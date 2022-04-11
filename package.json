@@ -1,0 +1,16 @@
+{
+  "name": "donation-manager",
+  "version": "0.1.0",
+  "main": "Gruntfile.js",
+  "author": "Michael Wender",
+  "scripts": {
+    "start": "grunt default",
+    "readme": "grunt readme",
+    "i18n": "grunt i18n"
+  },
+  "devDependencies": {
+    "grunt": "^1.5.0",
+    "grunt-wp-i18n": "^1.0.3",
+    "grunt-wp-readme-to-markdown": "^2.1.0"
+  }
+}
