@@ -1,0 +1,15 @@
+{
+    "name": "mwender/donation-manager",
+    "description": "WordPress plugin for handling donations",
+    "type": "project",
+    "require": {
+        "zordius/lightncandy": "^1.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Wender",
+            "email": "michael@michaelwender.com"
+        }
+    ]
+}
