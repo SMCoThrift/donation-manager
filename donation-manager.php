@@ -13,6 +13,23 @@
  */
 
 // Your code starts here.
+$css_dir = ( stristr( site_url(), '.local' ) || SCRIPT_DEBUG )? 'css' : 'dist' ;
+define( 'DONMAN_CSS_DIR', $css_dir );
+define( 'DONMAN_DEV_ENV', stristr( site_url(), '.local' ) );
+define( 'DONMAN_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
+
+// Load Composer dependencies
+if( file_exists( DONMAN_PLUGIN_PATH . 'vendor/autoload.php' ) ){
+  require_once DONMAN_PLUGIN_PATH . 'vendor/autoload.php';
+} else {
+  add_action( 'admin_notices', function(){
+    $class = 'notice notice-error';
+    $message = __( 'Missing required Composer libraries. Please run `composer install` from the root directory of this plugin.', 'donman' );
+    printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+  } );
+}
 
 /**
  * Enhanced logging.
