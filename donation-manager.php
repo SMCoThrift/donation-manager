@@ -33,6 +33,14 @@ if( file_exists( DONMAN_PLUGIN_PATH . 'vendor/autoload.php' ) ){
   } );
 }
 
+if( ! class_exists( 'ACF' ) ){
+  add_action( 'admin_notices', function(){
+    $class = 'notice notice-error';
+    $message = __( 'Missing <a href="https://www.advancedcustomfields.com" target="_blank">Advanced Custom Fields</a> plugin. Please install and activate.', 'donman' );
+    printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message );
+  } );
+}
+
 /**
  * Enhanced logging.
  *
