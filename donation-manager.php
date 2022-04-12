@@ -20,7 +20,9 @@ define( 'DONMAN_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 
-// Load Composer dependencies
+/**
+ * Load Composer or display a notice if not loaded.
+ */
 if( file_exists( DONMAN_PLUGIN_PATH . 'vendor/autoload.php' ) ){
   require_once DONMAN_PLUGIN_PATH . 'vendor/autoload.php';
 } else {
