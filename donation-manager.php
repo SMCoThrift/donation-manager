@@ -19,6 +19,10 @@ define( 'DONMAN_DEV_ENV', stristr( site_url(), '.local' ) );
 define( 'DONMAN_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
+/**
+ * Load required files
+ */
+require_once( DONMAN_PLUGIN_PATH . 'lib/fns/acf.php' );
 
 /**
  * Load Composer or display a notice if not loaded.
@@ -33,6 +37,9 @@ if( file_exists( DONMAN_PLUGIN_PATH . 'vendor/autoload.php' ) ){
   } );
 }
 
+/**
+ * Check for ACF
+ */
 if( ! class_exists( 'ACF' ) ){
   add_action( 'admin_notices', function(){
     $class = 'notice notice-error';

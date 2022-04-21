@@ -1,0 +1,124 @@
+{
+    "key": "group_6255bd5fe4d7e",
+    "title": "Organization Options",
+    "fields": [
+        {
+            "key": "field_6255bd7b677f4",
+            "label": "Monthly Report Email(s)",
+            "name": "monthly_report_emails",
+            "type": "text",
+            "instructions": "Comma separated list of email addresses. Monthly donation reports are sent here.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_6255bddfb3b78",
+            "label": "Website",
+            "name": "website",
+            "type": "url",
+            "instructions": "URL to the organization's website.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_6255be3bb3b79",
+            "label": "Pickup Settings",
+            "name": "pickup_settings",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_6255be63b3b7a",
+                    "label": "Priority Pickup",
+                    "name": "priority_pickup",
+                    "type": "checkbox",
+                    "instructions": "This organization provides pickups for a fee.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "yes": "Yes"
+                    },
+                    "allow_custom": 0,
+                    "default_value": [],
+                    "layout": "vertical",
+                    "toggle": 0,
+                    "return_format": "value",
+                    "save_custom": 0
+                },
+                {
+                    "key": "field_6255beb5b3b7b",
+                    "label": "Donation Routing",
+                    "name": "donation_routing",
+                    "type": "select",
+                    "instructions": "When this is set to \"Email\", donations will be routed to the email address for the transportation department.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "email": "Email",
+                        "chhj_api": "CHHJ API"
+                    },
+                    "default_value": "email",
+                    "allow_null": 0,
+                    "multiple": 0,
+                    "ui": 0,
+                    "return_format": "value",
+                    "ajax": 0,
+                    "placeholder": ""
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "organization"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1649786655
+}
