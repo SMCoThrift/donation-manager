@@ -1,0 +1,202 @@
+{
+    "key": "group_626aa073628ca",
+    "title": "Transportation Department Options",
+    "fields": [
+        {
+            "key": "field_626aa08347f2e",
+            "label": "Organization",
+            "name": "organization",
+            "type": "post_object",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "organization"
+            ],
+            "taxonomy": "",
+            "allow_null": 0,
+            "multiple": 0,
+            "return_format": "object",
+            "ui": 1
+        },
+        {
+            "key": "field_626aa2147c3ab",
+            "label": "Contact Title",
+            "name": "contact_title",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "20",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_626aa2257c3ac",
+            "label": "Contact Name",
+            "name": "contact_name",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "30",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_626aa2547c3ad",
+            "label": "Contact Email",
+            "name": "contact_email",
+            "type": "email",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_626aa2697c3ae",
+            "label": "CC Emails",
+            "name": "cc_emails",
+            "type": "text",
+            "instructions": "Comma separated list of additional contacts.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_626aa3e706d0d",
+            "label": "Phone",
+            "name": "phone",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_626aa4428ac24",
+            "label": "Ads",
+            "name": "ads",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_626aa4688ac25",
+            "min": 0,
+            "max": 3,
+            "layout": "table",
+            "button_label": "Add an Ad",
+            "sub_fields": [
+                {
+                    "key": "field_626aa4688ac25",
+                    "label": "Ad",
+                    "name": "ad",
+                    "type": "image",
+                    "instructions": "Ads may be either 468x120px or 500x500px *only* with a maximum allowed file size of 200Kb!",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "min_width": 468,
+                    "min_height": 120,
+                    "min_size": "",
+                    "max_width": 500,
+                    "max_height": 500,
+                    "max_size": ".2",
+                    "mime_types": "jpg,gif,png,jpeg"
+                },
+                {
+                    "key": "field_626aa4f68ac26",
+                    "label": "Ad URL",
+                    "name": "ad_url",
+                    "type": "url",
+                    "instructions": "The URL this graphic should point to.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "70",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "trans_dept"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1651156362
+}

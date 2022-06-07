@@ -99,6 +99,269 @@
                     "return_format": "value",
                     "ajax": 0,
                     "placeholder": ""
+                },
+                {
+                    "key": "field_62615dc03f2ae",
+                    "label": "Skip Pickup Dates",
+                    "name": "skip_pickup_dates",
+                    "type": "checkbox",
+                    "instructions": "Select this option to have donors skip pickup date selection during the donation process.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "yes": "Yes"
+                    },
+                    "allow_custom": 0,
+                    "default_value": [],
+                    "layout": "vertical",
+                    "toggle": 0,
+                    "return_format": "value",
+                    "save_custom": 0
+                },
+                {
+                    "key": "field_62615e2a3f2af",
+                    "label": "Pickup Dates",
+                    "name": "pickup_dates",
+                    "type": "checkbox",
+                    "instructions": "Select the days of the week this organization schedules donation pickups.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "Sunday": "Sunday",
+                        "Monday": "Monday",
+                        "Tuesday": "Tuesday",
+                        "Wednesday": "Wednesday",
+                        "Thursday": "Thursday",
+                        "Friday": "Friday",
+                        "Saturday": "Saturday"
+                    },
+                    "allow_custom": 0,
+                    "default_value": [],
+                    "layout": "vertical",
+                    "toggle": 0,
+                    "return_format": "value",
+                    "save_custom": 0
+                },
+                {
+                    "key": "field_62615e713f2b0",
+                    "label": "Minimum Scheduling Interval",
+                    "name": "minimum_scheduling_interval",
+                    "type": "select",
+                    "instructions": "Number of days of lead time prior to scheduling a pickup.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": [
+                        "0 days",
+                        "1 day",
+                        "2 days",
+                        "3 days",
+                        "4 days",
+                        "5 days",
+                        "6 days",
+                        "7 days",
+                        "8 days",
+                        "9 days",
+                        "10 days",
+                        "11 days",
+                        "12 days",
+                        "13 days",
+                        "14 days"
+                    ],
+                    "default_value": 2,
+                    "allow_null": 0,
+                    "multiple": 0,
+                    "ui": 0,
+                    "return_format": "value",
+                    "ajax": 0,
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_62615f283f2b1",
+                    "label": "Step One Notice",
+                    "name": "step_one_notice",
+                    "type": "wysiwyg",
+                    "instructions": "Any text entered here will appear as a note above Step One of the donation forms.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "delay": 0
+                },
+                {
+                    "key": "field_62615f5d3f2b2",
+                    "label": "Provide Additional Details?",
+                    "name": "provide_additional_details",
+                    "type": "checkbox",
+                    "instructions": "Allow donors to provide additional details for damaged, broken, or pet environment items.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "Yes": "Yes"
+                    },
+                    "allow_custom": 0,
+                    "default_value": [],
+                    "layout": "vertical",
+                    "toggle": 0,
+                    "return_format": "value",
+                    "save_custom": 0
+                },
+                {
+                    "key": "field_62615f943f2b3",
+                    "label": "Allow user photo uploads?",
+                    "name": "allow_user_photo_uploads",
+                    "type": "select",
+                    "instructions": "Provide users with a field for uploading a photo of their donation?",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "Yes": "Yes"
+                    },
+                    "default_value": false,
+                    "allow_null": 0,
+                    "multiple": 0,
+                    "ui": 0,
+                    "return_format": "value",
+                    "ajax": 0,
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_62615fc53f2b4",
+                    "label": "Pause pickups?",
+                    "name": "pause_pickups",
+                    "type": "select",
+                    "instructions": "Check if this organization has paused their pickups. When this org shows up after a zip code search, users will be shown a note and unable to select the org.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "Yes": "Yes"
+                    },
+                    "default_value": false,
+                    "allow_null": 0,
+                    "multiple": 0,
+                    "ui": 0,
+                    "return_format": "value",
+                    "ajax": 0,
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_62615ff13f2b5",
+                    "label": "Realtor Ad (Standard Banner)",
+                    "name": "realtor_ad_standard_banner",
+                    "type": "image",
+                    "instructions": "Add a 936x120px banner image for a Realtor Ad who is sponsoring this organization.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "min_width": 936,
+                    "min_height": 120,
+                    "min_size": "",
+                    "max_width": 936,
+                    "max_height": 120,
+                    "max_size": ".25",
+                    "mime_types": "png,jpeg,gif,jpg"
+                },
+                {
+                    "key": "field_6261605b3f2b6",
+                    "label": "Realtor Ad (Medium Banner)",
+                    "name": "realtor_ad_medium_banner",
+                    "type": "image",
+                    "instructions": "Add a 600x500px banner image for a Realtor Ad who is sponsoring this organization.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "min_width": 600,
+                    "min_height": 500,
+                    "min_size": "",
+                    "max_width": 600,
+                    "max_height": 500,
+                    "max_size": ".25",
+                    "mime_types": "png,jpg,jpeg,gif"
+                },
+                {
+                    "key": "field_626160923f2b7",
+                    "label": "Realtor Ad Link",
+                    "name": "realtor_ad_link",
+                    "type": "url",
+                    "instructions": "The link for the Realtor Ad banner graphic.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_626160ae3f2b8",
+                    "label": "Realtor Description",
+                    "name": "realtor_description",
+                    "type": "wysiwyg",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "delay": 0
                 }
             ]
         }
@@ -120,5 +383,6 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1649786655
+    "show_in_rest": 0,
+    "modified": 1650548941
 }
