@@ -3,7 +3,8 @@
     "description": "WordPress plugin for handling donations",
     "type": "project",
     "require": {
-        "zordius/lightncandy": "^1.2"
+        "zordius/lightncandy": "^1.2",
+        "collizo4sky/persist-admin-notices-dismissal": "^1.4"
     },
     "license": "MIT",
     "authors": [
