@@ -37,6 +37,17 @@ if( ! class_exists( 'ACF' ) ){
 }
 
 /**
+ * Check for (Custom Taxonomy Order)[https://wordpress.org/plugins/custom-taxonomy-order-ne/] plugin.
+ */
+if( ! donman_is_active_plugin( 'custom-taxonomy-order-ne/customtaxorder.php' ) ){
+  add_action( 'admin_notices', function(){
+    $class = 'notice notice-error';
+    $message = __( 'Missing <a href="https://wordpress.org/plugins/custom-taxonomy-order-ne/" target="_blank">Custom Taxonomy Order</a> plugin. Please install and activate.', 'donation-manager' );
+    printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message );
+  } );
+}
+
+/**
  * Check for CPT UI
  */
 if( ! donman_is_active_plugin( 'custom-post-type-ui/custom-post-type-ui.php' ) ){
