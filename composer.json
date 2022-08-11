@@ -4,7 +4,9 @@
     "type": "project",
     "require": {
         "zordius/lightncandy": "^1.2",
-        "collizo4sky/persist-admin-notices-dismissal": "^1.4"
+        "collizo4sky/persist-admin-notices-dismissal": "^1.4",
+        "rlanvin/php-form": "^2.0",
+        "a5hleyrich/wp-background-processing": "^1.0"
     },
     "license": "MIT",
     "authors": [

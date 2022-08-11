@@ -4,8 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "91b0b3ddc9e4554831d4cefca6703147",
+    "content-hash": "c9f25223cae56070fd0429d4262ac780",
     "packages": [
+        {
+            "name": "a5hleyrich/wp-background-processing",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deliciousbrains/wp-background-processing.git",
+                "reference": "2cbee1abd1b49e1133cd8f611df4d4fc5a8b9800"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/deliciousbrains/wp-background-processing/zipball/2cbee1abd1b49e1133cd8f611df4d4fc5a8b9800",
+                "reference": "2cbee1abd1b49e1133cd8f611df4d4fc5a8b9800",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "suggest": {
+                "coenjacobs/mozart": "Easily wrap this library with your own prefix, to prevent collisions when multiple plugins use this library"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "classes/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Delicious Brains",
+                    "email": "nom@deliciousbrains.com"
+                }
+            ],
+            "description": "WP Background Processing can be used to fire off non-blocking asynchronous requests or as a background processing tool, allowing you to queue tasks.",
+            "support": {
+                "issues": "https://github.com/deliciousbrains/wp-background-processing/issues",
+                "source": "https://github.com/deliciousbrains/wp-background-processing/tree/1.0.2"
+            },
+            "time": "2020-07-31T07:00:11+00:00"
+        },
         {
             "name": "collizo4sky/persist-admin-notices-dismissal",
             "version": "1.4.4",
@@ -46,6 +89,49 @@
                 "source": "https://github.com/w3guy/persist-admin-notices-dismissal"
             },
             "time": "2020-12-31T17:12:37+00:00"
+        },
+        {
+            "name": "rlanvin/php-form",
+            "version": "v2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rlanvin/php-form.git",
+                "reference": "d68c4fe9cc2e9191175169409d718a59ea1bff55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rlanvin/php-form/zipball/d68c4fe9cc2e9191175169409d718a59ea1bff55",
+                "reference": "d68c4fe9cc2e9191175169409d718a59ea1bff55",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
+            },
+            "suggest": {
+                "ext-intl": "Intl extension is useful for validating formatted numbers"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Form\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Lightweight form validation library for PHP",
+            "homepage": "https://github.com/rlanvin/php-form",
+            "keywords": [
+                "form",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/rlanvin/php-form/issues",
+                "source": "https://github.com/rlanvin/php-form/tree/master"
+            },
+            "time": "2016-04-11T09:58:23+00:00"
         },
         {
             "name": "zordius/lightncandy",
