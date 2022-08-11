@@ -1,0 +1,30 @@
+<div class="select-your-organization">
+  <style type="text/css">
+  .organization{border-bottom: 1px solid #eee; padding-bottom: 2em; margin-bottom: 2em;}
+  .organization:last-child{border-bottom: none;}
+  .organization .elementor-button{font-weight: bold;}
+  .organization h3{margin-top: 0; font-weight: bold;}
+  .organization .description{margin-top: 1em;}
+  </style>
+  {{#each rows}}
+  <div class="row organization{{css_classes}}">
+      <h3>{{name}}</h3>
+      {{#if pause_pickups}}
+        <div class="description">{{{desc}}}</div>
+      {{else}}
+      <div class="elementor-align-justify">
+        <a class="btn btn-primary button btn-lg btn-block elementor-button" href="{{link}}">
+          <span class="elementor-button-content-wrapper">
+            <span class="elementor-button-icon elementor-align-icon-right"><i aria-hidden="true" class="fas fa-arrow-alt-circle-right"></i></span>
+            <span class="elementor-button-text">{{button_text}}</span>
+          </span>
+        </a>
+      </div>
+      <div class="description">{{{desc}}}</div>
+      {{/if}}
+      {{#if edit_url}}
+      <div class="edit-this"><a href="{{edit_url}}" target="_blank">Edit</a></div>
+      {{/if}}
+  </div>
+  {{/each}}
+</div>

@@ -1,0 +1,15 @@
+<h1><code>[donationform]</code> Shortcode Documentation</h1>
+<p>This documentation is output by the <code>[donationform]</code> shortcode when the <code>dmdebug</code> cookie is set by accessing this site with <code>?dmdebug=true</code> appended to the URL.</p>
+
+<h2>Attributes</h2>
+<ul>
+<li><code>nextpage</code> - The form's redirect is defined by the <code>nextpage</code> attribute. We allow this redirect to be user defined so the user can control the path through the site. This in turn allows for adding the various pages as steps in an analytics tracking funnel (e.g. Google Analytics).</li>
+</ul>
+
+<h2>Notes</h2>
+
+<h3>RESET $_SESSION['donor'] ON HOME PAGE</h3>
+
+<p>We're assuming that the donation process begins on the site homepage. Therefore, we always reset the donor array so that we can begin the donation process and show the proper form by making sure that <code>$_SESSION['donor']['form']</code> is unset.</p>
+
+<p>In the event that we ever want to change this behavior, we could add some settings to the Donation Settings page we create with the ACF plugin. These settings would define which form displays on which page. Otherwise, we setup <code>$_SESSION['donor']['form']</code> inside <code>callback_init()</code>.</p>

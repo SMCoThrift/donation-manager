@@ -8,10 +8,7 @@
  * @return     string  Returns ACF JSON save location.
  */
 function donman_acf_json_save_point( $path ) {
-  // update path
   $path = plugin_dir_path( __FILE__ ) . '../acf-json';
-
-  // return
   return $path;
 }
 add_filter('acf/settings/save_json', 'donman_acf_json_save_point');
@@ -34,3 +31,12 @@ function donman_acf_json_load_point( $paths ) {
     return $paths;
 }
 add_filter('acf/settings/load_json', 'donman_acf_json_load_point');
+
+if( function_exists( 'acf_add_options_page' ) ){
+  acf_add_options_page([
+    'page_title'  => 'Donation Manager Settings',
+    'menu_title'  => 'Donation Manager Settings',
+    'menu_slug'   => 'donation-manager-settings',
+    'capability'  => 'edit_posts',
+  ]);
+}

@@ -1,0 +1,40 @@
+<style>
+.elementor-button{font-weight: bold;}
+.help-block{background-color: #eee; padding: .5em; border-radius: 5px; color: #666; font-size: .9em;}
+.help-block p:last-child{margin-bottom: 0;}
+table tr td{border: none; padding: 20px;}
+table tr .help-block{background-color: transparent;}
+div.help-block{margin-top: .5em;}
+div.checkbox label{display: flex; align-items: center; cursor: pointer;}
+div.checkbox label input{margin-right: .25em; width: 20px; height: 20px;}
+span.label-text{font-size: 1.25em; font-weight: bold;}
+</style>
+
+{{{step_one_notice}}}
+<p class="lead"><strong>Step 1 of 4:</strong> What Items do you have to donate? (<em>Check all that apply</em>)</p>
+<form action="" method="post" style="margin-bottom: 3em;">
+  <table class="">
+    {{#each checkboxes}}
+    <tr>
+      <td>
+        <div class="checkbox">
+          <label><input type="checkbox" name="donor[options][{{key}}][field_value]" value="{{value}}"{{checked}} /> <span class="label-text">{{name}}</span></label>
+          <div class="help-block">{{{desc}}}</div>
+          <input type="hidden" name="donor[options][{{key}}][pickup]" value="{{pickup}}" />
+          <input type="hidden" name="donor[options][{{key}}][skipquestions]" value="{{skip_questions}}" />
+          <input type="hidden" name="donor[options][{{key}}][term_id]" value="{{term_id}}" />
+        </div>
+      </td>
+    </tr>
+    {{/each}}
+  </table>
+  <h3>Brief description of items:</h3>
+  <p><strong><em>Required field.</em></strong> In order to proceed to the next page, please provide a brief description of your donation(s):</p>
+  <textarea class="form-control" rows="4" name="donor[description]">{{description}}</textarea>
+  <p class="help-block">Example: I have a couch and three boxes of household items from spring cleaning.</p>
+  <div class="elementor-align-justify">
+    <button type="submit" class="btn btn-primary button btn-lg btn-block elementor-button">Continue to Step 2</button>
+  </div>
+
+  <input type="hidden" name="nextpage" value="{{nextpage}}" />
+</form>
