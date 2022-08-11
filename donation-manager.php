@@ -7,9 +7,9 @@
  * Author URI:      https://mwender.com
  * Text Domain:     donation-manager
  * Domain Path:     /languages
- * Version:         0.1.0
+ * Version:         3.0.0
  *
- * @package         Donation_Manager
+ * @package         DonationManager
  */
 
 /**
@@ -22,12 +22,22 @@ define( 'DONMAN_CSS_DIR', $css_dir );
 define( 'DONMAN_DEV_ENV', stristr( site_url(), '.local' ) );
 define( 'DONMAN_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+//define( 'ORPHANED_PICKUP_RADIUS', 15 ); // radius in miles for zipcode search
+define( 'AVERGAGE_DONATION_VALUE', 230 ); // average value of a donation is $230
+
+/**
+ * Start our session
+ */
+if( ! defined( 'WP_CLI' ) && ! headers_sent() )
+  session_start();
 
 /**
  * Load required files
  */
-require_once( DONMAN_PLUGIN_PATH . 'lib/fns/acf.php' );
-require_once( DONMAN_PLUGIN_PATH . 'lib/fns/debugging.php' );
+$required_files = array_diff( scandir( DONMAN_PLUGIN_PATH . 'lib/fns' ), [ '.', '..', 'shortcode', 'cli' ] );
+foreach( $required_files as $file ){
+  require_once DONMAN_PLUGIN_PATH . 'lib/fns/' . $file;
+}
 
 /**
  * Load required libraries and check for required plugins.
