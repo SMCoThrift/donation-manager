@@ -56,7 +56,7 @@
                     "key": "field_6255be63b3b7a",
                     "label": "Priority Pickup",
                     "name": "priority_pickup",
-                    "type": "checkbox",
+                    "type": "radio",
                     "instructions": "This organization provides pickups for a fee.",
                     "required": 0,
                     "conditional_logic": 0,
@@ -66,14 +66,15 @@
                         "id": ""
                     },
                     "choices": {
-                        "yes": "Yes"
+                        "true": "Yes",
+                        "false": "No"
                     },
-                    "allow_custom": 0,
-                    "default_value": [],
+                    "allow_null": 0,
+                    "other_choice": 0,
+                    "default_value": "false",
                     "layout": "vertical",
-                    "toggle": 0,
                     "return_format": "value",
-                    "save_custom": 0
+                    "save_other_choice": 0
                 },
                 {
                     "key": "field_6255beb5b3b7b",
@@ -236,7 +237,7 @@
                     "key": "field_62615f943f2b3",
                     "label": "Allow user photo uploads?",
                     "name": "allow_user_photo_uploads",
-                    "type": "select",
+                    "type": "radio",
                     "instructions": "Provide users with a field for uploading a photo of their donation?",
                     "required": 0,
                     "conditional_logic": 0,
@@ -246,21 +247,21 @@
                         "id": ""
                     },
                     "choices": {
-                        "Yes": "Yes"
+                        "true": "Yes",
+                        "false": "No"
                     },
-                    "default_value": false,
                     "allow_null": 0,
-                    "multiple": 0,
-                    "ui": 0,
+                    "other_choice": 0,
+                    "default_value": "false",
+                    "layout": "vertical",
                     "return_format": "value",
-                    "ajax": 0,
-                    "placeholder": ""
+                    "save_other_choice": 0
                 },
                 {
                     "key": "field_62615fc53f2b4",
                     "label": "Pause pickups?",
                     "name": "pause_pickups",
-                    "type": "select",
+                    "type": "radio",
                     "instructions": "Check if this organization has paused their pickups. When this org shows up after a zip code search, users will be shown a note and unable to select the org.",
                     "required": 0,
                     "conditional_logic": 0,
@@ -270,15 +271,15 @@
                         "id": ""
                     },
                     "choices": {
-                        "Yes": "Yes"
+                        "true": "Yes",
+                        "false": "No"
                     },
-                    "default_value": false,
                     "allow_null": 0,
-                    "multiple": 0,
-                    "ui": 0,
+                    "other_choice": 0,
+                    "default_value": "false",
+                    "layout": "vertical",
                     "return_format": "value",
-                    "ajax": 0,
-                    "placeholder": ""
+                    "save_other_choice": 0
                 },
                 {
                     "key": "field_62615ff13f2b5",
@@ -364,6 +365,68 @@
                     "delay": 0
                 }
             ]
+        },
+        {
+            "key": "field_62ed43d16b5df",
+            "label": "Donation Option Descriptions",
+            "name": "donation_option_descriptions",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "",
+            "sub_fields": [
+                {
+                    "key": "field_62ed43e46b5e0",
+                    "label": "Donation Option",
+                    "name": "donation_option_id",
+                    "type": "taxonomy",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "25",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "donation_option",
+                    "field_type": "checkbox",
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 0
+                },
+                {
+                    "key": "field_62ed44036b5e1",
+                    "label": "Donation Option Description",
+                    "name": "description",
+                    "type": "wysiwyg",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "75",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "full",
+                    "media_upload": 1,
+                    "delay": 0
+                }
+            ]
         }
     ],
     "location": [
@@ -384,5 +447,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1650548941
+    "modified": 1659718198
 }

@@ -1,0 +1,307 @@
+{
+    "key": "group_62b1ac7a2a3e2",
+    "title": "Donation Manager Settings",
+    "fields": [
+        {
+            "key": "field_62b1ac9008c3e",
+            "label": "Default Organization",
+            "name": "default_organization",
+            "type": "post_object",
+            "instructions": "This organization is shown when donors enter a Zip\/Donation code that is not associated with any organization.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "organization"
+            ],
+            "taxonomy": "",
+            "allow_null": 0,
+            "multiple": 0,
+            "return_format": "object",
+            "ui": 1
+        },
+        {
+            "key": "field_62b1acc608c3f",
+            "label": "Default Transportation Department",
+            "name": "default_transportation_department",
+            "type": "post_object",
+            "instructions": "Orphaned donations get sent to the contact for this department.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "trans_dept"
+            ],
+            "taxonomy": "",
+            "allow_null": 0,
+            "multiple": 0,
+            "return_format": "object",
+            "ui": 1
+        },
+        {
+            "key": "field_62c432810f34a",
+            "label": "Donation Button Text",
+            "name": "donation_button_text",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_62c432d50f34b",
+                    "label": "Default",
+                    "name": "default",
+                    "type": "text",
+                    "instructions": "Typically something like \"Click Here to Request a Pick Up\".",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62c433150f34c",
+                    "label": "Non-Profit",
+                    "name": "non_profit",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62c433400f34d",
+                    "label": "Priority",
+                    "name": "priority",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_62c44c6bd062b",
+            "label": "Orphaned Pickup Radius",
+            "name": "orphaned_pickup_radius",
+            "type": "number",
+            "instructions": "Radius in miles for a zip code search.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 15,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_62f4f77dfc665",
+            "label": "Default Options",
+            "name": "default_options",
+            "type": "group",
+            "instructions": "These are the defaults used in the donation form(s).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_62f4f7aefc666",
+                    "label": "Default Donation Options",
+                    "name": "default_donation_options",
+                    "type": "taxonomy",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "donation_option",
+                    "field_type": "checkbox",
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 0
+                },
+                {
+                    "key": "field_62f4f7e8fc667",
+                    "label": "Default Screening Questions",
+                    "name": "default_screening_questions",
+                    "type": "taxonomy",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "screening_question",
+                    "field_type": "checkbox",
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 0
+                },
+                {
+                    "key": "field_62f4f80ffc668",
+                    "label": "Default Pickup Times",
+                    "name": "default_pickup_times",
+                    "type": "taxonomy",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "pickup_time",
+                    "field_type": "checkbox",
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 0
+                },
+                {
+                    "key": "field_62f4f83afc669",
+                    "label": "Default Pickup Locations",
+                    "name": "default_pickup_locations",
+                    "type": "taxonomy",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "pickup_location",
+                    "field_type": "checkbox",
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 0
+                }
+            ]
+        },
+        {
+            "key": "field_62f4f85bfc66a",
+            "label": "No Pickup Message",
+            "name": "no_pickup_message",
+            "type": "wysiwyg",
+            "instructions": "This message is displayed when a user only has items which the organization does not pickup. Use {organization} to have the organization's name inserted into the text.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "delay": 0
+        },
+        {
+            "key": "field_62f4f88efc66b",
+            "label": "No Damaged Items Message",
+            "name": "no_damaged_items_message",
+            "type": "wysiwyg",
+            "instructions": "Message that displays when donor answers \"Yes\" to a screening question. (Use {organization} as a placeholder for the organization's name.)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "delay": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "donation-manager-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1660221812
+}
