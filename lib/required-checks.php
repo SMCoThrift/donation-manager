@@ -6,6 +6,28 @@ function donman_is_active_plugin( $plugin ){
 }
 
 /**
+ * Checking for required constants:
+ *
+ * @type  string CLOUDINARY_CLOUD_NAME    Cloudinary account name.
+ * @type  string CLOUDINARY_API_KEY       Cloudinary account API key.
+ * @type  string CLOUDINARY_API_SECRET    Cloudinary API secret.
+ * @type  string DM_GOOGLE_MAPS_API_KEY   Google Maps API key.
+ */
+$donman_required_constants = [ 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET', 'DM_GOOGLE_MAPS_API_KEY' ];
+foreach( $donman_required_constants as $constant ){
+  if( ! defined( $constant ) ){
+    add_action( 'admin_notices', function() use ( $constant ){
+      $message = __( 'Missing required constant: <code>' . $constant . '</code>. Please add <code>define( \'' . $constant . '\', ... )</code> to your <code>wp-config.php</code>.' );
+      printf( '<div class="notice notice-error" style="padding: 10px;">%1$s</div>', $message );
+    });
+  }
+}
+/* Cloudinary PHP SDK ^2.0 */
+if( defined( 'CLOUDINARY_CLOUD_NAME' ) && defined( 'CLOUDINARY_API_KEY' ) && defined( 'CLOUDINARY_API_SECRET' ) )
+  putenv( 'CLOUDINARY_URL=cloudinary://' . CLOUDINARY_API_KEY . ':' . CLOUDINARY_API_SECRET . '@' . CLOUDINARY_CLOUD_NAME );
+
+
+/**
  * Load Composer or display a notice if not loaded.
  */
 if( file_exists( DONMAN_PLUGIN_PATH . 'vendor/autoload.php' ) ){
