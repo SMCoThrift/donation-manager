@@ -49,7 +49,7 @@ if( isset( $_REQUEST['message'] ) && ! empty( $_REQUEST['message'] ) && 'no_org_
 
 $priority_rows = [];
 $priority_ads = [];
-uber_log('🔔 $organizations = ' . print_r( $organizations, true ) );
+
 foreach( $organizations as $org ) {
     // Setup button link
     $link = '';
