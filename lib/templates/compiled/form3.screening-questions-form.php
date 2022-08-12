@@ -30,7 +30,19 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
     );
     
     $inary=is_array($in);
-    return '<form action="" method="post" name="screening-questions">
+    return '<style>
+.elementor-button{font-weight: bold;}
+.help-block{background-color: #eee; padding: .5em; border-radius: 5px; color: #666; font-size: .9em;}
+.help-block p:last-child{margin-bottom: 0;}
+table tr td{border: none; padding: 20px;}
+table tr .help-block{background-color: transparent;}
+div.help-block{margin-top: .5em;}
+div.checkbox label{display: flex; align-items: center; cursor: pointer;}
+div.checkbox label input{margin-right: .25em; width: 20px; height: 20px;}
+span.label-text{font-size: 1.25em; font-weight: bold;}
+</style>
+
+<form action="" method="post" name="screening-questions" style="margin-bottom: 3em;">
   <table class="table table-striped"><colgroup><col style="width: 70%;" /><col style="width: 15%" /><col style="width: 15%" /></colgroup>
 
 '.LR::sec($cx, (($inary && isset($in['questions'])) ? $in['questions'] : null), null, $in, true, function($cx, $in) {$inary=is_array($in);return '  <tr>
@@ -51,7 +63,11 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
     <div class="preview" style="display: none;"></div>
     <input type="hidden" name="image_public_id" id="image_public_id" value="" />
   </div>
-' : '').'  <p class="text-right"><button type="submit" class="btn btn-primary">Continue to Step 3</button></p>
+' : '').'
+  <div class="elementor-align-justify">
+    <button type="submit" class="btn btn-primary button btn-lg btn-block elementor-button">Continue to Step 3</button>
+  </div>
+
   <input type="hidden" name="nextpage" value="'.htmlspecialchars((string)(($inary && isset($in['nextpage'])) ? $in['nextpage'] : null), ENT_QUOTES, 'UTF-8').'" />
   <input type="hidden" name="provide_additional_details" value="'.htmlspecialchars((string)(($inary && isset($in['provide_additional_details'])) ? $in['provide_additional_details'] : null), ENT_QUOTES, 'UTF-8').'" />
 </form>';
