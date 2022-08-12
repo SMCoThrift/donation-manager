@@ -88,7 +88,7 @@ add_shortcode( 'donationform', __NAMESPACE__ . '\\donationform' );
 function donationform_docs( $atts = [] ){
   if( current_user_can( 'activate_plugins') && isset( $_COOKIE['dmdebug'] ) && 'on' == $_COOKIE['dmdebug'] ){
     add_action( 'wp_footer', function() use ( $atts ){
-      $devnotes = get_alert(['title' => 'FOR NEXT TIME', 'type' => 'info', 'description' => '<p>Continue working in <code>lib/fns/shortcode/donationform/screening-questions.php</code>.</p><ul><li>Get Additional Details working</li><li>Get Cloudinary Photo Uploads working</li></ul><p>EXTRA: Get the <a href="https://pmdthree.local/select-your-organization/">Select Your Organiztaion</a> page working when no vars are set.</p>']);
+      $devnotes = get_alert(['title' => 'FOR NEXT TIME', 'type' => 'info', 'description' => '<p>Continue working in <code>lib/fns/shortcode/donationform/screening-questions.php</code>.</p><ul style="margin-bottom: 2em;"><li>Get Additional Details working</li><li>Get Cloudinary Photo Uploads working</li></ul><p>EXTRA: Get the <a href="https://pmdthree.local/select-your-organization/">Select Your Organiztaion</a> page working when no vars are set.</p>']);
 
 
       echo '<style>.docs code{color: #900; background: #eee; padding: 1px 3px; font-size: .8em;} .docs h3{font-size: 1em; font-weight: bold; margin-bottom: .25em;}</style>';
