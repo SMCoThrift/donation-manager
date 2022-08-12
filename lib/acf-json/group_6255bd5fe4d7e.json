@@ -214,7 +214,7 @@
                     "key": "field_62615f5d3f2b2",
                     "label": "Provide Additional Details?",
                     "name": "provide_additional_details",
-                    "type": "checkbox",
+                    "type": "radio",
                     "instructions": "Allow donors to provide additional details for damaged, broken, or pet environment items.",
                     "required": 0,
                     "conditional_logic": 0,
@@ -224,14 +224,15 @@
                         "id": ""
                     },
                     "choices": {
-                        "Yes": "Yes"
+                        "true": "Yes",
+                        "false": "No"
                     },
-                    "allow_custom": 0,
-                    "default_value": [],
-                    "layout": "vertical",
-                    "toggle": 0,
+                    "allow_null": 0,
+                    "other_choice": 0,
+                    "default_value": "false",
+                    "layout": "horizontal",
                     "return_format": "value",
-                    "save_custom": 0
+                    "save_other_choice": 0
                 },
                 {
                     "key": "field_62615f943f2b3",
@@ -253,7 +254,7 @@
                     "allow_null": 0,
                     "other_choice": 0,
                     "default_value": "false",
-                    "layout": "vertical",
+                    "layout": "horizontal",
                     "return_format": "value",
                     "save_other_choice": 0
                 },
@@ -447,5 +448,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1659718198
+    "modified": 1660247875
 }
