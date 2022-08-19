@@ -31,14 +31,15 @@ foreach( $terms as $term ) {
   /**
    * $donation_option_desc
    *
-   * Populate our Donation Option descriptions by 1) checking
-   * for an Alternate Donation Option desc in
-   * $alt_donation_option_descriptions, and 2) the description
-   * that comes with the term.
+   * Populate our Donation Option descriptions by:
+   *
+   *   1) checking for an Alternate Donation Option desc in $alt_donation_option_descriptions
+   *   2) the description that comes with the term.
    *
    * @var        string
    */
-  $donation_option_desc = ( array_key_exists( $term->term_id, $alt_donation_option_descriptions ) )? $alt_donation_option_descriptions[ $term->term_id ] : apply_filters( 'the_content', $term->description ) ;
+  $donation_option_desc = ( array_key_exists( $term->term_id, $alt_donation_option_descriptions ) )? $alt_donation_option_descriptions[ $term->term_id ] : wpautop( $term->description );
+
   if( empty( $donation_option_desc ) && current_user_can( 'edit_posts' ) )
     $donation_option_desc = get_alert(['description' => 'No description entered for "' . $term->name . '". <a href="' . get_edit_term_link( $term, 'donation_option' ) . '" target="_blank">Edit</a> this term.']);
 
@@ -56,10 +57,7 @@ foreach( $terms as $term ) {
     'skip_questions'  => $skip_questions,
     'term_id'         => $term->term_id
   ];
-  /**/
 }
-//uber_log( '🔔 $donation_options = ' . print_r( $donation_options, true ) );
-//ksort( $donation_options );
 
 $checkboxes = array();
 
