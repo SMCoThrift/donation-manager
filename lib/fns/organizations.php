@@ -2,6 +2,8 @@
 
 namespace DonationManager\organizations;
 use function DonationManager\utilities\{get_alert};
+use function DonationManager\lib\fns\helpers\{in_array_r};
+use function DonationManager\templates\{render_template};
 
 /**
  * Gets the default organization.
@@ -158,7 +160,7 @@ function get_orphaned_donation_contacts( $args ){
           // Prevents duplicates from the same store
           if( isset( $contact['store_name'] )
               && ( false == $args['duplicates'] )
-              && DonationManager\lib\fns\helpers\in_array_r( $contact['store_name'], $contacts_array )
+              && in_array_r( $contact['store_name'], $contacts_array )
           )
               continue;
 
@@ -168,7 +170,7 @@ function get_orphaned_donation_contacts( $args ){
           $siteurl = get_option( 'siteurl' );
           $contact['by-pass-link'] = $siteurl . '/step-one/?oid=' . $default_organization->ID . '&tid=' . $default_trans_dept->ID . '&priority=0&orphanid=' . $contact['ID'];
 
-          if( isset( $contact['email_address'] ) && ! DonationManager\lib\fns\helpers\in_array_r( $contact['email_address'], $contacts_array ) ){
+          if( isset( $contact['email_address'] ) && ! in_array_r( $contact['email_address'], $contacts_array ) ){
               $contacts_array[$contact['ID']] = ( 'email_address' == $args['fields'] )? $contact['email_address'] : $contact;
           }
       }
@@ -199,11 +201,11 @@ function get_organizations( $pickup_code ) {
   if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
     \WP_CLI::line( '🔔 get_organizations() query args = ' . print_r( $args, true ) );
 
-  $query = new \WP_Query( $args );
+  $trans_depts = get_posts( $args );
 
   $organizations = [];
 
-  if( $query->have_posts() ) {
+  if( $trans_depts ):
     /**
      * PRIORITY PICKUP SERVICE
      *
@@ -215,47 +217,45 @@ function get_organizations( $pickup_code ) {
      */
     $priority_pickup = false;
 
-    while( $query->have_posts() ):
-      $query->the_post();
-      global $post;
-      setup_postdata( $post );
-      $org_id = get_post_meta( $post->ID, 'organization', true );
-      $organization = get_post( $org_id );
-      //if( 'WP_CLI' && true === 'WP_CLI_TEST' )
-      //  \WP_CLI::line( '🔔 $organization = ' . print_r( $organization, true ) );
+    foreach( $trans_depts as $trans_dept ){
+      //if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+        //\WP_CLI::line( '🔔 $trans_dept = ' . print_r( $trans_dept, true ) );
 
-      $alternate_donate_now_url = '';
+      $org_id = get_post_meta( $trans_dept->ID, 'organization', true );
+      $organization = get_post( $org_id );
+      //if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+        //\WP_CLI::line( '🔔 $organization = ' . print_r( $organization, true ) );
+
+      $pickup_settings = get_field( 'pickup_settings', $organization->ID );
       $priority_pickup = false;
       $pause_pickups = false;
-      if( $org_id ){
-        $pickup_settings = get_field( 'pickup_settings', $org_id );
-        if( $pickup_settings ):
-          // 08/03/2022 (03:16) - not current stored
-          // if( array_key_exists( 'alternate_donate_now_url', $pickup_settings ) )
-          //   $alternate_donate_now_url = $pickup_settings['alternate_donate_now_url']; // 08/03/2022 (03:16) - not current stored
+      if( $pickup_settings ){
+        // 08/03/2022 (03:16) - not current stored
+        // if( array_key_exists( 'alternate_donate_now_url', $pickup_settings ) )
+        //   $alternate_donate_now_url = $pickup_settings['alternate_donate_now_url']; // 08/03/2022 (03:16) - not current stored
 
-          if( array_key_exists( 'priority_pickup', $pickup_settings ) )
-            $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
+        if( array_key_exists( 'priority_pickup', $pickup_settings ) )
+          $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
 
-          if( array_key_exists( 'pause_pickups', $pickup_settings ) )
-            $pause_pickups = ( $pickup_settings['pause_pickups'] === 'true' )? true : false ;
-
-        endif;
+        if( array_key_exists( 'pause_pickups', $pickup_settings ) )
+          $pause_pickups = ( $pickup_settings['pause_pickups'] === 'true' )? true : false ;
       }
-      if( $organization )
-        $edit_url = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $organization->ID, 'link' ) : false ;
-          $organizations[] = [
-            'id'                        => $organization->ID,
-            'name'                      => $organization->post_title,
-            'desc'                      => $organization->post_content,
-            'trans_dept_id'             => $post->ID,
-            'alternate_donate_now_url'  => $alternate_donate_now_url,
-            'priority_pickup'           => $priority_pickup,
-            'pause_pickups'             => $pause_pickups,
-            'edit_url'                  => $edit_url,
-          ];
-    endwhile;
-    wp_reset_postdata();
+
+      $edit_url = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $org->ID, 'link' ) : false ;
+      if( $organization ){
+        $organizations[] = [
+          'id'                        => $organization->ID,
+          'name'                      => $organization->post_title,
+          'desc'                      => $organization->post_content,
+          'trans_dept_id'             => $trans_dept->ID,
+          'alternate_donate_now_url'  => $alternate_donate_now_url,
+          'priority_pickup'           => $priority_pickup,
+          'pause_pickups'             => $pause_pickups,
+          'edit_url'                  => $edit_url,
+        ];
+      }
+
+    }
 
     /**
      * We have only 1 org for this pickup_code, and it is a fee-based
@@ -286,7 +286,7 @@ function get_organizations( $pickup_code ) {
         */
         array_unshift( $organizations, $default_org );
     }
-  }
+  endif;
 
   return $organizations;
 }
@@ -347,6 +347,136 @@ function get_organization_meta_array( $org_id, $taxonomy ){
   ksort( $meta_array );
 
   return $meta_array;
+}
+
+/**
+ * Returns priority organizations for a given $pickup_code.
+ */
+function get_priority_organizations( $pickup_code = null ){
+  if( is_null( $pickup_code ) )
+    return false;
+
+  $args = array(
+    'post_type' => 'trans_dept',
+    'tax_query' => array(
+      array(
+        'taxonomy'  => 'pickup_code',
+        'terms'     => $pickup_code,
+        'field'     => 'slug'
+      )
+    )
+  );
+  $query = new \WP_Query( $args );
+
+  $organizations = array();
+
+  if( $query->have_posts() ){
+    if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+      \WP_CLI::line( '🔔 Looping through Transporation Departments: $query->posts...' );
+
+    while( $query->have_posts() ): $query->the_post();
+      global $post;
+      setup_postdata( $post );
+      $org_id = get_post_meta( $post->ID, 'organization', true );
+      if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+        \WP_CLI::line( '🔔 TRANS DEPT: ' . get_the_title() . ' (ORG: ' . get_the_title( $org_id ) . ', ID: ' . $org_id . ')' );
+
+      // If no `organization` is set, $org_id is a `string`. Therefore
+      // we must continue to the next post.
+      // 08/16/2022 (12:29) - 👆👇 ???
+      /*
+      if( 'string' == gettype( $org_id ) )
+        continue;
+      /**/
+
+      $pickup_settings = get_field( 'pickup_settings', $org_id );
+      if( $pickup_settings ):
+        // 08/03/2022 (03:16) - not current stored
+        // if( array_key_exists( 'alternate_donate_now_url', $pickup_settings ) )
+        //   $alternate_donate_now_url = $pickup_settings['alternate_donate_now_url']; // 08/03/2022 (03:16) - not current stored
+
+        if( array_key_exists( 'priority_pickup', $pickup_settings ) )
+          $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
+      endif;
+
+      if( $org_id && $priority_pickup ){
+        $organizations[] = [
+          'id' => $org_id,
+          'name' => get_the_title( $org_id ),
+          'desc' => get_the_content( null, false, $org_id ),
+          'trans_dept_id' => $post->ID,
+          /*'alternate_donate_now_url' => $alternate_donate_now_url,*/
+          'priority_pickup' => 1,
+        ];
+      }
+    endwhile;
+    wp_reset_postdata();
+    if( 0 == count( $organizations ) )
+      $organizations[] = get_default_organization( true );
+  } else {
+      // No orgs for this zip, return PMD as priority so we can
+      // use the Priority Orphan DB
+      $default_org = get_default_organization( true );
+
+      // Only provide the PRIORITY option for areas where there is
+      // a priority provider in the contacts table.
+      $contacts = get_orphaned_donation_contacts( array( 'pcode' => $pickup_code, 'limit' => 1, 'priority' => 1 ) );
+
+      if( 0 < count( $contacts ) )
+          $organizations[] = $default_org;
+  }
+
+  return $organizations;
+}
+
+/**
+ * Returns Priority Pick Up HTML.
+ */
+function get_priority_pickup_links( $pickup_code = null, $note = null ){
+    if( is_null( $pickup_code ) )
+        return false;
+
+    // Priority Donation Backlinks
+    $priority_html = '';
+    $priority_orgs = get_priority_organizations( $pickup_code );
+    if( is_array( $priority_orgs ) ){
+        foreach( $priority_orgs as $org ){
+            // Setup button link
+            if(
+                isset( $org['alternate_donate_now_url'] )
+                && filter_var( $org['alternate_donate_now_url'], FILTER_VALIDATE_URL )
+            ){
+                $link = $org['alternate_donate_now_url'];
+            } else {
+                $link = '/step-one/?oid=' . $org['id'] . '&tid=' . $org['trans_dept_id'] . '&priority=1';
+            }
+
+            $donation_button_text = get_field( 'donation_button_text', 'option' );
+            $priority_button_text = ( array_key_exists( 'priority', $donation_button_text ) && ! empty( $donation_button_text['priority'] ) )?  $donation_button_text['priority'] : 'Click here for Priority Pick Up' ;
+
+            $row = [
+                'name' => $org['name'],
+                'link' => $link,
+                'button_text' => $priority_button_text,
+                'css_classes' => ' priority',
+                'desc' => '',
+            ];
+            if( stristr( $org['name'], 'College Hunks' ) )
+                $row['additional_desc'] = '<div style="text-align: center; font-size: 1.25em;"><div style="margin-bottom: 1em">OR</div>Call <a href="tel:888-912-4902">(888) 912-4902</a> for Priority Pick Up</div>';
+            $rows[] = $row;
+        }
+        $hbs_vars = [
+            'rows' => $rows,
+        ];
+        $priority_rows = render_template( 'form1.select-your-organization', $hbs_vars ); // 08/16/2022 (11:21) - originally `form1.select-your-organization.rows`
+
+        if( is_null( $note ) )
+            $note = 'Even though your items don\'t qualify for pick up, you can connect with our "fee based" priority pick up partner that will pick up items we can\'t use as well as any other items you would like to recycle or throw away:';
+
+        $priority_html = '<div class="alert alert-warning"><h3 style="margin-top: 0;">Priority Pick Up Option</h3><p style="margin-bottom: 20px;">' . $note . '</p>' . $priority_rows . '</div>';
+    }
+
+    return $priority_html;
 }
 
 /**
