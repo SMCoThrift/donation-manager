@@ -1,5 +1,5 @@
 <?php
-namespace DonationManager\lib\fns\helpers;
+namespace DonationManager\helpers;
 
 /**
  * Returns content type for use in filter `wp_mail_content_type`.
@@ -88,61 +88,6 @@ function get_donations_value( $donations = 0 ){
 }
 
 /**
- * Gets the posted variable.
- *
- * Returns the following:
- *
- * - If $_POST[$varname] isset
- * - else if $_SESSION[$varname] isset
- * - else an empty string
- *
- * Check for a multi-level array value by using a
- * colon (i.e. `:`) between each level. Example:
- *
- * `get_posted_var( 'foo:bar' )` checks for $_POST['foo']['bar']
- *
- * @param      string  $varname  The varname
- *
- * @return     string  The value of the posted variable.
- */
-function get_posted_var( $varname ){
-    $varname = ( stristr( $varname, ':') )? explode( ':', $varname ) : [$varname];
-    $value = '';
-    //*
-    switch( count( $varname ) ){
-        case 4:
-            if( isset( $_POST[$varname[0]][$varname[1]][$varname[2]][$varname[3]] ) ){
-                $value = $_POST[$varname[0]][$varname[1]][$varname[2]][$varname[3]];
-            } else if( isset( $_SESSION[$varname[0]][$varname[1]][$varname[2]][$varname[3]] ) ){
-                $value = $_SESSION[$varname[0]][$varname[1]][$varname[2]][$varname[3]];
-            }
-        break;
-        case 3:
-            if( isset( $_POST[$varname[0]][$varname[1]][$varname[2]] ) ){
-                $value = $_POST[$varname[0]][$varname[1]][$varname[2]];
-            } else if( isset( $_SESSION[$varname[0]][$varname[1]][$varname[2]] ) ){
-                $value = $_SESSION[$varname[0]][$varname[1]][$varname[2]];
-            }
-        break;
-        case 2:
-            if( isset( $_POST[$varname[0]][$varname[1]] ) ){
-                $value = $_POST[$varname[0]][$varname[1]];
-            } else if( isset( $_SESSION[$varname[0]][$varname[1]] ) ){
-                $value = $_SESSION[$varname[0]][$varname[1]];
-            }
-        break;
-        case 1:
-            if( isset( $_POST[$varname[0]] ) ){
-                $value = $_POST[$varname[0]];
-            } else if( isset( $_SESSION[$varname[0]] ) ){
-                $value = $_SESSION[$varname[0]];
-            }
-        break;
-    }
-    return $value;
-}
-
-/**
  * Gets the socialshare copy.
  *
  * @param      string   $organization         The organization
@@ -151,12 +96,12 @@ function get_posted_var( $varname ){
  * @return     boolean/string  FALSE or The socialshare copy.
  */
 function get_socialshare_copy( $organization = '', $donation_id_hashtag = '' ){
-    if( empty( $organization ) || empty( $donation_id_hashtag ) )
-        return false;
+  if( empty( $organization ) || empty( $donation_id_hashtag ) )
+    return false;
 
-    $format = 'I just used @pickupdonations to schedule a donation pick up from %1$s. That was simple! #MyStuffMadeADifference %2$s';
+  $format = 'I just used @pickupdonations to schedule a donation pick up from %1$s. That was simple! #MyStuffMadeADifference %2$s';
 
-    return sprintf( $format, $organization, $donation_id_hashtag );
+  return sprintf( $format, $organization, $donation_id_hashtag );
 }
 
 /**
@@ -173,8 +118,13 @@ function get_donation_reason_select(){
     ];
     $options[] = '<option value="">Select your reason for donating...</option>';
     foreach( $reasons as $reason ){
+      $selected = '';
+      if( isset( $_POST['donor']['reason'] ) && $reason == $_POST['donor']['reason'] ){
         $selected = ( isset( $_POST['donor']['reason'] ) && $reason == $_POST['donor']['reason'] )? ' selected="selected"' : '';
-        $options[] = '<option value="' . $reason . '"' . $selected . '>' . $reason . '</option>';
+      } else if ( isset( $_SESSION['donor']['reason'] ) && $reason == $_SESSION['donor']['reason'] ){
+        $selected = ( isset( $_SESSION['donor']['reason'] ) && $reason == $_SESSION['donor']['reason'] )? ' selected="selected"' : '';
+      }
+      $options[] = '<option value="' . $reason . '"' . $selected . '>' . $reason . '</option>';
     }
     return '<select class="form-control" name="donor[reason]">' .  implode( '', $options ) . '</select>';
 }

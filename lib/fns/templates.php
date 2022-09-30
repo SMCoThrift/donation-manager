@@ -1,6 +1,43 @@
 <?php
 
 namespace DonationManager\templates;
+use function DonationManager\utilities\{get_alert};
+
+/**
+ * Retrieves template from /lib/html/
+ */
+
+/**
+ * Retrieves a template from /lib/html/.
+ *
+ * @param      string  $filename              The filename
+ * @param      array   $search_replace_array  The search replace array
+ *
+ * @return     string  The template part.
+ */
+function get_template_part( $filename = '', $search_replace_array = array() ) {
+  if( empty( $filename ) )
+    return get_alert(['type' => 'danger', 'description' => '<strong>ERROR:</strong> No filename!']);
+
+  $file = DONMAN_PLUGIN_PATH . 'lib/html/' . $filename . '.html';
+
+  if( ! file_exists( $file ) )
+    return get_alert(['type' => 'danger', 'description' => '<strong>ERROR:</strong> File not found! (<em>' . basename( $file ) . '</em>)']);
+
+  $template = file_get_contents( $file );
+
+  if( is_array( $search_replace_array ) && 0 < count( $search_replace_array ) ) {
+    $search_array = [];
+    $replace_array = [];
+    foreach( $search_replace_array as $search => $replace ) {
+      $search_array[] = '{' . $search . '}';
+      $replace_array[] = $replace;
+    }
+    $template = str_replace( $search_array, $replace_array, $template );
+  }
+
+  return $template;
+}
 
 /**
  * Renders a Handlebars template.

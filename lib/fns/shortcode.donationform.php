@@ -66,7 +66,7 @@ function donationform( $atts ){
   }
 
   if( isset( $_SESSION['donor']['org_id'] ) )
-      $allow_user_photo_uploads = get_post_meta( $_SESSION['donor']['org_id'], 'allow_user_photo_uploads', true );
+    $allow_user_photo_uploads = get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] );
 
   $form_filename = DONMAN_PLUGIN_PATH . 'lib/fns/shortcode/donationform/' . $form . '.php';
   /**
@@ -88,7 +88,7 @@ add_shortcode( 'donationform', __NAMESPACE__ . '\\donationform' );
 function donationform_docs( $atts = [] ){
   if( current_user_can( 'activate_plugins') && isset( $_COOKIE['dmdebug'] ) && 'on' == $_COOKIE['dmdebug'] ){
     add_action( 'wp_footer', function() use ( $atts ){
-      $devnotes = get_alert(['title' => 'FOR NEXT TIME', 'type' => 'info', 'description' => '<p>Continue working in <code>lib/fns/shortcode/donationform/screening-questions.php</code>.</p><ul style="margin-bottom: 2em;"><li>Get Additional Details working</li><li>Get Cloudinary Photo Uploads working</li></ul><p>EXTRA: Get the <a href="https://pmdthree.local/select-your-organization/">Select Your Organiztaion</a> page working when no vars are set.</p>']);
+      $devnotes = get_alert(['title' => 'FOR NEXT TIME', 'type' => 'info', 'description' => '<p>Continue working in <code>lib/fns/shortcode/donationform/select-preferred-pickup-dates.php</code>.</p><ul style="margin-bottom: 2em;"><li>Get Additional Details working<ul><li>✅ 08/17/2022 (18:22) - <strike>Make sure we do not show Additional Details field if Org does not accept additional details</strike></li><li>✅ 08/19/2022 (17:20) - <strike>Test adding additional details, do they get stored in session?</strike></li><li>Test PRIORITY PICK UP option when answering "Yes" to screening question and org does not allow "additional details".</li></ul></li><li>Get Cloudinary Photo Uploads working</li><li>Be sure to add <code>lib/fns/shortcode/donationform/duplicate-submission.php</code></li></ul><p>EXTRA: Get the <a href="https://pmdthree.local/select-your-organization/">Select Your Organiztaion</a> page working when no vars are set.</p>']);
 
 
       echo '<style>.docs code{color: #900; background: #eee; padding: 1px 3px; font-size: .8em;} .docs h3{font-size: 1em; font-weight: bold; margin-bottom: .25em;}</style>';
@@ -98,8 +98,12 @@ function donationform_docs( $atts = [] ){
         'type'        => 'info',
       ]);
       echo '<div style="display: flex;" class="flex-columns">';
-      echo '<div style="width: 50%;"><div style="padding: 0 20px 20px 0;">' . $devnotes . '</div><pre style="text-align: left; font-size: 12px;">Shortcode: [donationform nextpage="' . $atts['nextpage'] . '" /] (👈 The shortcode as it is used on this 👆 page.)<br/><br/>$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) . '</br>$_COOKIE[\'dmdebug\'] = ' . $_COOKIE['dmdebug'] . '</pre></div>';
-      echo '<div style="width: 50%;">' . file_get_contents( DONMAN_PLUGIN_PATH . 'lib/docs/shortcode.donationform.html' ). '</div>';
+      $nextpage = ( is_array( $atts ) && array_key_exists( 'nextpage', $atts ) )? $atts['nextpage'] : '';
+      echo '<div style="width: 50%;"><div style="padding: 0 20px 20px 0;">' . $devnotes . '</div><pre style="text-align: left; font-size: 12px;">Shortcode: [donationform nextpage="' . $nextpage . '" /] (👈 The shortcode as it is used on this 👆 page.)<br/><br/>$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) . '</br>$_COOKIE[\'dmdebug\'] = ' . $_COOKIE['dmdebug'] . '</pre></div>';
+      echo '<div style="width: 50%;">';
+      echo file_get_contents( DONMAN_PLUGIN_PATH . 'lib/docs/shortcode.donationform.html' );
+      echo file_get_contents( DONMAN_PLUGIN_PATH . 'lib/docs/shortcode.get_alert.html' );
+      echo '</div>';
       echo '</div><!-- .flex-columns -->';
       echo '</div>';
     });

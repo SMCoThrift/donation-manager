@@ -33,7 +33,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
     return '<div class="select-your-organization">
   <style type="text/css">
   .organization{border-bottom: 1px solid #eee; padding-bottom: 2em; margin-bottom: 2em;}
-  .organization:last-child{border-bottom: none;}
+  .row.organization:last-child{border-bottom: none; padding-bottom: 0;}
   .organization .elementor-button{font-weight: bold;}
   .organization h3{margin-top: 0; font-weight: bold;}
   .organization .description{margin-top: 1em;}

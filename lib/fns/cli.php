@@ -46,7 +46,9 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * ---
      * Available functions to test:
      *   - get_default_organization
+     *   - get_donation_contact
      *   - get_organizations
+     *   - get_priority_organizations
      *   - get_screening_questions
      * ---
      *
@@ -63,6 +65,28 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
         case 'get_default_organization':
           $org = DonationManager\organizations\get_default_organization();
           WP_CLI::line( '🔔 get_default_organization() returns $org = ' . print_r( $org, true ) );
+          break;
+
+        case 'get_donation_contact':
+          if( ! isset( $args[0] ) )
+            WP_CLI::error( 'Please provide a Donation ID as the first positional argument.' );
+          $donation_id = $args[0];
+          if( ! isset( $args[1] ) ){
+            WP_CLI::error( '2nd argument must be either `donor` or `transdept`.' );
+          } else {
+            $contact_type = $args[1];
+            WP_CLI::line( 'Testing with $contact_type set to ' . $contact_type );
+          }
+          $contact = DonationManager\donations\get_donation_contact( $donation_id, $contact_type );
+          WP_CLI::line( '🔔 get_donation_contact( ' . $donation_id . ', ' . $contact_type . ' ) returns: ' . print_r( $contact, true ) );
+          break;
+
+        case 'get_priority_organizations':
+          if( ! isset( $args[0] ) )
+            WP_CLI::error( 'This test requires a pickup code as the first postional argument.' );
+          $pickup_code = $args[0];
+          $priority_orgs = DonationManager\organizations\get_priority_organizations( $pickup_code );
+          WP_CLI::line( '🔔 get_priority_organizations() returns $priority_orgs = ' . print_r( $priority_orgs, true ) );
           break;
 
         case 'get_organizations':

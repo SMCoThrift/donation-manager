@@ -60,3 +60,21 @@ function get_trans_dept_ads( $id = null ){
 
   return $html;
 }
+
+/**
+ * Retrieves a transportation department contact
+ */
+function get_trans_dept_contact( $trans_dept_id = '' ) {
+    if( empty( $trans_dept_id ) || ! is_numeric( $trans_dept_id ) )
+        return false;
+
+    $trans_dept_contact = [
+      'contact_title' => get_field( 'contact_title', $trans_dept_id ),
+      'contact_name'  => get_field( 'contact_name', $trans_dept_id ),
+      'contact_email' => get_field( 'contact_email', $trans_dept_id ),
+      'cc_emails'     => get_field( 'cc_emails', $trans_dept_id ),
+      'phone'         => get_field( 'phone', $trans_dept_id ),
+    ];
+
+    return $trans_dept_contact;
+}

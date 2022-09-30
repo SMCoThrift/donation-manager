@@ -1,0 +1,56 @@
+<style>
+.row-pickup-dates{margin: 1em 0 0 0;}
+label.pickup-date{font-size: 16px; font-weight: bold;}
+.date-column{margin: 0 5px;}
+.date-column:first-child{margin-left: 0;}
+.date-column:last-child{margin-right: 0;}
+.date-column .available-times{margin-top: .25em;}
+@media(min-width: 768px){
+  .elementor-column.elementor-col-33.date-column{width: 32%;}
+}
+</style>
+<form action="" method="post">
+  <p class="lead">Please select three <em>POTENTIAL</em> pickup dates.</p>
+  {{{date_note}}}
+  <div class="row elementor-form-fields-wrapper elementor-labels-above row-pickup-dates">
+    {{#each pickupdates}}
+    <div class="elementor-column elementor-col-33 date-column" style="display: block;">
+      <label class="pickup-date" for="donor[pickupdate{{@index}}]">Preferred Pickup Date {{@index}}<span class="required">*</span>:</label><br />
+      <input type="text" name="donor[pickupdate{{@index}}]" id="pickupdate{{@index}}" class="date" gldp-id="gldatepicker{{@index}}" value="{{value}}" />
+      <div style="position: relative;">
+        <div gldp-el="gldatepicker{{@index}}" style="width: 400px; height: 300px;"></div>
+      </div>
+      <div class="available-times">
+        {{#each times}}
+        <div class="radio">
+          <label>
+            <input type="radio" name="donor[pickuptime{{../@index}}]" id="pickuptimes{{key}}" value="{{value}}"{{#if checked}} checked="checked"{{/if}}>
+            {{value}}
+          </label>
+        </div>
+        {{/each}}
+    </div><!-- .available-times -->
+    </div>
+    {{/each}}
+  </div>
+  <br />
+  {{{priority_pickup_option}}}
+  <div class="row">
+    <div class="col-md-12">
+      <p><strong>Location of items:</strong></p>
+      {{#each pickuplocations}}
+      <div class="radio">
+        <label>
+          <input type="radio" name="donor[pickuplocation]" id="pickuplocation{{key}}" value="{{location_attr_esc}}"{{checked}}>
+          {{location}}
+        </label>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-md-12 elementor-align-justify"><p><button type="submit" class="btn btn-block btn-primary" style="width: 100%;">Finish and Submit</button></p></div>
+  </div>
+  <input type="hidden" name="nextpage" value="{{nextpage}}" />
+</form>

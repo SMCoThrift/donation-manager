@@ -30,18 +30,20 @@ foreach( $screening_questions as $question ) {
  */
 $pickup_settings = get_field( 'pickup_settings', $_SESSION['donor']['org_id'] );
 
-$provide_additional_details = $pickup_settings['provide_additional_details'];
+$provide_additional_details = $pickup_settings['provide_additional_details'] === 'true' ? true : false ;
+uber_log( '🔔 $provide_additional_details = ' . $provide_additional_details );
 $additional_details = null;
 if( $provide_additional_details )
     $additional_details = ( isset( $_POST['donor']['additional_details'] ) )? esc_textarea( $_POST['donor']['additional_details'] ) : '' ;
 
-$allow_user_photo_uploads = $pickup_settings['allow_user_photo_uploads'];
+$allow_user_photo_uploads = $pickup_settings['allow_user_photo_uploads']; // 09/19/2022 (08:28) - switched to ACF true/false field
+uber_log( '🔔 $allow_user_photo_uploads = ' . $allow_user_photo_uploads );
 
 $hbs_vars = [
-    'questions' => $questions,
-    'additional_details' => $additional_details,
-    'nextpage' => $nextpage,
-    'provide_additional_details' => $provide_additional_details,
+  'questions' => $questions,
+  'additional_details' => $additional_details,
+  'nextpage' => $nextpage,
+  'provide_additional_details' => $provide_additional_details,
 ];
 
 /**
@@ -50,43 +52,45 @@ $hbs_vars = [
 // jQuery/Cloudinary Photo Upload
 if( $allow_user_photo_uploads )
 {
-    wp_enqueue_script( 'blueimp-jquery-ui-widget', DONMAN_PLUGIN_URL . 'lib/components/vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.js', ['jquery'], '2.3.0' );
-    wp_enqueue_script( 'blueimp-iframe-transport', DONMAN_PLUGIN_URL . 'lib/components/vendor/blueimp-file-upload/js/jquery.iframe-transport.js', ['jquery'], '2.3.0' );
-    wp_enqueue_script( 'blueimp-file-upload', DONMAN_PLUGIN_URL . 'lib/components/vendor/blueimp-file-upload/js/jquery.fileupload.js', ['jquery'], '2.3.0' );
-    wp_enqueue_script( 'cloudinary-file-upload', DONMAN_PLUGIN_URL . 'lib/components/vendor/cloudinary-jquery-file-upload/cloudinary-jquery-file-upload.js', ['jquery'], '2.3.0' );
+  uber_log('🔔 allowing user photo uploads...');
 
-    \Cloudinary::config([
-        'cloud_name' => CLOUDINARY_CLOUD_NAME,
-        'api_key' => CLOUDINARY_API_KEY,
-        'api_secret' => CLOUDINARY_API_SECRET,
-    ]);
+  wp_enqueue_script( 'blueimp-jquery-ui-widget', DONMAN_PLUGIN_URL . 'lib/components/vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.js', ['jquery'], '2.3.0' );
+  wp_enqueue_script( 'blueimp-iframe-transport', DONMAN_PLUGIN_URL . 'lib/components/vendor/blueimp-file-upload/js/jquery.iframe-transport.js', ['jquery'], '2.3.0' );
+  wp_enqueue_script( 'blueimp-file-upload', DONMAN_PLUGIN_URL . 'lib/components/vendor/blueimp-file-upload/js/jquery.fileupload.js', ['jquery'], '2.3.0' );
+  wp_enqueue_script( 'cloudinary-file-upload', DONMAN_PLUGIN_URL . 'lib/components/vendor/cloudinary-jquery-file-upload/cloudinary-jquery-file-upload.js', ['jquery'], '2.3.0' );
 
-    add_action( 'wp_footer', function(){
-        $params = array();
-        foreach (\Cloudinary::$JS_CONFIG_PARAMS as $param) {
-            $value = \Cloudinary::config_get($param);
-            if ($value) $params[$param] = $value;
-        }
-        $params = json_encode( $params );
-        $script = str_replace( '{{params}}', $params, file_get_contents( DONMAN_PLUGIN_PATH . 'lib/js/cloudinary.js' ) );
-        echo '<script type="text/javascript">' . $script . '</script>';
+  \Cloudinary::config([
+      'cloud_name' => CLOUDINARY_CLOUD_NAME,
+      'api_key' => CLOUDINARY_API_KEY,
+      'api_secret' => CLOUDINARY_API_SECRET,
+  ]);
 
-        $dm_styles = str_replace( '{{plugin_uri}}', DONMAN_PLUGIN_URL, file_get_contents( DONMAN_PLUGIN_PATH . 'lib/css/styles.css' ) );
-        echo '<style type="text/css">' . $dm_styles . '</style>';
-    }, 9999 );
+  add_action( 'wp_footer', function(){
+      $params = array();
+      foreach (\Cloudinary::$JS_CONFIG_PARAMS as $param) {
+          $value = \Cloudinary::config_get($param);
+          if ($value) $params[$param] = $value;
+      }
+      $params = json_encode( $params );
+      $script = str_replace( '{{params}}', $params, file_get_contents( DONMAN_PLUGIN_PATH . 'lib/js/cloudinary.js' ) );
+      echo '<script type="text/javascript">' . $script . '</script>';
 
-    // Generate a signed file upload field
-    // 08/12/2022 (09:18) - the file `cloudinary_cors.html` does
-    // not exist anywhere that I've checked (production or dev).
-    // Perhaps this function works by calling a pseudo URL?
-    $file_upload_input = cl_image_upload_tag( 'user_photo_id[]', [
-        'callback' => site_url() . '/cloudinary_cors.html',
-        'html'  => [
-            'multiple' => 'multiple',
-        ],
-    ]);
+      $dm_styles = str_replace( '{{plugin_uri}}', DONMAN_PLUGIN_URL, file_get_contents( DONMAN_PLUGIN_PATH . 'lib/css/styles.css' ) );
+      echo '<style type="text/css">' . $dm_styles . '</style>';
+  }, 9999 );
 
-    $hbs_vars['file_upload_input'] = $file_upload_input;
+  // Generate a signed file upload field
+  // 08/12/2022 (09:18) - the file `cloudinary_cors.html` does
+  // not exist anywhere that I've checked (production or dev).
+  // Perhaps this function works by calling a pseudo URL?
+  $file_upload_input = cl_image_upload_tag( 'user_photo_id[]', [
+      'callback' => site_url() . '/cloudinary_cors.html',
+      'html'  => [
+          'multiple' => 'multiple',
+      ],
+  ]);
+
+  $hbs_vars['file_upload_input'] = $file_upload_input;
 }
 
 if( empty( $template ) )

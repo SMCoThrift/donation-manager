@@ -1,0 +1,6 @@
+<p class="text-center lead">{{name}} (<a href="mailto:{{email}}">{{email}}</a>)<br />{{organization}}, {{title}}<br />{{phone}}</p>
+{{#if stores}}
+  {{#each stores}}
+  <p class="text-center" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc;"><strong>{{name}}</strong><br />{{address}}<br />{{city}}, {{state}} {{zip_code}}<br />{{phone}}</p>
+  {{/each}}
+{{/if}}

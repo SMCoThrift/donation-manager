@@ -1,0 +1,34 @@
+<strong>DONATION ID:</strong> {{id}}<br><br>
+
+<strong>DONOR INFORMATION:</strong><br>
+{{{donor_info}}}<br><br>
+
+<strong>PICK UP ADDRESS:</strong><br>
+<a href="http://maps.google.com/?q={{pickupaddress_query}}" target="_blank">{{{pickupaddress}}}</a><br><br>
+
+<strong>PREFERRED CONTACT METHOD:</strong> {{{preferred_contact_method}}}<br><br>
+
+{{#if pickupdates}}
+<strong>PREFERRED PICK UP DATES:</strong>
+<ul>
+  {{#each pickupdates}}
+  <li>{{date}} ({{time}})</li>
+  {{/each}}
+</ul>
+{{/if}}
+
+<strong>ITEMS:</strong> {{items}}<br><br>
+
+<strong>CUSTOMER DESCRIPTION:</strong><br>
+{{description}}<br><br>
+
+<strong>SCREENING QUESTIONS:</strong><br>
+{{{screening_questions}}}
+
+<strong>PICK UP LOCATION:</strong> {{pickuplocation}}<br><br>
+
+<strong>PICK UP CODE:</strong> {{pickup_code}}<br><br>
+
+<strong>PREFERRED DONOR CODE:</strong> {{preferred_code}}<br><br>
+
+<strong>REASON FOR DONATING:</strong> {{reason}}

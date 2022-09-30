@@ -2,7 +2,7 @@
 
 namespace DonationManager\organizations;
 use function DonationManager\utilities\{get_alert};
-use function DonationManager\lib\fns\helpers\{in_array_r};
+use function DonationManager\helpers\{in_array_r};
 use function DonationManager\templates\{render_template};
 
 /**
@@ -233,6 +233,7 @@ function get_organizations( $pickup_code ) {
         // 08/03/2022 (03:16) - not current stored
         // if( array_key_exists( 'alternate_donate_now_url', $pickup_settings ) )
         //   $alternate_donate_now_url = $pickup_settings['alternate_donate_now_url']; // 08/03/2022 (03:16) - not current stored
+        $alternate_donate_now_url = null;
 
         if( array_key_exists( 'priority_pickup', $pickup_settings ) )
           $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
@@ -241,7 +242,8 @@ function get_organizations( $pickup_code ) {
           $pause_pickups = ( $pickup_settings['pause_pickups'] === 'true' )? true : false ;
       }
 
-      $edit_url = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $org->ID, 'link' ) : false ;
+      $edit_url = ( current_user_can( 'edit_posts' ) && isset( $org ) )? get_edit_post_link( $org->ID, 'link' ) : false ;
+
       if( $organization ){
         $organizations[] = [
           'id'                        => $organization->ID,
@@ -347,6 +349,50 @@ function get_organization_meta_array( $org_id, $taxonomy ){
   ksort( $meta_array );
 
   return $meta_array;
+}
+
+/**
+ * Retrieves an org's pickup locations.
+ */
+function get_pickuplocations( $org_id ){
+  $terms = wp_get_post_terms( $org_id, 'pickup_location' );
+  if( 0 == count( $terms ) )
+    $terms = get_field( 'default_options_default_pickup_locations', 'option' );
+
+  $pickuplocations = [];
+  if( 0 < count( $terms ) ){
+    foreach( $terms as $term ){
+      $pickuplocations[] = [
+        'id'    => $term->term_id,
+        'name'  => $term->name,
+      ];
+    }
+  }
+  //uber_log( '🔔 $pickuplocations = ' . print_r( $pickuplocations, true ) );
+
+  return $pickuplocations;
+}
+
+/**
+ * Retrieves an organization's picktup times.
+ */
+function get_pickuptimes( $org_id ){
+  $terms = wp_get_post_terms( $org_id, 'pickup_time' );
+  if( 0 == count( $terms ) )
+    $terms = get_field( 'default_options_default_pickup_times', 'option' );
+
+  $pickuptimes = [];
+  if( 0 < count( $terms ) ){
+    foreach( $terms as $term ){
+      $pickuptimes[] = [
+        'id'    => $term->term_id,
+        'name'  => $term->name,
+      ];
+    }
+  }
+  //uber_log( '🔔 $pickuptimes = ' . print_r( $pickuptimes, true ) );
+
+  return $pickuptimes;
 }
 
 /**
@@ -462,7 +508,7 @@ function get_priority_pickup_links( $pickup_code = null, $note = null ){
                 'desc' => '',
             ];
             if( stristr( $org['name'], 'College Hunks' ) )
-                $row['additional_desc'] = '<div style="text-align: center; font-size: 1.25em;"><div style="margin-bottom: 1em">OR</div>Call <a href="tel:888-912-4902">(888) 912-4902</a> for Priority Pick Up</div>';
+                $row['desc'] = '<div style="text-align: center; font-size: 1.25em;"><div style="margin-bottom: 1em">OR</div>Call <a href="tel:888-912-4902">(888) 912-4902</a> for Priority Pick Up</div>';
             $rows[] = $row;
         }
         $hbs_vars = [
@@ -470,10 +516,17 @@ function get_priority_pickup_links( $pickup_code = null, $note = null ){
         ];
         $priority_rows = render_template( 'form1.select-your-organization', $hbs_vars ); // 08/16/2022 (11:21) - originally `form1.select-your-organization.rows`
 
+        /*
         if( is_null( $note ) )
             $note = 'Even though your items don\'t qualify for pick up, you can connect with our "fee based" priority pick up partner that will pick up items we can\'t use as well as any other items you would like to recycle or throw away:';
 
         $priority_html = '<div class="alert alert-warning"><h3 style="margin-top: 0;">Priority Pick Up Option</h3><p style="margin-bottom: 20px;">' . $note . '</p>' . $priority_rows . '</div>';
+        /**/
+
+        $priority_html = get_alert([
+          'type' => 'warning',
+          'description' => '<p>If you need a priority/fee-based pick up option, consider choosing our local priority partner:</p>' . $priority_rows
+        ]);
     }
 
     return $priority_html;
@@ -511,4 +564,31 @@ function get_screening_questions( $org_id = null ) {
   ksort( $screening_questions );
 
   return $screening_questions;
+}
+
+/**
+ * Checks if a donation is `orphaned`.
+ *
+ * In order for this function to return `true`, orphaned
+ * donation routing must be ON, and the donation must be
+ * using the default pick up provider.
+ *
+ * @access DonationManager\emails\{send_email}
+ * @since 1.3.0
+ *
+ * @param int $donor_trans_dept_id Trans dept ID associated with donation.
+ * @return bool Returns `true` for orphaned donations.
+ */
+function is_orphaned_donation( $donor_trans_dept_id = 0 ){
+  $orphaned_donation_routing = get_field( 'orphaned_donation_routing', 'option' );
+  $default_trans_dept = get_field( 'default_transportation_department', 'option' );
+
+  if(
+      true == $orphaned_donation_routing
+      && $donor_trans_dept_id == $default_trans_dept->ID
+  ){
+      return true;
+  } else {
+      return false;
+  }
 }

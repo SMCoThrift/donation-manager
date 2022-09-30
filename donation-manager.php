@@ -24,6 +24,7 @@ define( 'DONMAN_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 //define( 'ORPHANED_PICKUP_RADIUS', 15 ); // radius in miles for zipcode search
 define( 'AVERGAGE_DONATION_VALUE', 230 ); // average value of a donation is $230
+define( 'DONATION_TIMEOUT', 3 * MINUTE_IN_SECONDS );
 
 /**
  * Start our session
@@ -34,7 +35,7 @@ if( ! defined( 'WP_CLI' ) && ! headers_sent() )
 /**
  * Load required files
  */
-$required_files = array_diff( scandir( DONMAN_PLUGIN_PATH . 'lib/fns' ), [ '.', '..', 'shortcode', 'cli' ] );
+$required_files = array_diff( scandir( DONMAN_PLUGIN_PATH . 'lib/fns' ), [ '.', '..', 'shortcode', 'cli', 'callback' ] );
 foreach( $required_files as $file ){
   require_once DONMAN_PLUGIN_PATH . 'lib/fns/' . $file;
 }

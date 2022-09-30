@@ -238,7 +238,7 @@
                     "key": "field_62615f943f2b3",
                     "label": "Allow user photo uploads?",
                     "name": "allow_user_photo_uploads",
-                    "type": "radio",
+                    "type": "true_false",
                     "instructions": "Provide users with a field for uploading a photo of their donation?",
                     "required": 0,
                     "conditional_logic": 0,
@@ -247,16 +247,11 @@
                         "class": "",
                         "id": ""
                     },
-                    "choices": {
-                        "true": "Yes",
-                        "false": "No"
-                    },
-                    "allow_null": 0,
-                    "other_choice": 0,
-                    "default_value": "false",
-                    "layout": "horizontal",
-                    "return_format": "value",
-                    "save_other_choice": 0
+                    "message": "Yes",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
                 },
                 {
                     "key": "field_62615fc53f2b4",
@@ -448,5 +443,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1660247875
+    "modified": 1663590308
 }

@@ -1,16 +1,27 @@
 <?php
+/**
+ * This file implements the database.
+ *
+ * - 1.0.0 - Adding donman_zipcodes table
+ * - 2.0.0 - Adding donman_contacts table
+ * - 3.0.0 - Adding donman_orphaned_donations table
+ *
+ * @author     Mwender
+ * @since      2022
+ */
+
 global $donman_db_version;
-$donman_db_version = '1.0.0';
+$donman_db_version = '3.0.0';
 
 function donman_install(){
   global $wpdb;
   global $donman_db_version;
   $installed_version = get_option( 'donman_db_version' );
 
-  $table_name = $wpdb->prefix . 'donman_zipcodes';
-
   $charset_collate = $wpdb->get_charset_collate();
+  require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
+  $table_name = $wpdb->prefix . 'donman_zipcodes';
   if( $installed_version != $donman_db_version ){
     $sql = "CREATE TABLE $table_name (
       ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -38,8 +49,35 @@ function donman_install(){
       KEY StateAbbr (StateAbbr)
     ) $charset_collate;";
   }
+  dbDelta( $sql );
 
-  require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+  $table_name = $wpdb->prefix . 'donman_contacts';
+  if( $installed_version != $donman_db_version ){
+    $sql = "CREATE TABLE $table_name (
+      ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      store_name varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+      zipcode bigint(10) unsigned NOT NULL,
+      email_address varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+      receive_emails tinyint(1) unsigned NOT NULL DEFAULT '1',
+      unsubscribe_hash varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+      priority tinyint(1) unsigned NOT NULL DEFAULT '0',
+      show_in_results tinyint(1) unsigned NOT NULL DEFAULT '0',
+      last_donation_report varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+      PRIMARY KEY  (ID)
+    ) $charset_collate;";
+  }
+  dbDelta( $sql );
+
+  $table_name = $wpdb->prefix . 'donman_orphaned_donations';
+  if( $installed_version != $donman_db_version ){
+    $sql = "CREATE TABLE $table_name (
+      ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      donation_id bigint(20) unsigned DEFAULT NULL,
+      contact_id bigint(20) unsigned DEFAULT NULL,
+      timestamp datetime DEFAULT NULL,
+      PRIMARY KEY  (ID)
+    ) $charset_collate;";
+  }
   dbDelta( $sql );
 
   update_option( 'donman_db_version', $donman_db_version );

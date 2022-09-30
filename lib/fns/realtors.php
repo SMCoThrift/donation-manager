@@ -29,6 +29,8 @@ function get_realtor_ads( $orgs = [] ){
     if( array_key_exists( 'realtor_ad_link', $pickup_settings ) )
       $realtor_ad_link = $pickup_settings['realtor_ad_link'];
 
+    // JAKE asks me to update this so that it will do square ads.
+
     $ad_html = false;
     if( $realtor_ad_url ){
         $ad_html = '<img src="' . $realtor_ad_url . '" style="width: 100%; height: auto;">';
