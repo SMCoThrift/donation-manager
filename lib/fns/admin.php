@@ -9,9 +9,14 @@ namespace DonationManager\donations;
  */
 function custom_column_content( $column ){
     global $post;
+
     switch( $column ){
         case 'org':
+
             $org_id = get_field( 'organization', $post->ID );
+            if( is_object( $org_id ) )
+              $org_id = $org_id->ID;
+
             $org_name = '';
             if( is_numeric( $org_id ) )
               $org_name = get_the_title( $org_id );
@@ -74,6 +79,43 @@ function columns_for_donation( $defaults ){
     return $defaults;
 }
 add_filter( 'manage_donation_posts_columns', __NAMESPACE__ . '\\columns_for_donation' );
+
+/**
+ * Adds columns to admin store custom post_type listings.
+ *
+ * @since 1.0.1
+ *
+ * @param array $defaults Array of default columns for the CPT.
+ * @return array Modified array of columns.
+ */
+function columns_for_store( $defaults ){
+    $defaults = array(
+        'cb' => '<input type="checkbox" />',
+        'title' => 'Title',
+        'org' => 'Organization',
+    );
+    return $defaults;
+}
+add_filter( 'manage_store_posts_columns', __NAMESPACE__ . '\\columns_for_store' );
+
+/**
+ * Adds columns to admin trans_dept custom post_type listings.
+ *
+ * @since 1.0.1
+ *
+ * @param array $defaults Array of default columns for the CPT.
+ * @return array Modified array of columns.
+ */
+function columns_for_trans_dept( $defaults ){
+    $defaults = array(
+        'cb' => '<input type="checkbox" />',
+        'title' => 'Title',
+        'org' => 'Organization',
+        'taxonomy-pickup_code' => 'Pickup Codes',
+    );
+    return $defaults;
+}
+add_filter( 'manage_trans_dept_posts_columns', __NAMESPACE__ . '\\columns_for_trans_dept' );
 
 /**
  * Update CPTs with _organization_name used for sorting in admin.
