@@ -76,6 +76,48 @@ function columns_for_donation( $defaults ){
 add_filter( 'manage_donation_posts_columns', __NAMESPACE__ . '\\columns_for_donation' );
 
 /**
+ * Update CPTs with _organization_name used for sorting in admin.
+ *
+ * @since 1.0.1
+ *
+ * @param int $post_id Current post ID.
+ * @return void
+ */
+function custom_save_post( $post_id ){
+
+    if( \wp_is_post_revision( $post_id ) )
+        return;
+
+    // Only update valid CPTs
+    $post_type = \get_post_type( $post_id );
+    $valid_cpts = array( 'donation', 'store', 'trans_dept' );
+    if( ! in_array( $post_type, $valid_cpts ) )
+        return;
+
+    switch ( $post_type ) {
+        case 'store':
+            $trans_dept_id = get_field( 'trans_dept', $post_id );
+            if( $trans_dept_id ){
+              $org_id = get_field( 'organization', $trans_dept_id );
+            }
+        break;
+        case 'donation':
+        case 'trans_dept':
+            $org_id = get_field( 'organization', $post_id );
+        break;
+    }
+
+    if( $org_id && is_numeric( $org_id ) ){
+      $org_name = get_the_title( $org_id );
+
+      if( ! empty( $org_name ) )
+        update_post_meta( $post_id, '_organization_name', $org_name );
+    }
+
+}
+add_action( 'save_post', __NAMESPACE__ . '\\custom_save_post' );
+
+/**
  * Specifies sortable columns for our CPTs.
  *
  * @param      array  $sortables  The sortables
