@@ -4,6 +4,50 @@ namespace DonationManager\transdepts;
 use function DonationManager\templates\{render_template};
 
 /**
+ * Gets the pickup codes html.
+ *
+ * DEPRECATED? - 10/05/2022 (15:21) - searched production database
+ * for the string `list-pickup-codes` which is the shortcode that
+ * calls this function, and found no instances of it.
+ *
+ * @param      int     $tid    The trans_dept ID.
+ * @param      string  $title  The title
+ *
+ * @return     string  The pickup codes html.
+ */
+function get_pickup_codes_html( $tid, $title = 'donation pick up for' ){
+  $pickup_codes = wp_get_object_terms( $tid, 'pickup_code' );
+
+  if( empty( $pickup_codes ) )
+    return;
+
+  if( ! is_wp_error( $pickup_codes ) ){
+    $columns = 6;
+    $links = '';
+    $col = 1;
+    $last = end( $pickup_codes );
+    reset( $pickup_codes );
+    foreach( $pickup_codes as $pickup_code ){
+      if( 1 === $col )
+        $links.= '<div class="row" style="margin-bottom: 30px; text-align: center; font-size: 160%; font-weight: bold;">';
+      $format = '<div class="col-md-2"><a href="/select-your-organization/?pcode=%1$s" title="%2$s %1$s">%1$s</a></div>';
+      $links.= sprintf( $format, $pickup_code->name, $title );
+      if( $columns == $col ){
+        $links.= '</div>';
+        $col = 1;
+      } else {
+        $col++;
+        // If we're on the last element of the array, close the </div> for the div.row.
+        if( $last === $pickup_code )
+          $links.= '</div>';
+      }
+    }
+  }
+
+  return $links;
+}
+
+/**
  * Returns HTML for transportation department ads.
  *
  * DEPRECATED/USED - see note in
@@ -77,4 +121,37 @@ function get_trans_dept_contact( $trans_dept_id = '' ) {
     ];
 
     return $trans_dept_contact;
+}
+
+/**
+ * Returns an array of trans_dept IDs for a given Org ID.
+ *
+ * @since 1.1.1
+ *
+ * @param int $id Organization ID.
+ * @return array Array of trans_dept IDs.
+ */
+function get_trans_dept_ids( $id = null ){
+    $ids = [];
+
+    if( is_null( $id ) )
+        return $ids;
+
+    $trans_depts = get_posts([
+      'meta_key'      => 'organization',
+      'meta_compare'  => '=',
+      'meta_type'     => 'NUMERIC',
+      'meta_value'    => $id,
+      'numberposts'   => -1,
+      'post_type'     => 'trans_dept',
+    ]);
+
+    if( 0 === count( $trans_depts ) )
+        return $ids;
+
+    foreach( $trans_depts as $trans_dept ){
+      $ids[] = $trans_dept->ID;
+    }
+
+    return $ids;
 }
