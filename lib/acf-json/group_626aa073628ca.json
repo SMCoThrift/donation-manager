@@ -19,9 +19,9 @@
                 "organization"
             ],
             "taxonomy": "",
-            "allow_null": 0,
+            "return_format": "id",
             "multiple": 0,
-            "return_format": "object",
+            "allow_null": 0,
             "ui": 1
         },
         {
@@ -159,7 +159,8 @@
                     "max_width": 500,
                     "max_height": 500,
                     "max_size": ".2",
-                    "mime_types": "jpg,gif,png,jpeg"
+                    "mime_types": "jpg,gif,png,jpeg",
+                    "parent_repeater": "field_626aa4428ac24"
                 },
                 {
                     "key": "field_626aa4f68ac26",
@@ -175,9 +176,11 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "placeholder": ""
+                    "placeholder": "",
+                    "parent_repeater": "field_626aa4428ac24"
                 }
-            ]
+            ],
+            "rows_per_page": 20
         }
     ],
     "location": [
@@ -198,5 +201,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1651156362
+    "modified": 1664995936
 }
