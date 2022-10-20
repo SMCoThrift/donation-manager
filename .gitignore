@@ -10,3 +10,4 @@ node_modules/
 *.sublime-*
 /vendor/
 lib/components/vendor
+stats.json
