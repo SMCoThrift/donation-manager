@@ -2,6 +2,38 @@
 namespace DonationManager\helpers;
 
 /**
+ * Gets archived donations.
+ *
+ * @param      int  $year   The year (optional)
+ * @param      int  $month  The month (optional)
+ *
+ * @return     array   The archived donations.
+ */
+function get_archived_donations( $year = null, $month = null ){
+  $archived_donations = [];
+  $archived_donations['total'] = 0;
+  if( have_rows( 'donation_stats', 'option' ) ){
+    $total = 0;
+    while( have_rows( 'donation_stats', 'option' ) ): the_row();
+      $row_year = get_sub_field( 'year' );
+      if( ! is_null( $year ) && $row_year != $year )
+        continue;
+
+      $row_month = get_sub_field( 'month' );
+      if( ! is_null( $month) && $row_month != $month )
+        continue;
+
+      $row_donations = get_sub_field( 'donations' );
+      $total+= $row_donations;
+      $archived_donations[ $row_year ][ $row_month ] = $row_donations;
+    endwhile;
+    $archived_donations['total'] = $total;
+  }
+
+  return $archived_donations;
+}
+
+/**
  * Returns content type for use in filter `wp_mail_content_type`.
  *
  * @return     string  The content type.
@@ -83,7 +115,7 @@ function get_donations_by_interval( $interval = null ){
  * @return string Dollar value of donations.
  */
 function get_donations_value( $donations = 0 ){
-  $value = $donations * AVERGAGE_DONATION_VALUE;
+  $value = $donations * AVERAGE_DONATION_VALUE;
   return $value;
 }
 
