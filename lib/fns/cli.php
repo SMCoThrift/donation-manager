@@ -127,6 +127,49 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      */
     function writestats(){
       WP_CLI::line('🔔 Running `dm writestats`...');
+      $stats = new \stdClass();
+      $stats->donations = new \stdClass();
+
+      \WP_CLI::log( 'Getting stats from Donation Manager:' );
+
+      $db_donations = \wp_count_posts( 'donation' );
+      $archived_donations = DonationManager\helpers\get_archived_donations();
+
+      \WP_CLI::log('- Archived Donations: ' . $archived_donations['total'] );
+      \WP_CLI::log('- Donations in the DB: ' . $db_donations->publish );
+      //$db_donations->publish = $db_donations->publish + $archived_donations['total'];
+
+      $stats->donations->alltime = new \stdClass();
+      $stats->donations->alltime->number = intval( $db_donations->publish + $archived_donations['total']);
+      $stats->donations->alltime->value = DonationManager\helpers\get_donations_value( $stats->donations->alltime->number );
+      \WP_CLI::log( '- All Time: ' . number_format( $stats->donations->alltime->number ) . ' total donations valued at $' . number_format( $stats->donations->alltime->value ) . '.' );
+
+      $stats->donations->thisyear = new \stdClass();
+      $db_donations_this_year = DonationManager\helpers\get_donations_by_interval( 'this_year' );
+      $current_time = \current_time( 'Y-m-d' ) . ' first day of this year';
+      $dt = \date_create( $current_time );
+      $current_year = $dt->format( 'Y' );
+      $archived_donations_this_year = DonationManager\helpers\get_archived_donations( $current_year );
+      $stats->donations->thisyear->number = intval( $db_donations_this_year + $archived_donations_this_year['total'] );
+      $stats->donations->thisyear->value = DonationManager\helpers\get_donations_value( $stats->donations->thisyear->number );
+
+      $stats->donations->lastmonth = new \stdClass();
+      $db_donations_last_month = DonationManager\helpers\get_donations_by_interval( 'last_month' );
+      $current_time = \current_time( 'Y-m-d' ) . ' first day of last month';
+      $dt = \date_create( $current_time );
+      $last_months_year = $dt->format( 'Y' );
+      $last_month = $dt->format( 'm' );
+      $archived_donations_last_month = DonationManager\helpers\get_archived_donations( $last_months_year, $last_month );
+      $stats->donations->lastmonth->number = intval( $db_donations_last_month + $archived_donations_last_month['total'] );
+      $stats->donations->lastmonth->value = DonationManager\helpers\get_donations_value( $stats->donations->lastmonth->number );
+
+      \WP_CLI::log( '- This Year: ' . number_format( $stats->donations->thisyear->number ) . ' donations valued at $' . number_format( $stats->donations->thisyear->value ) . '.' );
+      \WP_CLI::log( '- Last Month: ' . number_format( $stats->donations->lastmonth->number ) . ' donations valued at $' . number_format( $stats->donations->lastmonth->value ) . '.' );
+
+      $json_string = json_encode( $stats );
+      file_put_contents( DONMAN_PLUGIN_PATH . 'stats.json', $json_string );
+
+      \WP_CLI::success('Donation stats written to ' . DONMAN_PLUGIN_PATH . 'stats.json.');
     }
   }
   WP_CLI::add_command( 'dm', 'DonationManagerCLI' );
