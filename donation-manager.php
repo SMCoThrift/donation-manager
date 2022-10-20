@@ -23,7 +23,7 @@ define( 'DONMAN_DEV_ENV', stristr( site_url(), '.local' ) );
 define( 'DONMAN_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 //define( 'ORPHANED_PICKUP_RADIUS', 15 ); // radius in miles for zipcode search
-define( 'AVERGAGE_DONATION_VALUE', 230 ); // average value of a donation is $230
+define( 'AVERAGE_DONATION_VALUE', 230 ); // average value of a donation is $230
 define( 'DONATION_TIMEOUT', 3 * MINUTE_IN_SECONDS );
 
 /**
