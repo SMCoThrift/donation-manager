@@ -1,6 +1,6 @@
 {
     "key": "group_62b1ac7a2a3e2",
-    "title": "Donation Manager Settings",
+    "title": "General Settings",
     "fields": [
         {
             "key": "field_62b1ac9008c3e",
@@ -309,7 +309,7 @@
             {
                 "param": "options_page",
                 "operator": "==",
-                "value": "donation-manager-settings"
+                "value": "acf-options-general"
             }
         ]
     ],
@@ -322,5 +322,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1663330088
+    "modified": 1666095973
 }
