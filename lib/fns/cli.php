@@ -51,6 +51,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      *   - get_priority_organizations
      *   - get_screening_questions
      *   - get_trans_dept_ids
+     *   - is_orphaned_donation
      * ---
      *
      * ## EXAMPLES
@@ -115,6 +116,18 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
           $org_id = $args[0];
           $trans_depts = DonationManager\transdepts\get_trans_dept_ids( $org_id );
           WP_CLI::line( '🔔 get_trans_dept_ids( ' . $org_id . ' ) = ' . print_r( $trans_depts, true ) );
+          break;
+
+        case 'is_orphaned_donation':
+          if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'This test requires a numeric Transportation Department ID as the first postional argument.' );
+          $trans_dept_id = $args[0];
+          $orphaned = DonationManager\organizations\is_orphaned_donation( $trans_dept_id );
+          if( $orphaned ){
+            WP_CLI::line( '👉 Donation IS orphaned.' );
+          } else {
+            WP_CLI::line( '👉 Donation is NOT orphaned.' );
+          }
           break;
 
         default:
