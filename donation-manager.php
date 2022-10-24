@@ -44,3 +44,7 @@ foreach( $required_files as $file ){
  * Load required libraries and check for required plugins.
  */
 require_once DONMAN_PLUGIN_PATH . 'lib/required-checks.php';
+
+// Include our Orphaned Donations Class
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/orphaned-donations.php';
+$DMOrphanedDonations = DMOrphanedDonations::get_instance();
