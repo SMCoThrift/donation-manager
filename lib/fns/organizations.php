@@ -583,6 +583,9 @@ function is_orphaned_donation( $donor_trans_dept_id = 0 ){
   $orphaned_donation_routing = get_field( 'orphaned_donation_routing', 'option' );
   $default_trans_dept = get_field( 'default_transportation_department', 'option' );
 
+  if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+    \WP_CLI::line( '🔔 is_orphaned_donation()' . "\n" . ' - $orphaned_donation_routing = ' . $orphaned_donation_routing . "\n - \$default_trans_dept->ID " . $default_trans_dept->ID );
+
   if(
       true == $orphaned_donation_routing
       && $donor_trans_dept_id == $default_trans_dept->ID
