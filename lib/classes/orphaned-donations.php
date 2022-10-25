@@ -299,7 +299,7 @@ class DMOrphanedDonations {
         '%d',
       );
 
-      $affected = $wpdb->insert( $wpdb->prefix . 'dm_contacts', $data, $format );
+      $affected = $wpdb->insert( $wpdb->prefix . 'donman_contacts', $data, $format );
 
       if ( false === $affected ) {
         $message = 'Error encountered while attempting to create contact';
@@ -317,7 +317,7 @@ class DMOrphanedDonations {
     /*
     elseif ( is_numeric( $contact ) ) {
       // The following logic requires a `receive_emails` column in our import CSV:
-      $sql = 'UPDATE ' . $wpdb->prefix . 'dm_contacts' . ' SET receive_emails="%d" WHERE ID=' . $contact;
+      $sql = 'UPDATE ' . $wpdb->prefix . 'donman_contacts' . ' SET receive_emails="%d" WHERE ID=' . $contact;
       $affected = $wpdb->query( $wpdb->prepare( $sql, $receive_emails ) );
       if ( false === $affected ) {
         $message = 'Could not update contact';
@@ -364,7 +364,7 @@ class DMOrphanedDonations {
     if ( empty( $args['store_name'] ) || empty( $args['zipcode'] ) || empty( $args['email'] ) )
       return 'ERROR - missing args for contact_exists';
 
-    $sql = 'SELECT ID FROM ' . $wpdb->prefix . 'dm_contacts' . ' WHERE store_name="%s" AND zipcode="%s" AND email_address="%s" ORDER BY zipcode ASC';
+    $sql = 'SELECT ID FROM ' . $wpdb->prefix . 'donman_contacts' . ' WHERE store_name="%s" AND zipcode="%s" AND email_address="%s" ORDER BY zipcode ASC';
     $contacts = $wpdb->get_results( $wpdb->prepare( $sql, $args['store_name'], $args['zipcode'], $args['email'] ) );
     if ( $contacts ) {
       return $contacts[0]->ID;
@@ -415,7 +415,7 @@ class DMOrphanedDonations {
     }
 
     $sql_format = 'SELECT ID,store_name,zipcode,email_address,receive_emails,priority
-        FROM ' . $wpdb->prefix . 'dm_contacts %4$s
+        FROM ' . $wpdb->prefix . 'donman_contacts %4$s
         ORDER BY %1$s %2$s
         %3$s';
 
@@ -487,7 +487,7 @@ class DMOrphanedDonations {
     $search = ( ! empty( $args['search'] ) )? "\n\t\t" . 'AND ' . $filterby . ' LIKE \'%' . esc_sql( $args['search'] ) . '%\'' : null;
 
     $sql_format = 'SELECT contacts.ID,store_name,zipcode,email_address,receive_emails,timestamp,COUNT(donation_id) AS total_donations
-        FROM ' . $wpdb->prefix . 'dm_contacts AS contacts, ' . $wpdb->prefix . 'dm_orphaned_donations AS donations
+        FROM ' . $wpdb->prefix . 'donman_contacts AS contacts, ' . $wpdb->prefix . 'donman_orphaned_donations AS donations
         WHERE contacts.ID = donations.contact_id %s%s%s
         GROUP BY contact_id
         ORDER BY %s %s
@@ -564,16 +564,16 @@ class DMOrphanedDonations {
             <?php
     switch ( $active_tab ) {
       case 'import':
-        include_once plugin_dir_path( __FILE__ ) . '../views/orphaned-donations.import.php';
+        include_once DONMAN_PLUGIN_PATH . 'lib/views/orphaned-donations.import.php';
         break;
       case 'utilities':
-        include_once plugin_dir_path( __FILE__ ) . '../views/orphaned-donations.utilities.php';
+        include_once DONMAN_PLUGIN_PATH . 'lib/views/orphaned-donations.utilities.php';
         break;
       case 'providers':
-        include_once plugin_dir_path( __FILE__ ) . '../views/orphaned-donations.providers.php';
+        include_once DONMAN_PLUGIN_PATH . 'lib/views/orphaned-donations.providers.php';
         break;
       default:
-        include_once plugin_dir_path( __FILE__ ) . '../views/orphaned-donations.php';
+        include_once DONMAN_PLUGIN_PATH . 'lib/views/orphaned-donations.php';
         break;
     }
 ?>
@@ -795,7 +795,7 @@ class DMOrphanedDonations {
   }
 
   /**
-   * Updates a row in the `dm_contacts` table
+   * Updates a row in the `donman_contacts` table
    *
    * @param      int    $id     The row ID
    * @param      string   $field  The column name
@@ -813,7 +813,7 @@ class DMOrphanedDonations {
 
     global $wpdb;
 
-    $sql = 'UPDATE ' . $wpdb->prefix . 'dm_contacts SET ' . $field . '=%s WHERE ID=%d';
+    $sql = 'UPDATE ' . $wpdb->prefix . 'donman_contacts SET ' . $field . '=%s WHERE ID=%d';
 
     $rows_affected = $wpdb->query( $wpdb->prepare( $sql, $value, $id ) );
 
@@ -837,7 +837,7 @@ class DMOrphanedDonations {
 
     $receive_emails = ( 'unsubscribe' == $action )? 0 : 1;
 
-    $sql = 'UPDATE ' . $wpdb->prefix . 'dm_contacts SET receive_emails=%d WHERE email_address="%s"';
+    $sql = 'UPDATE ' . $wpdb->prefix . 'donman_contacts SET receive_emails=%d WHERE email_address="%s"';
     $rows_affected = $wpdb->query( $wpdb->prepare( $sql, $receive_emails, $email ) );
 
     return $rows_affected;
@@ -877,7 +877,7 @@ class DMOrphanedDonations {
         return false;
 
       $args['ID'] = $_POST['ID'];
-      $sql = 'DELETE FROM ' . $wpdb->prefix . 'dm_contacts WHERE ID=%d';
+      $sql = 'DELETE FROM ' . $wpdb->prefix . 'donman_contacts WHERE ID=%d';
       $success = $wpdb->query( $wpdb->prepare( $sql, $args['ID'] ) );
       $response->ID = $args['ID'];
       $response->success = $success;
@@ -902,13 +902,13 @@ class DMOrphanedDonations {
 
       $message = '';
       if ( ! empty( $replace ) ) {
-        $sql = 'UPDATE ' . $wpdb->prefix . 'dm_contacts SET email_address = replace(email_address,"%s","%s") WHERE email_address="%s"';
+        $sql = 'UPDATE ' . $wpdb->prefix . 'donman_contacts SET email_address = replace(email_address,"%s","%s") WHERE email_address="%s"';
         $success = $wpdb->query( $wpdb->prepare( $sql, $search, $replace, $search ) );
         $message = '<br />';
         $message.= ( true == $success )? 'SUCCESS: Replaced ' : 'ERROR: Unable to replace ';
         $message.= '`' . $search . '` with `' . $replace . '`.';
       } else {
-        $sql = 'SELECT ID,store_name,zipcode,receive_emails FROM ' . $wpdb->prefix . 'dm_contacts WHERE email_address="%s"';
+        $sql = 'SELECT ID,store_name,zipcode,receive_emails FROM ' . $wpdb->prefix . 'donman_contacts WHERE email_address="%s"';
         $wpdb->get_row( $wpdb->prepare( $sql, $search ) );
       }
 
@@ -943,7 +943,7 @@ class DMOrphanedDonations {
       if( empty( $radius ) )
         $radius = 15; // Ensure radius is set
       $priority = $_POST['priority'];
-      $contacts = $this->get_orphaned_donation_contacts( array( 'pcode' => $pcode, 'radius' => $radius, 'priority' => $priority, 'fields' => 'store_name,email_address,zipcode,priority,show_in_results' ) );
+      $contacts = DonationManager\orphanedproviders\get_orphaned_donation_contacts( array( 'pcode' => $pcode, 'radius' => $radius, 'priority' => $priority, 'fields' => 'store_name,email_address,zipcode,priority,show_in_results' ) );
       $orphaned_donation_routing = get_option( 'donation_settings_orphaned_donation_routing' );
       //$response->output = ( ! is_wp_error( $contacts ) )? '<pre>$orphaned_donation_routing = ' . $orphaned_donation_routing . '<br />Results for `' . $pcode . '` within a ' . $radius . ' mile radius.<br />' . count( $contacts ) . ' result(s):<br />'.print_r( $contacts, true ).'</pre>' : $contacts->get_error_message();
       $x = 0;
