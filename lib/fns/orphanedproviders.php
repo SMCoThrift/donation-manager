@@ -42,27 +42,27 @@ function get_orphaned_provider_contact( $orphan_provider_id = '' ){
  * @return array Returns an array of contact emails.
  */
 function get_orphaned_donation_contacts( $args ){
-    global $wpdb;
+  global $wpdb;
 
-    $args = shortcode_atts( array(
-        'radius' => ORPHANED_PICKUP_RADIUS,
-        'pcode' => null,
-        'limit' => null,
-        'priority' => 0,
-        'fields' => 'email_address',
-        'duplicates' => true,
-        'show_in_results' => null,
-    ), $args );
+  $orphaned_pickup_radius = get_field( 'orphaned_pickup_radius', 'option' );
+  if( empty( $orphaned_pickup_radius ) || ! is_numeric( $orphaned_pickup_radius ) )
+    $orphaned_pickup_radius = 15;
+
+  $args = shortcode_atts( array(
+    'radius' => $orphaned_pickup_radius,
+    'pcode' => null,
+    'limit' => null,
+    'priority' => 0,
+    'fields' => 'email_address',
+    'duplicates' => true,
+    'show_in_results' => null,
+  ), $args );
 
     // Validate $args['priority'], ensuring it is only `0` or `1`.
     if( ! in_array( $args['priority'], array( 0, 1 ) ) )
         $args['priority'] = 0;
 
-    // In case ! is_defined( ORPHANED_PICKUP_RADIUS ), we'll set this to 15 miles:
-    if( empty( $args['radius'] ) )
-        $args['radius'] = 15;
-
-    $error = new WP_Error();
+    $error = new \WP_Error();
 
     if( empty( $args['pcode'] ) )
         return $error->add( 'nopcode', 'No $pcode sent to get_orphaned_donation_contacts().' );
@@ -122,10 +122,10 @@ function get_orphaned_donation_contacts( $args ){
                 continue;
 
             // Generate by-pass link
-            $default_organization = get_option( 'donation_settings_default_organization' );
-            $default_trans_dept = get_option( 'donation_settings_default_trans_dept' );
+            $default_organization = get_field( 'default_organization', 'option' );
+            $default_trans_dept = get_field( 'default_transportation_department', 'option' );
             $siteurl = get_option( 'siteurl' );
-            $contact['by-pass-link'] = $siteurl . '/step-one/?oid=' . $default_organization[0] . '&tid=' . $default_trans_dept[0] . '&priority=0&orphanid=' . $contact['ID'];
+            $contact['by-pass-link'] = $siteurl . '/step-one/?oid=' . $default_organization->ID . '&tid=' . $default_trans_dept->ID . '&priority=0&orphanid=' . $contact['ID'];
 
             if( isset( $contact['email_address'] ) && ! in_array_r( $contact['email_address'], $contacts_array ) ){
               $contacts_array[$contact['ID']] = ( 'email_address' == $args['fields'] )? $contact['email_address'] : $contact;
