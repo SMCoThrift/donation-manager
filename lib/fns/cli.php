@@ -65,8 +65,15 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
 
       switch( $function ){
         case 'get_default_organization':
-          $org = DonationManager\organizations\get_default_organization();
-          WP_CLI::line( '🔔 get_default_organization() returns $org = ' . print_r( $org, true ) );
+          $priority = false;
+          if( ! isset( $args[0] ) ){
+            WP_CLI::line( '👉 You may add `true` as the first positional argument to return the default Priority Organization.' );
+          } else if( 'true' == $args[0] ) {
+            WP_CLI::line( '👉 Testing for default PRIORITY Organization.' );
+            $priority = true;
+          }
+          $org = DonationManager\organizations\get_default_organization( $priority );
+          WP_CLI::line( '🔔 get_default_organization( `' . $priority . '` ) returns $org = ' . print_r( $org, true ) );
           break;
 
         case 'get_donation_contact':
