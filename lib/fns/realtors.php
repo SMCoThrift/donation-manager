@@ -22,7 +22,7 @@ function get_realtor_ads( $orgs = [] ){
     $pickup_settings = get_field( 'pickup_settings', $org_id );
 
     $realtor_ad_url = null;
-    if( array_key_exists( 'realtor_ad_standard_banner', $pickup_settings ) )
+    if( array_key_exists( 'realtor_ad_standard_banner', $pickup_settings ) && $pickup_settings['realtor_ad_standard_banner'] )
       $realtor_ad_url = $pickup_settings['realtor_ad_standard_banner']['url'];
 
     $realtor_ad_link = null;
