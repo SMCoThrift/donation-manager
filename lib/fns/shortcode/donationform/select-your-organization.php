@@ -2,7 +2,8 @@
 use function DonationManager\templates\{render_template};
 use function DonationManager\globals\{add_html,get_html};
 use function DonationManager\utilities\{get_alert};
-use function DonationManager\organizations\{get_organizations,get_default_organization,get_orphaned_donation_contacts};
+use function DonationManager\organizations\{get_organizations,get_default_organization};
+use function DonationManager\orphanedproviders\{get_orphaned_donation_contacts};
 use function DonationManager\transdepts\{get_trans_dept_ads};
 use function DonationManager\realtors\{get_realtor_ads};
 
@@ -30,8 +31,9 @@ if( false == $organizations || 0 == count( $organizations ) ){
     $contacts = get_orphaned_donation_contacts( array( 'pcode' => $pickup_code, 'limit' => 1, 'priority' => 1 ) );
 
     if( is_array( $contacts ) && 0 < count( $contacts ) )
-        $organizations[] = $default_priority_org[0];
+        $organizations[] = $default_priority_org;
 }
+uber_log('🔔💥👉 $organizations = ' . print_r( $organizations, true ) );
 
 if( 0 == count( $organizations ) )
     add_html( get_alert(['title' => 'No default organization found!', 'type' => 'warning', 'description' => 'No default organization has been specified in the Donation Manager settings.']) );
@@ -63,12 +65,9 @@ foreach( $organizations as $org ) {
       $link = $nextpage . '?oid=' . $org['id'] . '&tid=' . $org['trans_dept_id'];
     }
 
-    if( isset( $org['priority_pickup'] ) && true == $org['priority_pickup'] && ! stristr( $link, '&priority=1') ){
-        $link.= '&priority=1';
-    } else if( isset( $org['priority_pickup'] ) &&  false == $org['priority_pickup'] && ! stristr( $link, '&priority=0' ) ) {
-        $link.= '&priority=0';
-    } else if( ! stristr( $link, '&priority=0' ) ) {
-        $link.= '&priority=0';
+    if( FALSE === stristr( $link, '&priority=' ) ){
+      $priority = ( false == $org['priority_pickup'] )? 0 : 1 ;
+      $link.= '&priority=' . $priority;
     }
 
     $css_classes = array();
