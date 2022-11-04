@@ -51,7 +51,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
 '.htmlspecialchars((string)(($inary && isset($in['description'])) ? $in['description'] : null), ENT_QUOTES, 'UTF-8').'<br><br>
 
 <strong>SCREENING QUESTIONS:</strong><br>
-'.(($inary && isset($in['screening_questions'])) ? $in['screening_questions'] : null).'
+'.(($inary && isset($in['screening_questions'])) ? $in['screening_questions'] : null).'<br><br>
 
 <strong>PICK UP LOCATION:</strong> '.htmlspecialchars((string)(($inary && isset($in['pickuplocation'])) ? $in['pickuplocation'] : null), ENT_QUOTES, 'UTF-8').'<br><br>
 
