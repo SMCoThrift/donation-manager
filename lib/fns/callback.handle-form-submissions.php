@@ -16,7 +16,7 @@ use function DonationManager\globals\{add_html};
  * @return void
  */
 function handle_form_submissions(){
-  if( wp_doing_ajax() )
+  if( wp_doing_ajax() || is_admin() )
     return;
 
   $callback = null;
