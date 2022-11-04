@@ -48,6 +48,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      *   - get_default_organization
      *   - get_donation_contact
      *   - get_organizations
+     *   - get_orphaned_donation_contacts
      *   - get_priority_organizations
      *   - get_screening_questions
      *   - get_trans_dept_ids
@@ -103,6 +104,25 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
             WP_CLI::error( 'This test requires a numeric zip code as the first postional argument.' );
           $organizations = DonationManager\organizations\get_organizations( $args[0] );
           WP_CLI::line( '🔔 get_organizations() returns $organizations = ' . print_r( $organizations, true ) );
+          break;
+
+        case 'get_orphaned_donation_contacts':
+          if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'This test requires a numeric zip code as the first positional argument.' );
+          $pickup_code = $args[0];
+          if( ! isset( $args[1] ) || ! is_numeric( $args[1] ) )
+            WP_CLI::line( 'Using a pickup radius of 15 miles.' );
+          $orphaned_pickup_radius = ( ! isset( $args[1] ) || ! is_numeric( $args[1] ) )? 15 : $args[1] ;
+          WP_CLI::line( 'Using these options as well:' . "\n  • \$priority = 0\n  • \$fields = store_name,email_address,zipcode,priority\n  • \$duplicates = true\n  • \$show_in_results = 0" );
+
+          $contacts = DonationManager\orphanedproviders\get_orphaned_donation_contacts( [ 'pcode' => $pickup_code, 'radius' => $orphaned_pickup_radius, 'priority' => 0, 'fields' => 'store_name,email_address,zipcode,priority', 'duplicates' => true, 'show_in_results' => 0 ] );
+          //$contacts = DonationManager\orphanedproviders\get_orphaned_donation_contacts( array( 'pcode' => $pickup_code, 'limit' => 1, 'priority' => 1 ) );
+          if( ! is_wp_error( $contacts ) ){
+            WP_CLI::line( '🔔 get_orphaned_donation_contacts() returns: ' . print_r( $contacts, true ) );
+          } else {
+            $errors = $contacts->get_error_messages();
+            WP_CLI::error( '🔔 There were the following errors: ' . print_r( $errors, true ) );
+          }
           break;
 
         case 'get_screening_questions':
