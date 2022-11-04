@@ -82,8 +82,9 @@ function send_email( $type = '' ){
         $priority = 0;
         if( isset( $donor['priority'] ) && 1 == $donor['priority'] )
             $priority = 1;
-
-        $bcc_emails = get_orphaned_donation_contacts( array( 'pcode' => $donor['pickup_code'], 'limit' => 50, 'radius' => ORPHANED_PICKUP_RADIUS, 'priority' => $priority ) );
+        $orphaned_pickup_radius = get_field( 'orphaned_pickup_radius', 'option' );
+        $radius = ( is_numeric( $orphaned_pickup_radius ) )? $orphaned_pickup_radius : 15 ;
+        $bcc_emails = get_orphaned_donation_contacts( array( 'pcode' => $donor['pickup_code'], 'limit' => 50, 'radius' => $radius, 'priority' => $priority ) );
         if( is_array( $bcc_emails ) && 0 < count( $bcc_emails ) )
             $tc['orphaned_donation_contacts'] = $bcc_emails;
     }

@@ -939,7 +939,8 @@ class DMOrphanedDonations {
 
     default:
       $posted_radius = $_POST['radius'];
-      $radius = ( is_numeric( $posted_radius ) )? $posted_radius : ORPHANED_PICKUP_RADIUS;
+      $orphaned_pickup_radius = get_field( 'orphaned_pickup_radius', 'option' );
+      $radius = ( is_numeric( $posted_radius ) )? $posted_radius : $orphaned_pickup_radius;
       if( empty( $radius ) )
         $radius = 15; // Ensure radius is set
       $priority = $_POST['priority'];
