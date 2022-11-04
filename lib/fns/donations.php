@@ -181,7 +181,7 @@ function add_orphaned_donation( $args ){
  * @param      int    $ID        The Donation ID.
  * @param      array  $donation  The donation array.
  */
-function tag_donation( $ID = null, $donation ){
+function tag_donation( $ID = null, $donation = [] ){
   if( empty( $ID ) || ! is_numeric( $ID ) )
     return;
 
@@ -206,7 +206,7 @@ function tag_donation( $ID = null, $donation ){
   }
 
   // Tag the screening_question(s)
-  if( is_array( $donation['screening_questions'] ) ){
+  if( array_key_exists( 'screening_questions', $donation ) && is_array( $donation['screening_questions'] ) ){
     $screening_question_ids = array_keys( $donation['screening_questions'] );
     $screening_question_ids = array_map( 'intval', $screening_question_ids );
     $screening_question_ids = array_unique( $screening_question_ids );
