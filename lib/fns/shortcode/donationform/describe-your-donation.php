@@ -10,10 +10,15 @@ $pickup_settings = get_field( 'pickup_settings', $org_id );
 
 uber_log('🔔 $org_id = ' . $org_id );
 
-$step_one_notice = $pickup_settings['step_one_notice'];
+$step_one_notice = get_field( 'pickup_settings_step_one_notice', $org_id );
+$step_one_notice = get_alert([
+  'description' => $step_one_notice,
+  'type'        => 'info',
+]);
+
 if( true == $_SESSION['donor']['priority'] ){
   $step_one_alert = get_alert([
-    'type'        => 'info',
+    'type'        => 'warning',
     'title'       => 'Please Read',
     'css_classes' => 'large-title',
     'description' => 'You have selected our <strong>Expedited Pick Up Service</strong>.  Your request will be sent to our <strong>Fee Based</strong> pick up partners (<em>fee to be determined by the pick up provider</em>) who will in most cases be able to handle your request within 24 hours, bring quality donations to a local non-profit, and help you dispose of unwanted and/or unsellable items.  <br/><br/>If you reached this page in error, <a href="' . site_url() . '/select-your-organization/?pcode=' . $_SESSION['donor']['pickup_code'] . '&priority=0">CLICK HERE</a> and select <em>Free Pick Up</em>.',
@@ -56,11 +61,8 @@ foreach( $terms as $term ) {
   if( empty( $donation_option_desc ) && current_user_can( 'edit_posts' ) )
     $donation_option_desc = get_alert(['description' => 'No description entered for "' . $term->name . '". <a href="' . get_edit_term_link( $term, 'donation_option' ) . '" target="_blank">Edit</a> this term.']);
 
-  $pickup_field = get_field( 'pickup', 'donation_option_' . $term->term_id );
-  $pickup = ( array_key_exists( 0, $pickup_field ) && 'Yes' == $pickup_field[0] )? true : false ;
-
-  $skip_questions_field = get_field( 'skip_questions', 'donation_option_' . $term->term_id );
-  $skip_questions = ( array_key_exists( 0, $skip_questions_field ) && 'Yes' == $skip_questions_field[0] )? true : false ;
+  $pickup = get_field( 'pickup', 'donation_option_' . $term->term_id );
+  $skip_questions = get_field( 'skip_questions', 'donation_option_' . $term->term_id );
 
   $donation_options[] = [
     'name'            => $term->name,

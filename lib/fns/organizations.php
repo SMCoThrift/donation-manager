@@ -41,6 +41,8 @@ function get_default_organization( $priority = false ) {
   $organization = []; // initialize our return variable
   $organization['id'] = $default_organization->ID;
   $organization['trans_dept_id'] = $default_trans_dept->ID;
+  $organization['pause_pickups'] = ( get_field( 'pickup_settings_pause_pickups', $default_organization->ID ) === 'true' )? true : false ;
+  $organization['edit_url'] = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $default_organization->ID, 'link' ) : false ;
 
   if( $priority ){
     $organization['name'] = 'Expedited Pick Up Service';
@@ -50,13 +52,13 @@ function get_default_organization( $priority = false ) {
       'type'          => 'info',
     ]);
     $organization['button_text'] = $button_texts['priority'];
-    $organization['priority_pickup'] = 1;
+    $organization['priority_pickup'] = true;
     $organization['alternate_donate_now_url'] = site_url( '/step-one/?oid=' . $default_organization->ID . '&tid=' . $default_trans_dept->ID . '&priority=1' );
   } else {
     $organization['name'] = $default_organization->post_title;
     $organization['desc'] = $default_organization->post_content;
     $organization['button_text'] = $button_texts['non_profit'];
-    $organization['priority_pickup'] = 0;
+    $organization['priority_pickup'] = false;
 
     /**
      * 07/05/2022 (11:09) - I found 11 instances of an `alternate_donate_now_url`
@@ -66,7 +68,7 @@ function get_default_organization( $priority = false ) {
      * code probably needs to be removed:
      */
     //$alternate_donate_now_url = get_post_meta( $default_organization->ID, 'alternate_donate_now_url', true );
-    //$organization['alternate_donate_now_url'] = $alternate_donate_now_url;
+    $organization['alternate_donate_now_url'] = '';
   }
 
   return $organization;
