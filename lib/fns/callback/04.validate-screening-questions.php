@@ -1,4 +1,6 @@
 <?php
+use function DonationManager\globals\{add_html};
+use function DonationManager\utilities\{get_alert};
 
 /**
  *  04. VALIDATE SCREENING QUESTIONS
@@ -114,6 +116,6 @@ if( isset( $_POST['donor']['questions'] ) ) {
                 break;
             }
         }
-        add_html( get_alert(['type' => 'error', 'description' => 'Please correct these errors:<ul><li>' . implode( '</li><li>', $error_msg ) . '</li></ul>' ]) );
+        add_html( get_alert(['type' => 'danger', 'description' => 'Please correct these errors:<ul><li>' . implode( '</li><li>', $error_msg ) . '</li></ul>' ]) );
     }
 }
