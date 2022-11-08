@@ -1,5 +1,5 @@
 <?php
-class DMReports extends DonationManager {
+class DMReports {
     public $html = '';
 
     private static $instance = null;
