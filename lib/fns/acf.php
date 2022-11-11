@@ -32,6 +32,9 @@ function donman_acf_json_load_point( $paths ) {
 }
 add_filter('acf/settings/load_json', 'donman_acf_json_load_point');
 
+/**
+ * Adds ACF Option Pages.
+ */
 if( function_exists( 'acf_add_options_page' ) ){
   acf_add_options_page([
     'page_title'  => 'Donation Manager',
