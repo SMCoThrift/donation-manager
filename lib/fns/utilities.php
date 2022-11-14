@@ -84,6 +84,79 @@ function get_referer(){
 }
 
 /**
+ * Gets a test donation.
+ *
+ * @return     array  The test donation.
+ */
+function get_test_donation(){
+  $donor = [
+    'url_path' => [
+      0 => 'https://pmdthree.local/',
+      1 => 'https://pmdthree.local/?dmdebug=true',
+      2 => 'https://pmdthree.local/select-your-organization/?pcode=37922',
+      3 => 'https://pmdthree.local/step-one/?oid=122&tid=124&priority=0',
+      4 => 'https://pmdthree.local/step-two/',
+      5 => 'https://pmdthree.local/step-three/',
+    ],
+    'pickup_code' => 37922,
+    'rewrite_titles'  => null,
+    'org_id'  => 122,
+    'trans_dept_id' => 124,
+    'priority'  => 0,
+    'items' => [
+      11 => 'Large Furniture',
+    ],
+    'description' => 'Couch and Love Seat',
+    'screening_questions' => [
+      27 => [
+        'question'  => 'Is your donation in any way broken or damaged?',
+        'answer'    => 'No',
+      ],
+      29 => [
+        'question'  => 'Has your donation been in a smoking environment?',
+        'answer'    => 'No',
+      ],
+      28 => [
+        'question'  => 'Has your donation been in a pet environment - items used frequently by pets, covered in hair, have pet stains or pet odor?',
+        'answer'    => 'No',
+      ],
+    ],
+    'address' => [
+      'name' => [
+        'first' => 'Michael',
+        'last'  => 'Wender',
+      ],
+      'company' => 'Test Co',
+      'address' => '123 Any Street',
+      'city'    => 'Knoxville',
+      'state'   => 'TN',
+      'zip'     => '37922',
+    ],
+    'different_pickup_address'  => 'Yes',
+    'pickup_address'  => [
+      'address' => '321 Other Street',
+      'city'    => 'Knoxville',
+      'state'   => 'TN',
+      'zip'     => '37931',
+    ],
+    'email' => 'michael@michaelwender.com',
+    'phone' => '(865) 454-2121',
+    'preferred_contact_method'  => 'Email',
+    'preferred_code'  => null,
+    'reason'  => 'Remodeling',
+    'pickupdate1' => '11/21/2022',
+    'pickuptime1' => '8:00AM - 11:00AM',
+    'pickupdate2' => '11/23/2022',
+    'pickuptime2' => '8:00AM - 11:00AM',
+    'pickupdate3' => '11/25/2022',
+    'pickuptime3' => '8:00AM - 11:00AM',
+    'pickuplocation' => 'Outside/Garage',
+  ];
+
+  return $donor;
+}
+
+/**
  * Enqueues styles and scripts.
  */
 function enqueue_scripts(){
