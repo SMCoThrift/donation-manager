@@ -153,6 +153,9 @@ function get_test_donation(){
     'pickuplocation' => 'Outside/Garage',
   ];
 
+  // Set a unique email to avoid a duplicate donation error:
+  $donor['email'] = current_time('U') . '@example.com';
+
   return $donor;
 }
 
