@@ -35,7 +35,7 @@ if( ! defined( 'WP_CLI' ) && ! headers_sent() )
 /**
  * Load required files
  */
-$required_files = array_diff( scandir( DONMAN_PLUGIN_PATH . 'lib/fns' ), [ '.', '..', 'shortcode', 'cli', 'callback' ] );
+$required_files = array_diff( scandir( DONMAN_PLUGIN_PATH . 'lib/fns' ), [ '.', '..', 'shortcode', 'cli', 'callback', 'callback-donation-report.organizations.php', 'callback-donation-report.donors.php' ] );
 foreach( $required_files as $file ){
   require_once DONMAN_PLUGIN_PATH . 'lib/fns/' . $file;
 }
