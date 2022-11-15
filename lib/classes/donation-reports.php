@@ -146,6 +146,8 @@ class DMReports {
 	 * @return void
 	 */
     public function callback_donation_report(){
+    	if( ! defined( 'WP_CLI' ) && ! WP_CLI )
+    		return;
 
     	$response = new stdClass();
     	$response->message = '';
@@ -468,16 +470,16 @@ class DMReports {
 	    	foreach( $donations as $donation ){
 	    		$custom_fields = get_post_custom( $donation->ID );
 
-                $donor_company = ( ! isset( $custom_fields['donor_company'][0] ) )? '' : $custom_fields['donor_company'][0];
+                $donor_company = ( ! isset( $custom_fields['address_company'][0] ) )? '' : $custom_fields['address_company'][0];
 
-	    		$DonationAddress = ( empty( $custom_fields['pickup_address'][0] ) )? $custom_fields['donor_address'][0] : $custom_fields['pickup_address'][0];
-	    		$DonationCity = ( empty( $custom_fields['pickup_city'][0] ) )? $custom_fields['donor_city'][0] : $custom_fields['pickup_city'][0];
-	    		$DonationState = ( empty( $custom_fields['pickup_state'][0] ) )? $custom_fields['donor_state'][0] : $custom_fields['pickup_state'][0];
-	    		$DonationZip = ( empty( $custom_fields['pickup_zip'][0] ) )? $custom_fields['donor_zip'][0] : $custom_fields['pickup_zip'][0];
+	    		$DonationAddress = ( empty( $custom_fields['pickup_address_street'][0] ) )? $custom_fields['address_street'][0] : $custom_fields['pickup_address_street'][0];
+	    		$DonationCity = ( empty( $custom_fields['pickup_address_city'][0] ) )? $custom_fields['address_city'][0] : $custom_fields['pickup_address_city'][0];
+	    		$DonationState = ( empty( $custom_fields['pickup_address_state'][0] ) )? $custom_fields['address_state'][0] : $custom_fields['pickup_address_state'][0];
+	    		$DonationZip = ( empty( $custom_fields['pickup_address_zip'][0] ) )? $custom_fields['address_zip'][0] : $custom_fields['pickup_address_zip'][0];
 
-                $pickupdate1 = ( empty( $custom_fields['pickupdate1'] ) )? '' : $custom_fields['pickupdate1'][0];
-                $pickupdate2 = ( empty( $custom_fields['pickupdate2'] ) )? '' : $custom_fields['pickupdate2'][0];
-                $pickupdate3 = ( empty( $custom_fields['pickupdate3'] ) )? '' : $custom_fields['pickupdate3'][0];
+                $pickupdate1 = ( empty( $custom_fields['pickup_times_0_pick_up_time'] ) )? '' : $custom_fields['pickup_times_0_pick_up_time'][0];
+                $pickupdate2 = ( empty( $custom_fields['pickup_times_1_pick_up_time'] ) )? '' : $custom_fields['pickup_times_1_pick_up_time'][0];
+                $pickupdate3 = ( empty( $custom_fields['pickup_times_2_pick_up_time'] ) )? '' : $custom_fields['pickup_times_2_pick_up_time'][0];
 
                 $preferred_code = ( empty( $custom_fields['preferred_code'] ) )? '' : $custom_fields['preferred_code'][0] ;
 
@@ -485,10 +487,10 @@ class DMReports {
 	    			'Date' => $donation->post_date,
 	    			'DonorName' => $custom_fields['donor_name'][0],
                     'DonorCompany' => $donor_company,
-	    			'DonorAddress' => $custom_fields['donor_address'][0],
-	    			'DonorCity' => $custom_fields['donor_city'][0],
-	    			'DonorState' => $custom_fields['donor_state'][0],
-	    			'DonorZip' => $custom_fields['donor_zip'][0],
+	    			'DonorAddress' => $custom_fields['address_street'][0],
+	    			'DonorCity' => $custom_fields['address_city'][0],
+	    			'DonorState' => $custom_fields['address_state'][0],
+	    			'DonorZip' => $custom_fields['address_zip'][0],
 	    			'DonorPhone' => $custom_fields['donor_phone'][0],
 	    			'DonorEmail' => $custom_fields['donor_email'][0],
 	    			'DonationAddress' => $DonationAddress,
