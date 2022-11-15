@@ -53,6 +53,7 @@ function save_donation( $donation = array() ){
 
   wp_update_post( $post );
 
+  // Map ACF field names to $_POST vars
   $post_meta = array(
     'organization' => 'org_id',
     'trans_dept' => 'trans_dept_id',
@@ -81,65 +82,71 @@ function save_donation( $donation = array() ){
     'image' => '',
     'reason' => '',
   );
-  foreach( $post_meta as $meta_key => $donation_key ){
-    switch( $meta_key ){
-      case 'donor_name':
-        $meta_value = $donation['address']['name']['first'] . ' ' . $donation['address']['name']['last'];
-      break;
 
+  // Get Donation ACF Field Group
+  $field_group = donman_get_acf_field_group( 'group_629f701864f58' );
+  $fields = $field_group->fields;
 
-
-      case 'donor_address':
-        $key = 'address';
-        $meta_value = [ 'street' => $donation['address']['address'] ];
+  foreach( $fields as $field ){
+    switch( $field->name ){
+      case 'address':
+      case 'pickup_address':
+        $address_sub_fields = ['company','address','city','state','zip'];
+        /*
+        $address_sub_fields = [
+          'address' => [ 'donor_company' => 'company', 'donor_address' => 'street', 'donor_city' => 'city', 'donor_state' => 'state', 'donor_zip' => 'zip' ],
+          'pickup_address'  => [ 'pickup_company' => 'company', 'pickup_address' => 'street', 'pickup_city' => 'city', 'pickup_state' => 'state', 'pickup_zip' => 'zip' ],
+        ];
+        $sub_fields = $address_sub_fields[ $field->name ];
+        /**/
+        foreach( $address_sub_fields as $field_name ){
+          // Check for $field_name in $donor[ $field->name ] sub-array (e.g. $donor['pickup_address']['city']):
+          if( array_key_exists( $field_name, $donation[ $field->name ] ) ){
+            $value = $donation[ $field->name ][ $field_name ];
+            if( 'address' == $field_name )
+              $field_name = 'street';
+            update_field( $field->key, [ $field_name => $value ], $ID );
+            if( WP_CLI && true === WP_CLI_TEST )
+              \WP_CLI::line( '👉 update_field( ' . $field->key . ', [ ' . $field_name . ' => ' . $value . ' ], ' . $ID . ' );' );
+          }
+        }
         break;
 
-      case 'donor_company':
-      case 'donor_city':
-      case 'donor_state':
-      case 'donor_zip':
-        $key = 'address';
-        $sub_key = str_replace( 'donor_', '', $meta_key );
-        //$meta_value = $donation['address'][$key];
-        $meta_value = [ $sub_key => $donation['address'][$sub_key] ];
-      break;
+      case 'donor':
+        $sub_fields = [ 'name', 'email', 'phone' ];
+        foreach( $sub_fields as $field_name ){
+          switch( $field_name ){
+            case 'name':
+              $value = $donation['address']['name']['first'] . ' ' . $donation['address']['name']['last'];
+              break;
+
+            default:
+              $value = $donation[ $field_name ];
+              break;
+          }
+          update_field( $field->key, [ $field_name => $value ], $ID );
+        }
+        break;
+
+      case 'pickup_times':
+        $sub_field_key = $field->sub_fields[0]->key;
+        for ( $i = 1; $i < 4; $i++) {
+          $pickup_time = $donation[ 'pickupdate' . $i ] . ' ' . $donation[ 'pickuptime' . $i ];
+          add_row( $field->key, [ $sub_field_key => $pickup_time ], $ID );
+        }
+        break;
 
       case 'referer':
-        $meta_value = get_referer();
-      break;
-
-      /*
-      09/13/2022 (09:39) - Seems like this code was more "PODS" plugin
-      related. I think we can use the default below:
-      case 'organization':
-      case 'trans_dept':
-        $meta_value = $donation[$donation_key];
-        $meta_value_array[] = $meta_value;
-        add_post_meta( $ID, '_pods_' .$meta_key, $meta_value_array );
-      break;
-      */
-
-      case 'pickup_address':
-        $key = 'address';
-        $value = ( isset( $donation['pickup_address'] ) )? $donation['pickup_address'][$key] : '';
-        $meta_value = [ 'street' => $value ];
-        break;
-
-      case 'pickup_city':
-      case 'pickup_state':
-      case 'pickup_zip':
-        $key = 'address';
-        $sub_key = str_replace( 'pickup_', '', $meta_key );
-        $value = ( isset( $donation['pickup_address'] ) )? $donation['pickup_address'][$key] : '';
-        $meta_value = [ $sub_key => $value ];
+        $referer = \DonationManager\utilities\get_referer();
+        update_field( $field->key, $referer, $ID );
         break;
 
       default:
-        $meta_value = ( isset( $donation[$donation_key] ) )? $donation[$donation_key] : '';
+        $donation_array_key = $post_meta[ $field->name ];
+        $meta_value = ( isset( $donation[$donation_array_key] ) )? $donation[$donation_array_key] : '' ;
+        update_field( $field->key, $meta_value, $ID );
         break;
     }
-    if( ! empty( $meta_value ) )
-        add_post_meta( $ID, $meta_key, $meta_value );
   }
 
   // Save _organization_name for sorting purposes
