@@ -142,7 +142,7 @@ function get_test_donation(){
     'email' => 'michael@michaelwender.com',
     'phone' => '(865) 454-2121',
     'preferred_contact_method'  => 'Email',
-    'preferred_code'  => null,
+    'preferred_code'  => 'Testing preferred_code...',
     'reason'  => 'Remodeling',
     'pickupdate1' => '11/21/2022',
     'pickuptime1' => '8:00AM - 11:00AM',
