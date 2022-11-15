@@ -33,6 +33,25 @@ function donman_acf_json_load_point( $paths ) {
 add_filter('acf/settings/load_json', 'donman_acf_json_load_point');
 
 /**
+ * Gets the Donation ACF field group.
+ *
+ * @return     bool|array  An array of the Donation ACF field group.
+ */
+function donman_get_acf_field_group( $field_group = null ){
+  if( is_null( $field_group ) )
+    return false;
+
+  $file = DONMAN_PLUGIN_PATH . 'lib/acf-json/' . $field_group . '.json';
+  if( ! file_exists( $file ) )
+    return false;
+
+  $string = file_get_contents( $file );
+  $json = json_decode( $string );
+
+  return $json;
+}
+
+/**
  * Adds ACF Option Pages.
  */
 if( function_exists( 'acf_add_options_page' ) ){
