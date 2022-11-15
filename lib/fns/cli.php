@@ -47,12 +47,14 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * Available functions to test:
      *   - get_default_organization
      *   - get_donation_contact
+     *   - get_donation_meta
      *   - get_organizations
      *   - get_orphaned_donation_contacts
      *   - get_priority_organizations
      *   - get_screening_questions
      *   - get_trans_dept_ids
      *   - is_orphaned_donation
+     *   - save_donation
      * ---
      *
      * ## EXAMPLES
@@ -89,6 +91,20 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
           }
           $contact = DonationManager\donations\get_donation_contact( $donation_id, $contact_type );
           WP_CLI::line( '🔔 get_donation_contact( ' . $donation_id . ', ' . $contact_type . ' ) returns: ' . print_r( $contact, true ) );
+          break;
+
+        case 'get_donation_meta':
+          if( ! isset( $args[0] ) )
+            WP_CLI::error( 'Please provide a Donation ID as the first positional argument.' );
+          $donation_id = $args[0];
+          if( ! is_numeric( $donation_id ) )
+            WP_CLI::error( '🚨 Donation ID is NOT numeric!' );
+          $posttype = get_post_type( $donation_id );
+          if( ! 'donation' == $posttype )
+            WP_CLI::error( '🚨 $posttype for #' . $donation_id . ' is ' . $posttype . '. Please provide an ID for a donation.' );
+
+          $custom_fields = get_post_custom( $donation_id );
+          WP_CLI::line('🔔 $custom_fields = ' . print_r( $custom_fields, true ) );
           break;
 
         case 'get_priority_organizations':
@@ -155,6 +171,16 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
           } else {
             WP_CLI::line( '👉 Donation is NOT orphaned.' );
           }
+          break;
+
+        case 'save_donation':
+          $donation = DonationManager\utilities\get_test_donation();
+          $_SESSION['donor'] = $donation;
+          $ID = DonationManager\donations\save_donation( $donation );
+          $_SESSION['donor']['ID'] = $ID;
+          DonationManager\donations\tag_donation( $ID, $donation );
+          DonationManager\emails\send_email( 'trans_dept_notification' );
+          DonationManager\emails\send_email( 'donor_confirmation' );
           break;
 
         default:
