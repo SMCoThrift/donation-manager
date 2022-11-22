@@ -101,7 +101,7 @@ function save_donation( $donation = array() ){
         /**/
         foreach( $address_sub_fields as $field_name ){
           // Check for $field_name in $donor[ $field->name ] sub-array (e.g. $donor['pickup_address']['city']):
-          if( array_key_exists( $field_name, $donation[ $field->name ] ) ){
+          if( array_key_exists( $field->name, $donation ) && array_key_exists( $field_name, $donation[ $field->name ] ) ){
             $value = $donation[ $field->name ][ $field_name ];
             if( 'address' == $field_name )
               $field_name = 'street';
