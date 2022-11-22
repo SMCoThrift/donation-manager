@@ -88,7 +88,7 @@ function get_referer(){
  *
  * @return     array  The test donation.
  */
-function get_test_donation(){
+function get_test_donation( $use_different_pickup_address = 'no' ){
   $donor = [
     'url_path' => [
       0 => 'https://pmdthree.local/',
@@ -132,13 +132,7 @@ function get_test_donation(){
       'state'   => 'TN',
       'zip'     => '37922',
     ],
-    'different_pickup_address'  => 'Yes',
-    'pickup_address'  => [
-      'address' => '321 Other Street',
-      'city'    => 'Knoxville',
-      'state'   => 'TN',
-      'zip'     => '37931',
-    ],
+    'different_pickup_address'  => 'No',
     'email' => 'michael@michaelwender.com',
     'phone' => '(865) 454-2121',
     'preferred_contact_method'  => 'Email',
@@ -152,6 +146,16 @@ function get_test_donation(){
     'pickuptime3' => '8:00AM - 11:00AM',
     'pickuplocation' => 'Outside/Garage',
   ];
+
+  if( 'yes' == $use_different_pickup_address ){
+    $donor['different_pickup_address'] = 'Yes';
+    $donor['pickup_address'] = [
+      'address' => '321 Other Street',
+      'city'    => 'Knoxville',
+      'state'   => 'TN',
+      'zip'     => '37931',
+    ];
+  }
 
   // Set a unique email to avoid a duplicate donation error:
   $donor['email'] = current_time('U') . '@example.com';
