@@ -45,6 +45,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * : The function to test.
      * ---
      * Available functions to test:
+     *   - get_all_donations
      *   - get_default_organization
      *   - get_donation_contact
      *   - get_donation_meta
@@ -67,6 +68,26 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
       $function = $assoc_args['function'];
 
       switch( $function ){
+        case 'get_all_donations':
+          if(
+            ! isset( $args[0] ) ||
+            7 != strlen( $args[0] ) ||
+            ! stristr( $args[0], '-' ) ||
+            ! is_numeric( substr( $args[0], 0, 4 ) ) ||
+            ! is_numeric( substr( $args[0], 5, 2 ) )
+          )
+            WP_CLI::error( 'Please the month you want to retrieve in YYYY-MM format as the first positional argument.' );
+
+          require_once( DONMAN_PLUGIN_PATH . 'lib/classes/donation-reports.php' );
+          $DMreports = DMReports::get_instance();
+          // Get _offset and donations
+          $offset = 0;
+          $month = $args[0];
+          $donations_per_page = 100;
+          $donations = $DMreports->get_all_donations( $offset, $donations_per_page, $month );
+          WP_CLI::line( '🔔 get_all_donations( ' . $offset . ', ' . $donations_per_page .', ' . $month . ' ) = ' . print_r( $donations, true ) );
+          break;
+
         case 'get_default_organization':
           $priority = false;
           if( ! isset( $args[0] ) ){
@@ -174,7 +195,9 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
           break;
 
         case 'save_donation':
-          $donation = DonationManager\utilities\get_test_donation();
+          $use_different_pickup_address = ( isset( $args[0] ) || in_array( strtolower( $args[0] ), [ 'yes', 'no' ] ) )? $args[0] : 'no' ;
+          WP_CLI::line( '🔔 $use_different_pickup_address = ' . $use_different_pickup_address );
+          $donation = DonationManager\utilities\get_test_donation( $use_different_pickup_address );
           $_SESSION['donor'] = $donation;
           $ID = DonationManager\donations\save_donation( $donation );
           $_SESSION['donor']['ID'] = $ID;
