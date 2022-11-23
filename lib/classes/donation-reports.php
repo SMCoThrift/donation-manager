@@ -658,7 +658,7 @@ class DMReports {
 
         $eol = PHP_EOL;
 
-        add_filter( 'wp_mail_content_type', 'DonationManager\lib\fns\helpers\get_content_type' );
+        add_filter( 'wp_mail_content_type', 'DonationManager\helpers\get_content_type' );
 
         add_filter( 'wp_mail_from', function( $email ){
             return 'contact@pickupmydonation.com';
@@ -669,7 +669,7 @@ class DMReports {
 
         $human_month = date( 'F Y', strtotime( $args['month'] ) );
         $organization = get_the_title( $args['org_id'] );
-        $donation_value = '$' . number_format( AVERGAGE_DONATION_VALUE * intval( $args['donation_count'] ) );
+        $donation_value = '$' . number_format( AVERAGE_DONATION_VALUE * intval( $args['donation_count'] ) );
 
         $headers = array();
         $headers[] = 'Sender: PickUpMyDonation.com <contact@pickupmydonation.com>';
@@ -697,14 +697,14 @@ class DMReports {
             'donation_count' => $args['donation_count'],
         ];
 
-        $html = DonationManager\lib\fns\templates\render_template( 'email.monthly-donor-report', $hbs_vars );
+        $html = DonationManager\templates\render_template( 'email.monthly-donor-report', $hbs_vars );
 
         $status = wp_mail( $args['to'], $human_month . ' Donation Report - PickUpMyDonation.com', $html, $headers, $args['attachment_file'] );
 
         if( true == $status )
             update_post_meta( $args['org_id'], '_last_donation_report', $args['month'] );
 
-        remove_filter( 'wp_mail_content_type', 'DonationManager\lib\fns\helpers\get_content_type' );
+        remove_filter( 'wp_mail_content_type', 'DonationManager\helpers\get_content_type' );
     }
 
     /**
@@ -751,7 +751,7 @@ class DMReports {
         });
 
         $human_month = date( 'F Y', strtotime( $args['month'] ) );
-        $donation_value = '$' . number_format( AVERGAGE_DONATION_VALUE * intval( $args['donation_count'] ) );
+        $donation_value = '$' . number_format( AVERAGE_DONATION_VALUE * intval( $args['donation_count'] ) );
 
         $headers = array();
         $headers[] = 'Sender: PickUpMyDonation.com <contact@pickupmydonation.com>';
