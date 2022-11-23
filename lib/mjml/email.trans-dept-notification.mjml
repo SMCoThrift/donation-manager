@@ -1,0 +1,46 @@
+<mj-body background-color="#eeebeb">
+  <mj-section>
+    <mj-column><mj-text align="left" padding="0px" font-size="24px" font-weight="600" color="#6f6f6f">
+      Donation Notification<br><span style="font-size: 14px; line-height: 18px; font-weight: normal; color: #000;">From: {{donor_name}}, {{{contact_info}}}<br>To: {{organization_name}}</span></mj-text>
+      </mj-column>
+      <mj-column><mj-image align="right" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/pickupmydonation.1200x143.png"></mj-image></mj-column>    
+  </mj-section>
+  <mj-section background-color="#fff" padding="20px" padding-bottom="0px">
+    <mj-column background-color="#fff">
+      <mj-raw>{{#if user_uploaded_image}}</mj-raw>
+      	<mj-text padding="10px 0" font-weight="600">DONATION PHOTO(S):</mj-text>
+      	<mj-raw>{{#each user_uploaded_image}}</mj-raw>
+      		<mj-image src="{{.}}" href="{{.}}" border="1px solid #eee" padding="0px"></mj-image>
+        <mj-raw>{{/each}}</mj-raw>
+      <mj-raw>{{else}}</mj-raw>
+      <mj-text padding="10px" line-height="20px">{{{social_links}}}</mj-text>
+      <mj-raw>{{/if}}</mj-raw>
+    </mj-column>
+  </mj-section>
+  <mj-section background-color="#fff" padding="20px">
+    <mj-column background-color="#e6e7e9">
+      <mj-text padding="0px" line-height="22px">{{{orphaned_donation_note}}}</mj-text>
+      <mj-text line-height="22px">{{{donationreceipt}}}</mj-text>
+    </mj-column>
+  </mj-section>
+  <mj-section padding="0">
+    <mj-column>
+       <mj-image src="https://pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/smco-training-conference-2022.jpg" width="600px" padding="0" href="https://smcothrift.com/conference/"></mj-image>
+    </mj-column>    	
+  </mj-section>      
+  <mj-section background-color="#fff" padding="20px">
+  	<mj-column><mj-image src="https://pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/smcothrift_600x210.png" href="https://smcothrift.com"></mj-image></mj-column>    	
+    <mj-column><mj-image src="https://pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/thrifttrac-with-tagline_600x210.png" href="https://thrifttrac.com"></mj-image></mj-column>
+  </mj-section>
+  <mj-section background-color="#363636">
+    <mj-column>
+      <mj-social mode="horizontal" icon-size="30px">
+        <mj-social-element name="twitter-noshare" href="https://twitter.com/pickupdonations" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/twitter.png"></mj-social-element>
+        <mj-social-element name="facebook-noshare" href="https://www.facebook.com/PickUpMyDonationcom" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/facebook.png"></mj-social-element>
+        <mj-social-element name="instagram-noshare" href="https://www.instagram.com/pickupdonations/" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/instagram.png"></mj-social-element>
+      </mj-social>
+      <mj-text align="center" color="#fff" line-height="20px">&copy; 2012 &ndash; 2022 PickUpMyDonation.com. All rights reserved.<br>
+        <a href="https://www.pickupmydonation.com/email-preferences?email={{{email}}}" style="color: #f68428; text-decoration: none;">Unsubscribe from these emails.</a></mj-text>
+    </mj-column>
+  </mj-section>
+</mj-body>

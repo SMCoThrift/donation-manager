@@ -1,0 +1,119 @@
+<mj-body background-color="#eeebeb">
+    <mj-section padding="0">
+    	<mj-column>
+            <mj-text padding="0">{{{orphaned_donation_note}}}</mj-text>
+    		<mj-text color="#6f6f6f" font-size="28px" line-height="32px" font-weight="600" align="center" padding-bottom="0" padding-top="20px">{{organization_name}}</mj-text>
+    	</mj-column>
+    </mj-section>
+    <mj-section padding-bottom="0">
+        <mj-column width="600">
+            <mj-divider border-width="8px" border-color="#0082C8" padding="0"></mj-divider>
+            <mj-image src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/email-header.png" padding="0"></mj-image>
+        </mj-column>
+    </mj-section>
+    <mj-raw>{{# if organization_logo}}</mj-raw>
+    <mj-section background-color="#ffffff" padding-bottom="0">
+        <mj-column>
+            <mj-text color="#0082C8" font-weight="600" align="center" font-size="20px" line-height="28px" padding="0 25px 10px 25px">
+                Thank you for donating to:
+            </mj-text>
+            <mj-image href="{{website}}" width="300" src="{{organization_logo}}" />
+        </mj-column>
+    </mj-section>
+    <mj-raw>{{/if}}</mj-raw>
+    <mj-section background-color="#ffffff" padding-bottom="0">
+        <mj-column>
+            <mj-text color="#0082C8" font-weight="600" align="center" font-size="20px" line-height="28px" padding="0 25px 20px 25px">
+                Next, we'll contact you to confirm your pick up date.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section padding-bottom="0" padding-top="0">
+        <mj-column width="600">
+            <mj-image src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/three-steps.png" padding="0"></mj-image>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding-bottom="0">
+        <mj-column>
+            <mj-text color="#6f6f6f" font-weight="600" align="center" padding="0 25px" font-size="20px" line-height="24px">
+                We must contact you to finalize your pickup!
+            </mj-text>
+            <mj-text line-height="22px">
+                The date(s) and time(s) you selected for your donation are only <em>preferred</em> pickup times. You will not be on our pickup schedule until our schedulers are able to contact you by the preferred method (email or phone) you selected during the online process. Please allow up to 24 hours to be contacted (longer if submitted on the weekend).
+            </mj-text>
+            <mj-text line-height="22px">
+                If you have any questions throughout the process please do not hesitate to contact:
+            </mj-text>
+            <mj-text align="center" line-height="22px">
+                {{{trans_contact}}}
+            </mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-raw>{{#unless allow_user_photo_uploads}}</mj-raw>
+        <mj-section background-color="#fff" padding="20px 20px 0 20px">
+            <mj-column background-color="#b2e8ff" width="68px" padding="0px">
+                <mj-image src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/twitter.96x96.png" padding="16px 0px 2px 20px"></mj-image>
+            </mj-column>
+            <mj-column background-color="#b2e8ff" width="492px">
+                <mj-text color="#4f4f4f" font-weight="600" padding="27px 0px 15px 6px" font-size="24px" line-height="24px">
+                    Need faster service?
+                </mj-text>
+            </mj-column>
+        </mj-section>
+        <mj-section background-color="#fff" padding="0 20px 0 20px">
+            <mj-column background-color="#b2e8ff">
+                <mj-text color="#6f6f6f" font-weight="600" padding="0 20px 0 20px" font-size="18px" line-height="22px">
+                    Tweet your donation with your Donation ID hashtag!
+                </mj-text>
+                <mj-text padding="10px 20px 10px 20px" line-height="22px">Tweet a photo of your donation along with your Donation ID hashtag. Some organizations respond faster when you do! Here's something to get you started:</mj-text>
+                <mj-text padding="10px 20px" color="#3f3f3f" font-size="16px" line-height="24px">
+                    {{socialshare_copy}}
+                </mj-text>
+                <mj-text padding="10px 20px 20px 20px" color="#6f6f6f" line-height="22px">
+                    NOTE: Be sure to include a photo of your donation and the donation ID hashtag with your tweet (i.e. {{donation_id_hashtag}}).
+                </mj-text>
+            </mj-column>
+        </mj-section>
+    <mj-raw>{{/unless}}</mj-raw>
+    <mj-section background-color="#fff" padding="20px">
+        <mj-column background-color="#e6e7e9">
+            <mj-text line-height="22px">{{{donationreceipt}}}</mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#fff" padding="0 20px">
+        <mj-column background-color="#fde0c9">
+            <mj-text line-height="22px">
+                <strong>IMPORTANT:</strong> If donations are left unattended during pick up, copies of this ticket MUST be attached to all items or containers of items in order for them to be picked up.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#fff" padding="0 20px">
+        <mj-column>
+            <mj-text line-height="22px">
+                <em><strong>Please note:</strong> The organization incurs a great deal of cost to dispose of unsellable merchandise. We reserve the right to refuse any items that create a liability for our organization. Thank you for your understanding.</em>
+            </mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#363636">
+        <mj-column>
+            <mj-social
+                mode="horizontal"
+                display="twitter:url facebook:url instagram:url"
+                facebook-href="https://www.facebook.com/PickUpMyDonationcom"
+                facebook-content=""
+                facebook-icon-color="transparent"
+                twitter-href="https://twitter.com/pickupdonations"
+                twitter-content=""
+                twitter-icon-color="transparent"
+                instagram-href="https://www.instagram.com/pickupdonations/"
+                instagram-content=""
+                instagram-icon-color="transparent"
+                icon-size="30px"
+                base-url="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/"
+            />
+            <mj-text align="center" color="#fff">
+                    &copy; 2012 &ndash; 2022 PickUpMyDonation.com. All rights reserved.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+</mj-body>
