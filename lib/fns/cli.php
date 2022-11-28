@@ -17,7 +17,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * : The specific report. Can be:
      * - networkmembers
      * - organizations
-     * - zipbytransdept
+     * - zipsbytransdept
      *
      * [--format=<table|csv|json|yaml|ids|count>]
      * : Output format of the report (i.e.  ‘table’, ‘json’, ‘csv’, ‘yaml’, ‘ids’, ‘count’)
