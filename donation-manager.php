@@ -45,6 +45,16 @@ foreach( $required_files as $file ){
  */
 require_once DONMAN_PLUGIN_PATH . 'lib/required-checks.php';
 
+// Include class files
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/network-member.php';
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/organization.php';
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/background-processes.php';
+$BackgroundDonationCountProcess = new DM_Donation_Count_Process();
+
+// Initialize background process for deleteing/archiving donations:
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/background-delete-donation-process.php';
+$GLOBALS['BackgroundDeleteDonationProcess'] = new DM_Delete_Donation_Process(); // We must set this as an explicit global in order for it to be available inside WPCLI
+
 // Include our Orphaned Donations Class
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/orphaned-donations.php';
 $DMOrphanedDonations = DMOrphanedDonations::get_instance();
