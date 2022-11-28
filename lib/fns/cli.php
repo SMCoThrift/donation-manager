@@ -17,13 +17,21 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * : The specific report. Can be:
      * - networkmembers
      * - organizations
-     * - zipsbytransdept
+     * - zipsbytransdept (11/28/2022 (07:25) - doesn't appear to be in use anywhere)
+     *
+     * --month=<month>
+     * : The month in Y-m (e.g. 2022-11) format.
      *
      * [--format=<table|csv|json|yaml|ids|count>]
      * : Output format of the report (i.e.  ‘table’, ‘json’, ‘csv’, ‘yaml’, ‘ids’, ‘count’)
      */
     function report( $args, $assoc_args ){
       $report = $assoc_args['report'];
+      $month = $assoc_args['month'];
+      $month_array = explode( '-', $month );
+      if( ! is_numeric( $month_array[0] ) || ! is_numeric( $month_array[1] ) )
+        WP_CLI::error( '🚨 Provided `month` is not formatted correctly. Please provide a month in the following format: YYYY-MM.' );
+
       $format = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table' ;
 
       $report_file = DONMAN_PLUGIN_PATH . 'lib/fns/cli/report.' . $report . '.php';
