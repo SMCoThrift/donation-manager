@@ -24,7 +24,7 @@ class NetworkMember
         global $wpdb;
 
         $last_donation_report = $wpdb->get_var( $wpdb->prepare(
-            "SELECT last_donation_report FROM " . $wpdb->prefix . "dm_contacts WHERE ID=%d",
+            "SELECT last_donation_report FROM " . $wpdb->prefix . "donman_contacts WHERE ID=%d",
             $this->id
         ) );
 
@@ -42,7 +42,7 @@ class NetworkMember
         global $wpdb;
 
         $member_name = $wpdb->get_var( $wpdb->prepare(
-            "SELECT store_name FROM " . $wpdb->prefix . "dm_contacts WHERE ID=%d",
+            "SELECT store_name FROM " . $wpdb->prefix . "donman_contacts WHERE ID=%d",
             $this->id
         ) );
 
@@ -59,7 +59,7 @@ class NetworkMember
     public function save_donation_report( $month ){
         global $wpdb;
 
-        $status = $wpdb->update( $wpdb->prefix . 'dm_contacts', ['last_donation_report' => $month], ['ID' => $this->id] );
+        $status = $wpdb->update( $wpdb->prefix . 'donman_contacts', ['last_donation_report' => $month], ['ID' => $this->id] );
 
         return $status;
     }
