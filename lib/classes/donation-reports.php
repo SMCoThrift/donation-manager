@@ -478,19 +478,17 @@ class DMReports {
 	    	$donation_rows = array();
 	    	foreach( $donations as $donation ){
 	    		$custom_fields = get_post_custom( $donation->ID );
-
-                $donor_company = ( ! isset( $custom_fields['address_company'][0] ) )? '' : $custom_fields['address_company'][0];
-
+	    		$donor_company = ( ! isset( $custom_fields['address_company'][0] ) )? '' : $custom_fields['address_company'][0];
 	    		$DonationAddress = ( empty( $custom_fields['pickup_address_street'][0] ) )? $custom_fields['address_street'][0] : $custom_fields['pickup_address_street'][0];
 	    		$DonationCity = ( empty( $custom_fields['pickup_address_city'][0] ) )? $custom_fields['address_city'][0] : $custom_fields['pickup_address_city'][0];
 	    		$DonationState = ( empty( $custom_fields['pickup_address_state'][0] ) )? $custom_fields['address_state'][0] : $custom_fields['pickup_address_state'][0];
 	    		$DonationZip = ( empty( $custom_fields['pickup_address_zip'][0] ) )? $custom_fields['address_zip'][0] : $custom_fields['pickup_address_zip'][0];
 
-                $pickupdate1 = ( empty( $custom_fields['pickup_times_0_pick_up_time'] ) )? '' : $custom_fields['pickup_times_0_pick_up_time'][0];
-                $pickupdate2 = ( empty( $custom_fields['pickup_times_1_pick_up_time'] ) )? '' : $custom_fields['pickup_times_1_pick_up_time'][0];
-                $pickupdate3 = ( empty( $custom_fields['pickup_times_2_pick_up_time'] ) )? '' : $custom_fields['pickup_times_2_pick_up_time'][0];
+          $pickupdate1 = ( empty( $custom_fields['pickup_times_0_pick_up_time'] ) )? '' : $custom_fields['pickup_times_0_pick_up_time'][0];
+          $pickupdate2 = ( empty( $custom_fields['pickup_times_1_pick_up_time'] ) )? '' : $custom_fields['pickup_times_1_pick_up_time'][0];
+          $pickupdate3 = ( empty( $custom_fields['pickup_times_2_pick_up_time'] ) )? '' : $custom_fields['pickup_times_2_pick_up_time'][0];
 
-                $preferred_code = ( empty( $custom_fields['preferred_code'] ) )? '' : $custom_fields['preferred_code'][0] ;
+          $preferred_code = ( empty( $custom_fields['preferred_code'] ) )? '' : $custom_fields['preferred_code'][0] ;
 
 	    		$donation_row = array(
 	    			'Date' => $donation->post_date,
@@ -529,7 +527,7 @@ class DMReports {
     public function get_all_network_members(){
         if( false === ( $network_members = get_transient( 'get_network_members' ) ) ){
             global $wpdb;
-            $contacts =  $wpdb->get_results('SELECT DISTINCT store_name FROM ' . $wpdb->prefix . 'dm_contacts WHERE receive_emails=1');
+            $contacts =  $wpdb->get_results('SELECT DISTINCT store_name FROM ' . $wpdb->prefix . 'donman_contacts WHERE receive_emails=1');
             $network_members = [];
             if( $contacts ){
                 foreach ($contacts as $contact ) {
@@ -672,9 +670,22 @@ class DMReports {
         $donation_value = '$' . number_format( AVERAGE_DONATION_VALUE * intval( $args['donation_count'] ) );
 
         $headers = array();
-        $headers[] = 'Sender: PickUpMyDonation.com <contact@pickupmydonation.com>';
+        $headers[] = 'Sender: contact@pickupmydonation.com';
         $headers[] = 'Reply-To: PickUpMyDonation.com <contact@pickupmydonation.com>';
         $headers[] = 'CC: misty@pickupmydonation.com';
+
+        $subject = $human_month . ' Donation Report - PickUpMyDonation.com';
+        /**
+         * MailHog miss-encodes the subject line (i.e. you get "=?us-ascii?Q?" with no
+         * subject showing). Reducing the strlen below 40 chars so we see it during
+         * local development.
+         *
+         * Ref: https://github.com/mailhog/MailHog/issues/282
+         */
+        if( DONMAN_DEV_ENV ){
+	        if( 40 < strlen( $subject ) )
+	        	$subject = substr( $subject, 0, 37 ) . '...';
+        }
 
         $donation_word = ( 1 < $args['donation_count'] )? 'donations' : 'donation';
 
@@ -699,7 +710,7 @@ class DMReports {
 
         $html = DonationManager\templates\render_template( 'email.monthly-donor-report', $hbs_vars );
 
-        $status = wp_mail( $args['to'], $human_month . ' Donation Report - PickUpMyDonation.com', $html, $headers, $args['attachment_file'] );
+        $status = wp_mail( $args['to'], $subject, $html, $headers, $args['attachment_file'] );
 
         if( true == $status )
             update_post_meta( $args['org_id'], '_last_donation_report', $args['month'] );
@@ -711,7 +722,7 @@ class DMReports {
      * Sends a network member report.
      *
      * @param      array   $atts {
-     *  @type array     $ID             Array of dm_contact IDs.
+     *  @type array     $ID             Array of donman_contact IDs.
      *  @type string    $email_address  Email address we're sending the report to.
      *  @type string    $month          Month in `Y-m` format (e.g. 2017-03).
      *  @type int       $donation_count No. of donations received during the month.
