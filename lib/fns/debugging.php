@@ -30,3 +30,37 @@ if( ! function_exists( 'uber_log' ) ){
     $counter++;
   }
 }
+
+
+if( ! function_exists( 'uber_log_table') ){
+  /**
+   * Logs out an array as a table.
+   *
+   * @param      array  $array               The array
+   * @param      bool   $prefer_public_vars  If TRUE, will discard variables starting with an underscore.
+   *
+   * @return     string The array formatted as an ASCII table.
+   */
+  function uber_log_table( $array = [], $prefer_public_vars = false ){
+    if( 0 == count( $array ) )
+      return false;
+
+    ksort( $array );
+    $rows = [];
+    foreach( $array as $key => $value ){
+      if( $prefer_public_vars && '_' == substr( $key, 0, 1 ) )
+        continue;
+
+      $rows[] = [
+        'key' => $key,
+        'value' => $value,
+      ];
+    }
+
+    ob_start();
+    WP_CLI\Utils\format_items( 'table', $rows, array( 'key', 'value' ) );
+    $table = ob_get_contents();
+    ob_end_clean();
+    error_log( "\n🔔 uber_log_table() 👇\n" . $table );
+  }
+}
