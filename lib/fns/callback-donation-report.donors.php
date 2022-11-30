@@ -45,7 +45,7 @@ switch ( $switch ) {
         if( $zipcode && is_numeric( $zipcode ) ){
 
             // Get the Lat/Lon of our zipcode
-            $sql = 'SELECT ID,Latitude,Longitude FROM ' . $wpdb->prefix . 'dm_zipcodes WHERE ZIPCode="%s" ORDER BY CityName ASC LIMIT 1';
+            $sql = 'SELECT ID,Latitude,Longitude FROM ' . $wpdb->prefix . 'donman_zipcodes WHERE ZIPCode="%s" ORDER BY CityName ASC LIMIT 1';
             $coordinates = $wpdb->get_results( $wpdb->prepare( $sql, $zipcode ) );
 
             if( ! $coordinates )
@@ -55,7 +55,7 @@ switch ( $switch ) {
             $lon = $coordinates{0}->Longitude;
 
             // Get all zipcodes within $radius miles of our zipcode
-            $sql = 'SELECT distinct(ZipCode) FROM ' . $wpdb->prefix . 'dm_zipcodes  WHERE (3958*3.1415926*sqrt((Latitude-' . $lat . ')*(Latitude-' . $lat . ') + cos(Latitude/57.29578)*cos(' . $lat . '/57.29578)*(Longitude-' . $lon . ')*(Longitude-' . $lon . '))/180) <= %d';
+            $sql = 'SELECT distinct(ZipCode) FROM ' . $wpdb->prefix . 'donman_zipcodes  WHERE (3958*3.1415926*sqrt((Latitude-' . $lat . ')*(Latitude-' . $lat . ') + cos(Latitude/57.29578)*cos(' . $lat . '/57.29578)*(Longitude-' . $lon . ')*(Longitude-' . $lon . '))/180) <= %d';
             $zipcodes = $wpdb->get_results( $wpdb->prepare( $sql, $radius ) ); // $radius == mile radius
 
             if( ! $zipcodes )
