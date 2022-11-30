@@ -58,7 +58,7 @@ function get_coordinates( $zipcode = null ){
         return false;
 
     // Get the Lat/Lon of our Zip Code
-    $sql = 'SELECT ID,Latitude,Longitude FROM ' . $wpdb->prefix . 'dm_zipcodes WHERE ZIPCode="%s" ORDER BY CityName ASC LIMIT 1';
+    $sql = 'SELECT ID,Latitude,Longitude FROM ' . $wpdb->prefix . 'donman_zipcodes WHERE ZIPCode="%s" ORDER BY CityName ASC LIMIT 1';
     $result = $wpdb->get_results( $wpdb->prepare( $sql, $zipcode ) );
 
     $lat = round( $result[0]->Latitude, 3 );
