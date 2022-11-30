@@ -13,10 +13,10 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      *
      * ## OPTIONS
      *
-     * --report=<report>
+     * --type=<type>
      * : The specific report. Can be:
-     * - networkmembers
-     * - organizations
+     * - networkmembers (PMD 2.0 this was called by setting `--provider=nonexclusive`)
+     * - organizations (PMD 2.0 this was the default for `wp donman sendreports`, these are the `exclusive` providers)
      * - zipsbytransdept (11/28/2022 (07:25) - doesn't appear to be in use anywhere)
      *
      * --month=<month>
@@ -26,7 +26,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * : Output format of the report (i.e.  ‘table’, ‘json’, ‘csv’, ‘yaml’, ‘ids’, ‘count’)
      */
     function report( $args, $assoc_args ){
-      $report = $assoc_args['report'];
+      $type = $assoc_args['type'];
       $month = $assoc_args['month'];
       $month_array = explode( '-', $month );
       if( ! is_numeric( $month_array[0] ) || ! is_numeric( $month_array[1] ) )
@@ -34,9 +34,9 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
 
       $format = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table' ;
 
-      $report_file = DONMAN_PLUGIN_PATH . 'lib/fns/cli/report.' . $report . '.php';
+      $report_file = DONMAN_PLUGIN_PATH . 'lib/fns/cli/report.' . $type . '.php';
       if( ! file_exists( $report_file ) )
-        WP_CLI::error( '✋ File `' . basename( $report_file ) . '` does not exist! This command expects to find `lib/fns/cli/' . basename( $report_file ) . '` with the necessary logic for generating the `' . $report . '` report.' );
+        WP_CLI::error( '✋ File `' . basename( $report_file ) . '` does not exist! This command expects to find `lib/fns/cli/' . basename( $report_file ) . '` with the necessary logic for generating the `' . $type . '` report.' );
 
       require_once( $report_file );
     }
