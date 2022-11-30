@@ -58,3 +58,9 @@ $GLOBALS['BackgroundDeleteDonationProcess'] = new DM_Delete_Donation_Process(); 
 // Include our Orphaned Donations Class
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/orphaned-donations.php';
 $DMOrphanedDonations = DMOrphanedDonations::get_instance();
+
+// Include our Reporting Class
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-reports.php';
+$DMReports = DMReports::get_instance();
+register_activation_hook( __FILE__, array( $DMReports, 'flush_rewrites' ) );
+register_deactivation_hook( __FILE__, array( $DMReports, 'flush_rewrites' ) );
