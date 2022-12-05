@@ -469,7 +469,7 @@ class DMOrphanedDonations {
       $start_date_ts = strtotime( $args['start_date'] );
       $num_of_days = date( 't', $start_date_ts );
       $end_date = date( 'Y', $start_date_ts ) . '-' . date( 'm', $start_date_ts ) . '-' . $num_of_days;
-      $date_range = "\n\t\t" . 'AND timestamp >= \'' . $args['start_date'] . '\' AND timestamp <= \'' . $end_date . '\'';
+      $date_range = "\n\t\t" . 'AND timestamp >= \'' . date( 'Y-m-d', $start_date_ts ) . '\' AND timestamp <= \'' . $end_date . '\'';
     }
 
     $order_cols = array( 'store_name', 'zipcode', 'email_address', 'timestamp', 'total_donations' );
@@ -638,12 +638,11 @@ class DMOrphanedDonations {
       $x = 0;
       foreach ( $stores as $store ) {
         $domain = '';
-        $generic_domains = array( 'gmail.com', 'hotmail.com', 'verizon.net', 'comcast.net', 'sbcglobal.net', 'yahoo.com', 'att.net', 'chilitech.net', 'aol.com', 'yahoo.co', 'earthlink.net' );
         if ( stristr( $store->email_address, '@' ) ) {
           $email_array = explode( '@', $store->email_address );
           $domain = $email_array[1];
         }
-        $website = ( ! empty( $domain ) && ! in_array( $domain, $generic_domains ) )? '<a href="http://' . $domain . '" target="_blank">' . $domain . '</a>' : '&nbsp;';
+        $website = ( ! empty( $domain ) && ! in_array( $domain, GENERIC_DOMAINS ) )? '<a href="http://' . $domain . '" target="_blank">' . $domain . '</a>' : '&nbsp;';
 
         $subscribed = ( true == $store->receive_emails )? '<span style="color: #090">Yes</span>' : '<span style="color: #900">No</span>';
         $data[$x] = array(
@@ -761,12 +760,11 @@ class DMOrphanedDonations {
       $x = 0;
       foreach ( $stores as $store ) {
         $domain = '';
-        $generic_domains = array( 'gmail.com', 'hotmail.com', 'verizon.net', 'comcast.net', 'sbcglobal.net', 'yahoo.com', 'att.net', 'chilitech.net', 'aol.com', 'yahoo.co', 'earthlink.net' );
         if ( stristr( $store->email_address, '@' ) ) {
           $email_array = explode( '@', $store->email_address );
           $domain = $email_array[1];
         }
-        $website = ( ! empty( $domain ) && ! in_array( $domain, $generic_domains ) )? '<a href="http://' . $domain . '" target="_blank">' . $domain . '</a>' : '&nbsp;';
+        $website = ( ! empty( $domain ) && ! in_array( $domain, GENERIC_DOMAINS ) )? '<a href="http://' . $domain . '" target="_blank">' . $domain . '</a>' : '&nbsp;';
 
         $subscribed = ( true == $store->receive_emails )? '<span style="color: #090">Yes</span>' : '<span style="color: #900">No</span>';
         $data[$x] = array(

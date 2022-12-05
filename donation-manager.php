@@ -25,6 +25,7 @@ define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 //define( 'ORPHANED_PICKUP_RADIUS', 15 ); // radius in miles for zipcode search
 define( 'AVERAGE_DONATION_VALUE', 230 ); // average value of a donation is $230
 define( 'DONATION_TIMEOUT', 3 * MINUTE_IN_SECONDS );
+define( 'GENERIC_DOMAINS', ['gmail.com', 'hotmail.com', 'verizon.net', 'comcast.net', 'sbcglobal.net', 'yahoo.com', 'att.net', 'chilitech.net', 'aol.com', 'yahoo.co', 'earthlink.net', 'pacbell.net' ] ); // Used to filter out generic email providers
 
 /**
  * Start our session
