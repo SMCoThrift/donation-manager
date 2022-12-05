@@ -39,12 +39,12 @@ class DMOrphanedDonations {
     if ( 'donation_page_orphaned-donations' != $hook )
       return;
 
-    wp_enqueue_style( 'dm-admin-css', plugins_url( '../css/admin.css', __FILE__ ), array( 'dashicons', 'thickbox' ), filemtime( plugin_dir_path( __FILE__ ) . '../css/admin.css' ) );
+    wp_enqueue_style( 'dm-admin-css', DONMAN_PLUGIN_URL . 'lib/css/admin.css', ['dashicons', 'thickbox'], filemtime( DONMAN_PLUGIN_PATH . 'lib/css/admin.css' ) );
 
     wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/r/dt/dt-1.10.9,fh-3.0.0/datatables.min.css' );
     wp_register_script( 'datatables', 'https://cdn.datatables.net/r/dt/dt-1.10.9,fh-3.0.0/datatables.min.js', array( 'jquery' ) );
 
-    wp_enqueue_script( 'dm-orphaned-donations', plugins_url( '../js/orphaned-donations.js', __FILE__ ), array( 'jquery', 'media-upload', 'thickbox', 'jquery-ui-progressbar', 'datatables', 'jquery-color' ), filemtime( plugin_dir_path( __FILE__ ) . '../js/orphaned-donations.js' ), false );
+    wp_enqueue_script( 'dm-orphaned-donations', DONMAN_PLUGIN_URL . 'lib/js/orphaned-donations.js', ['jquery', 'media-upload', 'thickbox', 'jquery-ui-progressbar', 'datatables', 'jquery-color'], filemtime( DONMAN_PLUGIN_PATH . 'lib/js/orphaned-donations.js' ), false );
 
 
     $month_options = array( '<option value="">All dates</option>' );
