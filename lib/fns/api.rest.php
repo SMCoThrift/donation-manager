@@ -74,8 +74,8 @@ function get_donations_by_area( $request ){
         }
     }
 
-    $default_org = \DonationManager::get_default_organization();
-    $default_org_id = $default_org[0]['id'];
+    $default_org = DonationManager\organizations\get_default_organization();
+    $default_org_id = $default_org['id'];
 
     $donation_query_args = [];
     $donation_query_args['post_type'] = 'donation';
