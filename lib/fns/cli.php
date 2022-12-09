@@ -71,8 +71,6 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      *   wp dm test --function=get_default_organization
      */
     function test( $args, $assoc_args ){
-      define( 'WP_CLI_TEST', true );
-
       $function = $assoc_args['function'];
 
       switch( $function ){
@@ -273,5 +271,4 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
 
 } else {
   define( 'WP_CLI', false );
-  define( 'WP_CLI_TEST', false );
 }

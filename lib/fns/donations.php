@@ -106,7 +106,7 @@ function save_donation( $donation = array() ){
             if( 'address' == $field_name )
               $field_name = 'street';
             update_field( $field->key, [ $field_name => $value ], $ID );
-            if( WP_CLI && true === WP_CLI_TEST )
+            if( WP_CLI )
               \WP_CLI::line( '👉 update_field( ' . $field->key . ', [ ' . $field_name . ' => ' . $value . ' ], ' . $ID . ' );' );
           }
         }

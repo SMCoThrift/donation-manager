@@ -14,23 +14,23 @@ use function DonationManager\orphanedproviders\{get_orphaned_donation_contacts};
  * @return     array|bool  The default organization.
  */
 function get_default_organization( $priority = false ) {
-  if( WP_CLI && true === WP_CLI_TEST )
-    \WP_CLI::line( '🔔 running get_default_organization()... ');
+  if( WP_CLI )
+      \WP_CLI::line( '🔔 running get_default_organization()... ');
 
   $default_organization = get_field( 'default_organization', 'option' );
-  if( WP_CLI && true === WP_CLI_TEST )
+  if( WP_CLI )
     \WP_CLI::line( '🔔 default_organization = ' . print_r( $default_organization, true ) );
   if( ! $default_organization ){
-    if( WP_CLI && true === WP_CLI_TEST )
+    if( WP_CLI )
       \WP_CLI::line( '🚨 No default organization set! Check the settings page for the plugin.' );
     return false;
   }
 
   $default_trans_dept = get_field( 'default_transportation_department', 'option' );
-  if( WP_CLI && true === WP_CLI_TEST )
+  if( WP_CLI )
     \WP_CLI::line( '🔔 default_trans_dept = ' . print_r( $default_trans_dept, true ) );
   if( ! $default_trans_dept ){
-    if( WP_CLI && true === WP_CLI_TEST )
+    if( WP_CLI )
       \WP_CLI::line( '🚨 No default transportation department set! Check the settings page for the plugin.' );
     return false;
   }
@@ -93,7 +93,7 @@ function get_organizations( $pickup_code ) {
       ]
     ],
   ];
-  if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+  if( WP_CLI && class_exists( 'WP_CLI' ) )
     \WP_CLI::line( '🔔 get_organizations() query args = ' . print_r( $args, true ) );
 
   $trans_depts = get_posts( $args );
@@ -113,13 +113,9 @@ function get_organizations( $pickup_code ) {
     $priority_pickup = false;
 
     foreach( $trans_depts as $trans_dept ){
-      //if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
-        //\WP_CLI::line( '🔔 $trans_dept = ' . print_r( $trans_dept, true ) );
 
       $org_id = get_post_meta( $trans_dept->ID, 'organization', true );
       $organization = get_post( $org_id );
-      //if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
-        //\WP_CLI::line( '🔔 $organization = ' . print_r( $organization, true ) );
 
       $pickup_settings = get_field( 'pickup_settings', $organization->ID );
       $priority_pickup = false;
@@ -312,14 +308,14 @@ function get_priority_organizations( $pickup_code = null ){
   $organizations = array();
 
   if( $query->have_posts() ){
-    if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+    if( WP_CLI && class_exists( 'WP_CLI' ) )
       \WP_CLI::line( '🔔 Looping through Transporation Departments: $query->posts...' );
 
     while( $query->have_posts() ): $query->the_post();
       global $post;
       setup_postdata( $post );
       $org_id = get_post_meta( $post->ID, 'organization', true );
-      if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+      if( WP_CLI && class_exists( 'WP_CLI' ) )
         \WP_CLI::line( '🔔 TRANS DEPT: ' . get_the_title() . ' (ORG: ' . get_the_title( $org_id ) . ', ID: ' . $org_id . ')' );
 
       // If no `organization` is set, $org_id is a `string`. Therefore
@@ -441,7 +437,7 @@ function get_screening_questions( $org_id = null ) {
     $default_options = get_field( 'default_options', 'option' );
 
     $default_question_ids = $default_options['default_screening_questions'];
-    if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+    if( WP_CLI && class_exists( 'WP_CLI' ) )
       \WP_CLI::line( '🔔 get_screening_questions() $default_question_ids = ' . print_r( $default_question_ids, true ) );
 
     if( is_array( $default_question_ids ) && 0 < count( $default_question_ids ) ){
@@ -450,7 +446,7 @@ function get_screening_questions( $org_id = null ) {
         $terms[ $term->term_order ] = $term;
       }
     }
-    if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+    if( WP_CLI && class_exists( 'WP_CLI' ) )
       \WP_CLI::line( '🔔 get_screening_questions() $terms = ' . print_r( $terms, true ) );
   }
   foreach( $terms as $term ) {
@@ -478,7 +474,7 @@ function is_orphaned_donation( $donor_trans_dept_id = 0 ){
   $orphaned_donation_routing = get_field( 'orphaned_donation_routing', 'option' );
   $default_trans_dept = get_field( 'default_transportation_department', 'option' );
 
-  if( WP_CLI && true === WP_CLI_TEST && class_exists( 'WP_CLI' ) )
+  if( WP_CLI && class_exists( 'WP_CLI' ) )
     \WP_CLI::line( '🔔 is_orphaned_donation()' . "\n" . ' - $orphaned_donation_routing = ' . $orphaned_donation_routing . "\n - \$default_trans_dept->ID " . $default_trans_dept->ID );
 
   if(

@@ -58,7 +58,7 @@ function get_orphaned_donation_contacts( $args ){
     'show_in_results' => null,
   ), $args );
 
-  if( WP_CLI && true === WP_CLI_TEST )
+  if( WP_CLI )
     \WP_CLI::line( '🔔 running get_orphaned_donation_contacts( ' . print_r( $args, true ). ' );');
 
     // Validate $args['priority'], ensuring it is only `0` or `1`.
