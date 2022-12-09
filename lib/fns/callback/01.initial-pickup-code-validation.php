@@ -1,4 +1,6 @@
 <?php
+use function DonationManager\utilities\{get_alert};
+use function DonationManager\globals\{add_html};
 
 /**
  *  01. INITIAL ZIP/PICKUP CODE VALIDATION
@@ -25,9 +27,9 @@ if( isset( $_REQUEST['pickupcode'] ) || isset( $_REQUEST['pcode'] ) ) {
         $step = 'default';
         $msg = [];
         $errors = $form->getErrors();
-        if( true == $errors['pickupcode']['regexp'] )
+        if( array_key_exists( 'regexp', $errors['pickupcode'] ) && true == $errors['pickupcode']['regexp'] )
             $msg[] = 'Zip or Donation Code can only be made up of numbers, letters, dashes, and underscores.';
-        if( true == $errors['pickupcode']['required'] )
+        if( array_key_exists( 'required', $errors['pickupcode'] ) && true == $errors['pickupcode']['required'] )
             $msg[] = 'Zip or Donation Code can not be blank.';
         $alert = get_alert(['description' => '<p>Invalid pick up code! Please correct the following errors:</p><ul><li>' . implode( '</li><
             li>', $msg ) . '</li></ul>', 'type' => 'danger']);

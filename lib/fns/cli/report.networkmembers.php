@@ -23,8 +23,6 @@ foreach ( $network_members as $network_member ) {
     'filterby' => 'store_name'
   ]);
 
-  \WP_CLI::line( 'Getting data for `' . $network_member . '`' );
-
   $network_member_data = $wpdb->get_results( $network_member_sql );
   if( 0 < count( $network_member_data ) ){
     $total_donations = 0;

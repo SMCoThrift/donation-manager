@@ -752,7 +752,7 @@ class DMReports {
 
         $eol = PHP_EOL;
 
-        add_filter( 'wp_mail_content_type', 'DonationManager\lib\fns\helpers\get_content_type' );
+        add_filter( 'wp_mail_content_type', 'DonationManager\helpers\get_content_type' );
 
         add_filter( 'wp_mail_from', function( $email ){
             return 'contact@pickupmydonation.com';
@@ -789,9 +789,23 @@ class DMReports {
             'donation_count' => $args['donation_count'],
         ];
 
-        $html = DonationManager\lib\fns\templates\render_template( 'email.monthly-donor-report', $hbs_vars );
+        $html = DonationManager\templates\render_template( 'email.monthly-donor-report', $hbs_vars );
 
-        $status = wp_mail( $args['email_address'], $human_month . ' Donation Report - PickUpMyDonation.com', $html, $headers );
+        $subject = $human_month . ' Donation Report - PickUpMyDonation.com';
+        /**
+         * MailHog miss-encodes the subject line (i.e. you get "=?us-ascii?Q?" with no
+         * subject showing). Reducing the strlen below 40 chars so we see it during
+         * local development.
+         *
+         * Ref: https://github.com/mailhog/MailHog/issues/282
+         */
+        if( DONMAN_DEV_ENV ){
+	        if( 40 < strlen( $subject ) )
+	        	$subject = substr( $subject, 0, 37 ) . '...';
+        }
+
+
+        $status = wp_mail( $args['email_address'], $subject, $html, $headers );
 
         if( true == $status ){
             foreach ($args['ID'] as $id ) {

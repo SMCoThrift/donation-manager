@@ -346,6 +346,18 @@ function send_email( $type = '' ){
 
     $subject = html_entity_decode( $subject, ENT_COMPAT, 'UTF-8' );
 
+    /**
+     * MailHog miss-encodes the subject line (i.e. you get "=?us-ascii?Q?" with no
+     * subject showing). Reducing the strlen below 40 chars so we see it during
+     * local development.
+     *
+     * Ref: https://github.com/mailhog/MailHog/issues/282
+     */
+    if( DONMAN_DEV_ENV ){
+      if( 40 < strlen( $subject ) )
+        $subject = substr( $subject, 0, 37 ) . '...';
+    }
+
     if( true == $orphaned_donation && 'trans_dept_notification' == $type ){
 
       // Send normal email to default contact, any cc_emails for the

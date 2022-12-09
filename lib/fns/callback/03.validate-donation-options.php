@@ -82,7 +82,7 @@ if( isset( $_POST['donor']['options'] ) ) {
       header( 'Location: ' . $_POST['nextpage'] );
       die();
     } else {
-      add_html( '<div class="alert alert-error">No $_POST[nextpage] defined.</div>' );
+      DonationManager\globals\add_html( '<div class="alert alert-error">No $_POST[nextpage] defined.</div>' );
     }
   } else {
     $errors = $form->getErrors();
@@ -90,10 +90,10 @@ if( isset( $_POST['donor']['options'] ) ) {
         $msg[] = 'Please select at least one donation item.';
     if( true == $errors['description']['required'] )
         $msg[] = 'Please enter a description of your item(s).';
-    add_html(get_alert([
+    DonationManager\globals\add_html( get_alert([
       'type'        => 'danger',
       'description' => '<p>There was a problem with your submission. Please correct the following errors:</p><ul><li>' . implode( '</li><li>', $msg ) . '</li></ul>',
-    ]));
+    ]) );
   }
 
 }

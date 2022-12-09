@@ -43,7 +43,7 @@ if ( isset( $_REQUEST['oid'] ) && isset( $_REQUEST['tid'] ) && ! isset( $_POST['
         }
     } else {
         // Invalid org_id or trans_dept_id, redirect to site home page
-        $this->notify_admin( 'invalid_link' );
+        DonationManager\emails\notify_admin( 'invalid_link' );
         header( 'Location: ' . site_url() );
         die();
     }
