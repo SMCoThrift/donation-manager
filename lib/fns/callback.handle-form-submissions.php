@@ -19,6 +19,9 @@ function handle_form_submissions(){
   if( wp_doing_ajax() || is_admin() )
     return;
 
+  if( defined( 'WP_CLI' ) && WP_CLI )
+    return;
+
   $callback = null;
 
   if( isset( $_REQUEST['pickupcode'] ) || isset( $_REQUEST['pcode'] ) ) {
