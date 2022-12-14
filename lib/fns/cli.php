@@ -19,7 +19,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * - organizations (PMD 2.0 this was the default for `wp donman sendreports`, these are the `exclusive` providers)
      * - zipsbytransdept (11/28/2022 (07:25) - doesn't appear to be in use anywhere)
      *
-     * --month=<month>
+     * [--month=<month>]
      * : The month in Y-m (e.g. 2022-11) format.
      *
      * [--format=<table|csv|json|yaml|ids|count>]
@@ -27,10 +27,18 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      */
     function report( $args, $assoc_args ){
       $type = $assoc_args['type'];
-      $month = $assoc_args['month'];
-      $month_array = explode( '-', $month );
-      if( ! is_numeric( $month_array[0] ) || ! is_numeric( $month_array[1] ) )
-        WP_CLI::error( '🚨 Provided `month` is not formatted correctly. Please provide a month in the following format: YYYY-MM.' );
+      if( ! in_array( $type, [ 'networkmembers', 'organizations', 'zipsbytransdept' ] ) )
+        WP_CLI::error( '🔔 Unknown report type: ' . $type );
+
+      if( in_array( $type, [ 'networkmembers', 'organizations' ] ) && ! array_key_exists( 'month', $assoc_args ) )
+        WP_CLI::error( '🚨 Missing required `--month=YYYY-MM` parameter.' );
+
+      if( in_array( $type, [ 'networkmembers', 'organizations' ] ) ){
+        $month = $assoc_args['month'];
+        $month_array = explode( '-', $month );
+        if( ! is_numeric( $month_array[0] ) || ! is_numeric( $month_array[1] ) )
+          WP_CLI::error( '🚨 Provided `month` is not formatted correctly. Please provide a month in the following format: YYYY-MM.' );
+      }
 
       $format = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table' ;
 
