@@ -12,10 +12,6 @@
  * : Output format of the report (i.e.  ‘table’, ‘json’, ‘csv’, ‘yaml’, ‘ids’, ‘count’)
  */
 
-WP_CLI::line('🔔 called from inside ' . basename( __FILE__ ) );
-WP_CLI::line( '🔔 $report = ' . $report );
-
-
 // 1. Get all orgs
 // 2. For each org, get all trans_depts.
 // 3. For each trans_dept, get all zip codes.
