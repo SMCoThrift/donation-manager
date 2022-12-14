@@ -9,6 +9,37 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
   class DonationManagerCLI {
 
     /**
+     * Archives a year of donations.
+     *
+     * NOTE: Due to an error from `Roots\Sage\Extras\seo_pages_where()`, I recommend running this command with the global flag `--skip-themes` as shown in the examples below.
+     *
+     * ## OPTIONS
+     *
+     * <year>
+     * : The year to archive
+     *
+     * [--month]
+     * : Specify the month.
+     *
+     * [--dry-run]
+     * : Specify if we are testing.
+     * ---
+     * default: true
+     * options:
+     *   - true
+     *   - false
+     * ---
+     *
+     * ## EXAMPLES
+     *
+     * wp donations archive 2012 --skip-themes
+     * wp donations archive 2015 --month=6 --skip-themes
+     */
+    function archive( $args, $assoc_args ){
+      require_once( DONMAN_PLUGIN_PATH . 'lib/fns/cli/donations.archive.php' );
+    }
+
+    /**
      * Generate Donation Manager reports.
      *
      * ## OPTIONS
@@ -223,6 +254,81 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
         default:
           WP_CLI::error('🚨 No test written for `' . $function . '()`.');
       }
+    }
+
+    function getstats(){
+      WP_CLI::line( '🔔 Getting Donation Stats...' );
+      if( have_rows( 'donation_stats', 'option' ) ){
+        $total = 0;
+        $grand_total = 0;
+        $rows = [];
+        $current_year = 0;
+
+        while( have_rows( 'donation_stats', 'option' ) ): the_row();
+          $row_year = get_sub_field( 'year' );
+          if( ! is_null( $year ) && $row_year != $year )
+            continue;
+
+          $row_month = get_sub_field( 'month' );
+          if( ! is_null( $month ) && $row_month != $month )
+            continue;
+
+          $row_donations = get_sub_field( 'donations' );
+
+          if( $current_year != $row_year ){
+            if( 0 !== $current_year ){
+              $rows[] = [
+                'year'      => '',
+                'month'     => '',
+                'donations' => $current_year . ' TOTAL:',
+                'total'     => $total,
+                'value'     => '$' . number_format( $total * AVERAGE_DONATION_VALUE, 0, '.', ',' ),
+              ];
+              $rows[] = [
+                'year'      => ' --- ',
+                'month'     => ' --- ',
+                'donations' => ' ----- ',
+                'total'     => ' --- ',
+                'value'     => ' --- ',
+              ];
+            }
+            $current_year = $row_year;
+            $table_year_value = $row_year;
+            $total = $row_donations;
+          } else {
+            $table_year_value = '   -';
+            $total+= $row_donations;
+          }
+
+          $rows[] = [
+            'year'      => $table_year_value,
+            'month'     => $row_month,
+            'donations' => $row_donations,
+            'total'     => $total,
+            'value'     => '$' . number_format( $row_donations * AVERAGE_DONATION_VALUE, 0, '.', ',' ),
+          ];
+
+          $grand_total+= $row_donations;
+        endwhile;
+
+      }
+      $rows[] = [
+        'year'      => ' --- ',
+        'month'     => ' --- ',
+        'donations' => ' ----- ',
+        'total'     => ' --- ',
+        'value'     => ' --- ',
+      ];
+      $rows[] = [
+        'year'      => '',
+        'month'     => '',
+        'donations' => 'GRAND TOTAL:',
+        'total'     => $grand_total,
+        'value'     => '$' . number_format( $grand_total * AVERAGE_DONATION_VALUE, 0, '.', ',' ),
+      ];
+
+      WP_CLI\Utils\format_items( 'table', $rows, array( 'year', 'month', 'donations', 'total', 'value' ) );
+      //WP_CLI::line('🔔 TOTAL DONATIONS: ' . $grand_total );
     }
 
     /**
