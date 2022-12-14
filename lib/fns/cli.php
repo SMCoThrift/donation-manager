@@ -17,7 +17,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      * : The specific report. Can be:
      * - networkmembers (PMD 2.0 this was called by setting `--provider=nonexclusive`)
      * - organizations (PMD 2.0 this was the default for `wp donman sendreports`, these are the `exclusive` providers)
-     * - zipsbytransdept (11/28/2022 (07:25) - doesn't appear to be in use anywhere)
+     * - zipsbytransdept - shows all zip code assignments in the system
      *
      * [--month=<month>]
      * : The month in Y-m (e.g. 2022-11) format.

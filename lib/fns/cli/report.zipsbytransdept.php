@@ -2,9 +2,13 @@
 /**
  * Generates a report of zip codes assigned to trans_depts.
  *
- * NOTE: 11/28/2022 (07:25) - the following doesn't appear to be called
- * anywhere in PMD 2.0. Adding the following code, but we haven't
- * tested it.
+ * By default, the generated report shows the following:
+ *
+ * - Columns for id, name, trans_depts, zipcodes, total_zips
+ * - Lists Organizations, their trans_departs, and assigned zip codes
+ *
+ * This report currently serves as the basic building block for a
+ * report which could show all zip code assignments in the system.
  *
  * ## OPTIONS
  *
