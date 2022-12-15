@@ -256,6 +256,9 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
       }
     }
 
+    /**
+     * Retrieves donation statistics.
+     */
     function getstats(){
       WP_CLI::line( '🔔 Getting Donation Stats...' );
       if( have_rows( 'donation_stats', 'option' ) ){
@@ -312,6 +315,22 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
         endwhile;
 
       }
+      $db_donations = \wp_count_posts( 'donation' );
+      $rows[] = [
+        'year'      => ' --- ',
+        'month'     => ' --- ',
+        'donations' => ' ----- ',
+        'total'     => ' --- ',
+        'value'     => ' --- ',
+      ];
+      $rows[] = [
+        'year'      => '',
+        'month'     => '',
+        'donations' => 'In Database:',
+        'total'     => $db_donations->publish,
+        'value'     => '$' . number_format( $db_donations->publish * AVERAGE_DONATION_VALUE, 0, '.', ',' ),
+      ];
+      $grand_total+= $db_donations->publish;
       $rows[] = [
         'year'      => ' --- ',
         'month'     => ' --- ',
@@ -328,7 +347,6 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
       ];
 
       WP_CLI\Utils\format_items( 'table', $rows, array( 'year', 'month', 'donations', 'total', 'value' ) );
-      //WP_CLI::line('🔔 TOTAL DONATIONS: ' . $grand_total );
     }
 
     /**
