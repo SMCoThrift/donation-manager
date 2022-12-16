@@ -48,6 +48,7 @@ require_once DONMAN_PLUGIN_PATH . 'lib/required-checks.php';
 
 // Include class files
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/cli.php';
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/cli.fixzips.php';
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/network-member.php';
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/organization.php';
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/background-processes.php';
