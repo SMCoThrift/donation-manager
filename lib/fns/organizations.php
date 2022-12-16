@@ -486,3 +486,18 @@ function is_orphaned_donation( $donor_trans_dept_id = 0 ){
       return false;
   }
 }
+
+/**
+ * Returns true|false depending on an Organization's priority pickup status.
+ *
+ * @param      int  $org_id  The organization identifier
+ *
+ * @return     bool    True if the specified organization identifier is priority, False otherwise.
+ */
+function is_priority( $org_id ){
+  $priority_pickup = false;
+  $pickup_settings = get_field( 'pickup_settings', $org_id );
+  if( array_key_exists( 'priority_pickup', $pickup_settings ) )
+    $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
+  return $priority_pickup;
+}
