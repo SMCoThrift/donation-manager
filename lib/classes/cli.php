@@ -1,7 +1,7 @@
 <?php
 
 // Only run if in the WP_CLI
-if( defined( 'WP_CLI' ) && 'WP_CLI' ){
+if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
 
   /**
    * The Donation Manager CLI.
@@ -102,6 +102,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
      *   - get_screening_questions
      *   - get_trans_dept_ids
      *   - is_orphaned_donation
+     *   - is_priority
      *   - save_donation
      * ---
      *
@@ -236,6 +237,21 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
             WP_CLI::line( '👉 Donation IS orphaned.' );
           } else {
             WP_CLI::line( '👉 Donation is NOT orphaned.' );
+          }
+          break;
+
+        case 'is_priority':
+          if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'This test requires a numeric Organization ID as the first postional argument.' );
+          $org_id = $args[0];
+          $org = get_post( $org_id );
+          if( 'organization' != get_post_type( $org ) )
+            WP_CLI::error( $org_id . ' is not a valid Organization ID.' );
+          $priority = DonationManager\organizations\is_priority( $org_id );
+          if( $priority ){
+            WP_CLI::line( '✅ `' . get_the_title( $org_id ) . '` is a PRIORITY pickup provider.' );
+          } else {
+            WP_CLI::line( '❌ `' . get_the_title( $org_id ) . '` is NOT a PRIORITY pickup provider.' );
           }
           break;
 
@@ -402,5 +418,6 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' ){
   WP_CLI::add_command( 'dm', 'DonationManagerCLI' );
 
 } else {
-  define( 'WP_CLI', false );
+  if( ! defined( 'WP_CLI' ) )
+    define( 'WP_CLI', false );
 }
