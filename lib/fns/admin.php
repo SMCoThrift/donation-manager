@@ -8,28 +8,32 @@ namespace DonationManager\donations;
  * @param      string  $column  The column
  */
 function custom_column_content( $column ){
-    global $post;
+  global $post;
 
-    switch( $column ){
-        case 'org':
+  switch( $column ){
+    case 'org':
+        $org_id = get_field( 'organization', $post->ID );
+        if( is_object( $org_id ) )
+          $org_id = $org_id->ID;
 
-            $org_id = get_field( 'organization', $post->ID );
-            if( is_object( $org_id ) )
-              $org_id = $org_id->ID;
+        $org_name = '';
+        if( is_numeric( $org_id ) )
+          $org_name = get_the_title( $org_id );
+        if( empty( $org_name ) ){
+          $post_status = get_post_status( $post->ID );
+          $color = ( 'publish' == $post_status )? 'f00' : '333' ;
+          $text = ( 'publish' == $post_status )? 'NOT SET!' : 'not set';
+          $org_name = '<code style="color: #' . $color . '; font-weight: bold;">' . $text . '</code>';
+        }
 
-            $org_name = '';
-            if( is_numeric( $org_id ) )
-              $org_name = get_the_title( $org_id );
-            if( empty( $org_name ) ){
-              $post_status = get_post_status( $post->ID );
-              $color = ( 'publish' == $post_status )? 'f00' : '333' ;
-              $text = ( 'publish' == $post_status )? 'NOT SET!' : 'not set';
-              $org_name = '<code style="color: #' . $color . '; font-weight: bold;">' . $text . '</code>';
-            }
+        echo $org_name;
+    break;
 
-            echo $org_name;
-        break;
-    }
+    case 'trans_dept':
+      $trans_dept = get_field( 'trans_dept', $post->ID );
+      echo $trans_dept->post_title;
+      break;
+  }
 }
 add_action( 'manage_donation_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 add_action( 'manage_store_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
@@ -90,9 +94,9 @@ add_filter( 'manage_donation_posts_columns', __NAMESPACE__ . '\\columns_for_dona
  */
 function columns_for_store( $defaults ){
     $defaults = array(
-        'cb' => '<input type="checkbox" />',
-        'title' => 'Title',
-        'org' => 'Organization',
+        'cb'            => '<input type="checkbox" />',
+        'title'         => 'Title',
+        'trans_dept'    => 'Transportation Department',
     );
     return $defaults;
 }
