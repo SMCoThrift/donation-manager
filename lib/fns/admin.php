@@ -142,18 +142,22 @@ function custom_save_post( $post_id ){
 
     switch ( $post_type ) {
         case 'store':
-            $trans_dept_id = get_field( 'trans_dept', $post_id );
-            if( $trans_dept_id ){
-              $org_id = get_field( 'organization', $trans_dept_id );
+            $trans_dept = get_field( 'trans_dept', $post_id );
+            if( $trans_dept && property_exists( $trans_dept, 'ID' ) ){
+              $org = get_field( 'organization', $trans_dept->ID );
+              if( $org && property_exists( $org, 'ID' ) )
+                $org_id = $org->ID;
             }
         break;
         case 'donation':
         case 'trans_dept':
-            $org_id = get_field( 'organization', $post_id );
+            $org = get_field( 'organization', $post_id );
+            if( $org && property_exists( $org, 'ID' ) )
+              $org_id = $org->ID;
         break;
     }
 
-    if( $org_id && is_numeric( $org_id ) ){
+    if( isset( $org_id ) && is_numeric( $org_id ) ){
       $org_name = get_the_title( $org_id );
 
       if( ! empty( $org_name ) )
