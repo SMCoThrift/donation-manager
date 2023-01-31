@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:     Donation Manager
- * Plugin URI:      PLUGIN SITE HERE
+ * Plugin URI:      https://github.com/SMCoThrift/donation-manager
  * Description:     Online donation manager built for SMCoThrift and PickUpMyDonation.com. This plugin displays the donation form and handles donation submissions.
  * Author:          Michael Wender
  * Author URI:      https://mwender.com
