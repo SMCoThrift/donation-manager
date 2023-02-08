@@ -4,7 +4,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 5.9.3  
 **Requires PHP:** 7.2  
-**Stable tag:** 3.0.2  
+**Stable tag:** 3.1.0  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.1.0 ###
+* Adding City Pages ACF fields.
 
 ### 3.0.2 ###
 * Updating `lib/fns/admin.php::custom_save_post()` to properly obtain the `$org_id`.
