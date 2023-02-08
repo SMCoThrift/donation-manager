@@ -85,7 +85,10 @@
             "allow_null": 1,
             "multiple": 1,
             "return_format": "id",
-            "ui": 1
+            "ui": 1,
+            "save_custom": 0,
+            "save_post_type": "",
+            "save_post_status": ""
         },
         {
             "key": "field_595d070d19c41",
@@ -108,7 +111,10 @@
             "allow_null": 1,
             "multiple": 0,
             "return_format": "id",
-            "ui": 1
+            "ui": 1,
+            "save_custom": 0,
+            "save_post_type": "",
+            "save_post_status": ""
         },
         {
             "key": "field_595d0b567248e",
@@ -139,9 +145,9 @@
                 "value": "page"
             },
             {
-                "param": "post_template",
+                "param": "page_parent",
                 "operator": "==",
-                "value": "template-city-page.php"
+                "value": "244"
             }
         ]
     ],
@@ -153,5 +159,13 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "show_in_rest": false
+    "show_in_rest": 0,
+    "acfe_display_title": "",
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1675889592
 }
