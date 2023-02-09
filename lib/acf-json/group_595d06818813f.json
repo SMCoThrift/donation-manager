@@ -23,6 +23,26 @@
             "maxlength": ""
         },
         {
+            "key": "field_63e54429d1d8a",
+            "label": "Alternate Title",
+            "name": "alt_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "We use the \"Alternate Title\" on the main City Pages page to link to this city page (e.g. \"Indio, CA (Central Coachella Valley)\").",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_595e6169d47c0",
             "label": "Hero Text",
             "name": "hero_text",
@@ -167,5 +187,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1675889592
+    "modified": 1675970003
 }
