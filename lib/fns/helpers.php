@@ -24,7 +24,8 @@ function get_archived_donations( $year = null, $month = null ){
         continue;
 
       $row_donations = get_sub_field( 'donations' );
-      $total+= $row_donations;
+      if( is_numeric( $row_donations ) )
+        $total+= $row_donations;
       $archived_donations[ $row_year ][ $row_month ] = $row_donations;
     endwhile;
     $archived_donations['total'] = $total;

@@ -4,7 +4,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 7.2  
-**Stable tag:** 3.2.0  
+**Stable tag:** 3.2.1  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.2.1 ###
+* BUGFIX: Checking for numeric value before attempting `+=` operation in `get_archived_donations()`.
 
 ### 3.2.0 ###
 * Adding City Pages sidebar shortcode (i.e. `[city_page_sidebar/]`).
