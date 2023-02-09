@@ -15,8 +15,12 @@ use function DonationManager\globals\{add_html,get_html};
  */
 function donationform( $atts ){
   $args = shortcode_atts([
-    'nextpage' => null,
+    'nextpage'  => null,
+    'template'  => null,
   ], $atts );
+
+  if( is_null( $args['template'] ) || empty( $args['template'] ) )
+    $args['template'] = 'form0.enter-your-zipcode';
 
   /**
    * Show DEBUG info when $_COOKIE['dmdebug'] is TRUE:
@@ -48,7 +52,9 @@ function donationform( $atts ){
    *  which form displays on which page. Otherwise, we setup
    *  $_SESSION['donor']['form'] inside callback_init().
    */
-  if( is_front_page() || is_page('donate-now') )
+  global $wp;
+  $current_url = home_url( add_query_arg( array(), $wp->request ) );
+  if( is_front_page() || is_page('donate-now') || stristr( $current_url, 'city-pages' ) )
       $_SESSION['donor'] = array();
 
   track_url_path();
