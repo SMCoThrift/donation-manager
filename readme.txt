@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 4.5
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 3.3.0
+Stable tag: 3.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.3.1 =
+* Adding `sort_column` option to `[list_pages/]`.
+* Updating `list_pages()` to use `get_posts()` instead of `get_pages()`.
 
 = 3.3.0 =
 * Adding "Alternate Title" to City Page options.

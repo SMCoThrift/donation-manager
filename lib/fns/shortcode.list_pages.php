@@ -14,17 +14,33 @@ namespace DonationManager\shortcodes;
  */
 function list_pages( $atts ){
   $args = shortcode_atts([
-    'tag'     => 'ul',
-    'parent'  => null,
-    'title'   => 'post_title',
+    'tag'         => 'ul',
+    'parent'      => null,
+    'title'       => 'post_title',
+    'sort_column' => 'post_title',
   ], $atts );
 
-  $get_pages_args = [
-    'parent'  => $args['parent'],
+  $get_posts_args = [
+    'post_type'   => 'page',
+    'post_status' => 'publish',
+    'post_parent' => $args['parent'],
+    'order'       => 'ASC',
+    'numberposts' => -1,
   ];
 
+  switch( $args['sort_column'] ){
+    case 'city':
+      $get_posts_args['meta_key'] = 'city';
+      $get_posts_args['orderby'] = 'meta_value';
+      break;
+
+    default:
+      $get_posts_args['sort_column'] = 'post_title';
+      break;
+  }
+
   $html = [];
-  $pages = get_pages( $get_pages_args );
+  $pages = get_posts( $get_posts_args );
   if( $pages ){
 
     $html[] = '<' . $args['tag'] . '>';
