@@ -2,9 +2,9 @@
 **Contributors:** [thewebist](https://profiles.wordpress.org/thewebist/)  
 **Tags:** donations, CPT  
 **Requires at least:** 4.5  
-**Tested up to:** 5.9.3  
+**Tested up to:** 6.1.1  
 **Requires PHP:** 7.2  
-**Stable tag:** 3.1.0  
+**Stable tag:** 3.2.0  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,12 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.2.0 ###
+* Adding City Pages sidebar shortcode (i.e. `[city_page_sidebar/]`).
+* Adding City Pages realtor description shortcode (i.e. `[city_page_realtor_description/]`).
+* Adding `[donationform template="form0.city-page" /]` template for City Page.
+* Adding "template" attribute for `[donationform/]` shortcode.
 
 ### 3.1.0 ###
 * Adding City Pages ACF fields.
