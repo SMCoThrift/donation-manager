@@ -251,7 +251,7 @@ function get_pickuplocations( $org_id ){
     $terms = get_field( 'default_options_default_pickup_locations', 'option' );
 
   $pickuplocations = [];
-  if( 0 < count( $terms ) ){
+  if( is_array( $terms ) && 0 < count( $terms ) ){
     foreach( $terms as $term ){
       $pickuplocations[] = [
         'id'    => $term->term_id,

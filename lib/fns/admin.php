@@ -152,7 +152,7 @@ function custom_save_post( $post_id ){
         case 'donation':
         case 'trans_dept':
             $org = get_field( 'organization', $post_id );
-            if( $org && property_exists( $org, 'ID' ) )
+            if( $org && is_object( $org ) && property_exists( $org, 'ID' ) )
               $org_id = $org->ID;
         break;
     }

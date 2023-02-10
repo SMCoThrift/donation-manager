@@ -160,14 +160,16 @@
     "location": [
         [
             {
-                "param": "post_type",
-                "operator": "==",
-                "value": "page"
-            },
-            {
                 "param": "page_parent",
                 "operator": "==",
                 "value": "244"
+            }
+        ],
+        [
+            {
+                "param": "page_parent",
+                "operator": "==",
+                "value": "1163"
             }
         ]
     ],
@@ -187,5 +189,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1675970003
+    "modified": 1676066261
 }

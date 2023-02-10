@@ -4,7 +4,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 7.2  
-**Stable tag:** 3.3.5  
+**Stable tag:** 3.3.6  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.3.6 ###
+* BUGFIX: Manually setting ACF Display Rules for City Page Options to include the Page ID for "City Pages" on the production server. By doing this, any time we update the plugin on production, the City Page Options should be properly displayed for child pages of the "City Pages" page.
+* BUGFIX: Checking for object before attempting to retrieve object property in `custom_save_post()`.
 
 ### 3.3.5 ###
 * BUGFIX: Converting variable assigments to work with ACF true/false fields when working with Organization Pickup Settings.
