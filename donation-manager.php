@@ -7,7 +7,7 @@
  * Author URI:      https://mwender.com
  * Text Domain:     donation-manager
  * Domain Path:     /languages
- * Version:         3.3.2
+ * Version:         3.3.3
  *
  * @package         DonationManager
  */
