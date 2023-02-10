@@ -20,6 +20,8 @@ function get_realtor_ads( $orgs = [] ){
   foreach( $orgs as $org ){
     $org_id = ( is_numeric( $org ) )? $org : $org['org_id'] ;
     $pickup_settings = get_field( 'pickup_settings', $org_id );
+    if( ! is_array( $pickup_settings ) )
+      $pickup_settings = [];
 
     $realtor_ad_url = null;
     if( array_key_exists( 'realtor_ad_standard_banner', $pickup_settings ) && $pickup_settings['realtor_ad_standard_banner'] )

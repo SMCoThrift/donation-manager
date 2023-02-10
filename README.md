@@ -4,7 +4,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 7.2  
-**Stable tag:** 3.3.3  
+**Stable tag:** 3.3.4  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.3.4 ###
+* BUGFIX: Checking for array in `get_realtor_ads()`.
 
 ### 3.3.3 ###
 * BUGFIX: Moving `$template` variable assigment inside `lib/fns/shortcode/donationform/default.php` to allow all other steps to properly set their own form templates.
