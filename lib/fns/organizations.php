@@ -41,7 +41,7 @@ function get_default_organization( $priority = false ) {
   $organization = []; // initialize our return variable
   $organization['id'] = $default_organization->ID;
   $organization['trans_dept_id'] = $default_trans_dept->ID;
-  $organization['pause_pickups'] = ( get_field( 'pickup_settings_pause_pickups', $default_organization->ID ) === 'true' )? true : false ;
+  $organization['pause_pickups'] = get_field( 'pickup_settings_pause_pickups', $default_organization->ID );
   $organization['edit_url'] = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $default_organization->ID, 'link' ) : false ;
 
   if( $priority ){
@@ -127,10 +127,10 @@ function get_organizations( $pickup_code ) {
         $alternate_donate_now_url = null;
 
         if( array_key_exists( 'priority_pickup', $pickup_settings ) )
-          $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
+          $priority_pickup = $pickup_settings['priority_pickup'];
 
         if( array_key_exists( 'pause_pickups', $pickup_settings ) )
-          $pause_pickups = ( $pickup_settings['pause_pickups'] === 'true' )? true : false ;
+          $pause_pickups = $pickup_settings['pause_pickups'];
       }
 
       $edit_url = ( current_user_can( 'edit_posts' ) && isset( $org ) )? get_edit_post_link( $org->ID, 'link' ) : false ;
@@ -333,7 +333,7 @@ function get_priority_organizations( $pickup_code = null ){
         //   $alternate_donate_now_url = $pickup_settings['alternate_donate_now_url']; // 08/03/2022 (03:16) - not current stored
 
         if( array_key_exists( 'priority_pickup', $pickup_settings ) )
-          $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
+          $priority_pickup = $pickup_settings['priority_pickup'];
       endif;
 
       if( $org_id && $priority_pickup ){
@@ -498,6 +498,6 @@ function is_priority( $org_id ){
   $priority_pickup = false;
   $pickup_settings = get_field( 'pickup_settings', $org_id );
   if( array_key_exists( 'priority_pickup', $pickup_settings ) )
-    $priority_pickup = ( $pickup_settings['priority_pickup'] === 'true' )? true : false ;
+    $priority_pickup = $pickup_settings['priority_pickup'];
   return $priority_pickup;
 }

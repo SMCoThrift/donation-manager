@@ -23,7 +23,7 @@ if( isset( $_POST['donor']['questions'] ) ) {
     // Does the organization allow additional details?
     $pickup_settings = get_field( 'pickup_settings', $_SESSION['donor']['org_id'] );
     if( array_key_exists( 'provide_additional_details', $pickup_settings ) )
-      $provide_additional_details = ( $pickup_settings['provide_additional_details'] === 'true' )? true : false ;
+      $provide_additional_details = $pickup_settings['provide_additional_details'];
 
     //$provide_additional_details = get_post_meta( $_SESSION['donor']['org_id'], 'provide_additional_details', true );
     if( $provide_additional_details ){
