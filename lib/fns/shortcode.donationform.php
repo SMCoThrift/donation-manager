@@ -19,8 +19,9 @@ function donationform( $atts ){
     'template'  => null,
   ], $atts );
 
-  if( is_null( $args['template'] ) || empty( $args['template'] ) )
-    $args['template'] = 'form0.enter-your-zipcode';
+  $template = 'form0.enter-your-zipcode';
+  if( ! empty( $args['template'] ) && template_exists( $args['template'] ) )
+    $template = $args['template'];
 
   /**
    * Show DEBUG info when $_COOKIE['dmdebug'] is TRUE:
