@@ -4,7 +4,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 7.2  
-**Stable tag:** 3.3.6  
+**Stable tag:** 3.3.7  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.3.7 ###
+* Setting `DMDEBUG` constant.
+* DEBUG output for donor emails in `send_email()`.
 
 ### 3.3.6 ###
 * BUGFIX: Manually setting ACF Display Rules for City Page Options to include the Page ID for "City Pages" on the production server. By doing this, any time we update the plugin on production, the City Page Options should be properly displayed for child pages of the "City Pages" page.
