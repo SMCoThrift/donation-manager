@@ -102,7 +102,13 @@ function send_email( $type = '' ){
     $headers = array();
 
     switch( $type ){
-
+        /**
+         * INVALID LINK ALERT
+         *
+         * Alerts admins when a referring URL sends traffic to the site via an invalid link.
+         *
+         * @context  Administrators
+         */
         case 'invalid_link':
             if( ! get_referer() )
                 return;
@@ -116,6 +122,13 @@ function send_email( $type = '' ){
             $headers[] = 'Reply-To: PMD Support <support@pickupmydonation.com>';
         break;
 
+        /**
+         * MISSING ORGANIZATION/TRANSPORTATION DEPARTMENT ALERT
+         *
+         * Alerts admins when a donation comes through without an Organization and/or a Transportation Department set.
+         *
+         * @content  Administrator
+         */
         case 'missing_org_transdept_notification':
             $html = render_template( 'email.blank', [
               'content' => '<div style="text-align: left;"><p>This donation doesn\'t have an ORG and/or TRANS_DEPT set:</p><pre>$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) . '</pre></div>',
@@ -125,6 +138,13 @@ function send_email( $type = '' ){
             $headers[] = 'Reply-To: PMD Support <support@pickupmydonation.com>';
         break;
 
+        /**
+         * ZIPCODE MISMATCH ALERT
+         *
+         * Used to alert admins when there's a mismatch between the searched zip code and the pick up address.
+         *
+         * @context  Administrator
+         */
         case 'zipcode_mismatch':
             $html = render_template( 'email.blank', [
               'content' => '<div style="text-align: left;"><p>' . $_POST['donor']['address']['name']['first'] . ' ' . $_POST['donor']['address']['name']['last'] . '<br />$_SESSION[\'donor\'][\'pickup_code\'] = ' . $_SESSION['donor']['pickup_code'] . '<br />$_POST[\'donor\'][\'address\'][\'zip\'] = ' . $_POST['donor']['address']['zip'] . '</p><p><pre>URL PATH = ' . print_r( $_SESSION['donor']['url_path'], true ) . '</pre></p></div>',
@@ -134,6 +154,13 @@ function send_email( $type = '' ){
             $headers[] = 'Reply-To: PMD Support <support@pickupmydonation.com>';
             break;
 
+        /**
+         * DONOR CONFIRMATION
+         *
+         * Sent to donors immediately after their donation is entered into the system.
+         *
+         * @context  Donor
+         */
         case 'donor_confirmation':
 
           $trans_contact = $tc['contact_name'] . ' (<a href="mailto:' . $tc['contact_email'] . '">' . $tc['contact_email'] . '</a>)<br>' . $organization_name . ', ' . $tc['contact_title'] . '<br>' . $tc['phone'];
@@ -184,6 +211,13 @@ function send_email( $type = '' ){
           $headers[] = 'Reply-To: ' . $tc['contact_name'] . ' <' . $tc['contact_email'] . '>';
         break;
 
+        /**
+         * TRANSPORTATION DEPARTMENT NOTIFICATION
+         *
+         * Email sent to the contact for a Transportation Department.
+         *
+         * @context  Provider
+         */
         case 'trans_dept_notification':
           // Donation Routing Method
           if( ! $orphaned_donation ){
