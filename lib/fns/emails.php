@@ -175,8 +175,8 @@ function send_email( $type = '' ){
           $html = render_template( 'email.donor-confirmation', $hbs_vars );
 
           $recipients = array( $donor['address']['name']['first'] . ' ' . $donor['address']['name']['last'] . ' <' . $donor['email'] . '>' );
-          //$subject = 'Thank You for Donating to ' . $organization_name; // Long subject lines result in double encodeing with `=?us-ascii?Q?` getting added to subject.
-          $subject = 'Thank You For Your Donation';
+          // On localhost with Mailhog, long subject lines result in double encodeing with `=?us-ascii?Q?` getting added to subject.
+          $subject = ( DONMAN_DEV_ENV )? 'Thank You For Your Donation' : 'Thank You for Donating to ' . $organization_name ;
           //uber_log('🔔 👉 Sending Trans Dept email with subject = ' . $subject );
 
           // Set Reply-To the Transportation Department
