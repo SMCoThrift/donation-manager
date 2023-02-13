@@ -416,6 +416,11 @@ function send_email( $type = '' ){
         }
       } else {
         wp_mail( $recipients, $subject, $html, $headers );
+        if( DMDEBUG ){
+          $log_recipients = ( is_array( $recipients ) )? implode( ', ', $recipients ) : $recipients ;
+          $log_headers = ( is_array( $headers ) )? implode( "\t\n", $headers ) : $headers ;
+          uber_log( "🔔 send_email( `$type` ):\n\$recipients = " . $log_recipients . "\n\$subject = $subject\n\$html = [...]\n\$headers = " . $log_headers );
+        }
       }
     }
 
