@@ -27,6 +27,9 @@ define( 'AVERAGE_DONATION_VALUE', 230 ); // average value of a donation is $230
 define( 'DONATION_TIMEOUT', 3 * MINUTE_IN_SECONDS );
 define( 'GENERIC_DOMAINS', ['gmail.com', 'hotmail.com', 'verizon.net', 'comcast.net', 'sbcglobal.net', 'yahoo.com', 'att.net', 'chilitech.net', 'aol.com', 'yahoo.co', 'earthlink.net', 'pacbell.net' ] ); // Used to filter out generic email providers
 
+$dmdebug = ( isset( $_COOKIE['dmdebug'] ) && 'on' == $_COOKIE['dmdebug'] )? true : false ;
+define( 'DMDEBUG', $dmdebug );
+
 /**
  * Start our session
  */

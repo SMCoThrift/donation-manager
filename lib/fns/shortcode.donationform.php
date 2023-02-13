@@ -99,7 +99,7 @@ function donationform_docs( $atts = [] ){
       ]);
       echo '<div style="display: flex;" class="flex-columns">';
       $nextpage = ( is_array( $atts ) && array_key_exists( 'nextpage', $atts ) )? $atts['nextpage'] : '';
-      echo '<div style="width: 50%;"><pre style="text-align: left; font-size: 12px;">Shortcode: [donationform nextpage="' . $nextpage . '" /] (👈 The shortcode as it is used on this 👆 page.)<br/><br/>$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) . '</br>$_COOKIE[\'dmdebug\'] = ' . $_COOKIE['dmdebug'] . '</pre></div>';
+      echo '<div style="width: 50%;"><pre style="text-align: left; font-size: 12px;">Shortcode: [donationform nextpage="' . $nextpage . '" /] (👈 The shortcode as it is used on this 👆 page.)<br/><br/>$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) . '<br/>$_COOKIE[\'dmdebug\'] = ' . $_COOKIE['dmdebug'] . '<br/>Constant: DMDEBUG = ' . DMDEBUG . '</pre></div>';
       echo '<div style="width: 50%;">';
       echo file_get_contents( DONMAN_PLUGIN_PATH . 'lib/docs/shortcode.donationform.html' );
       echo file_get_contents( DONMAN_PLUGIN_PATH . 'lib/docs/shortcode.get_alert.html' );
