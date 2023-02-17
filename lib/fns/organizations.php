@@ -432,7 +432,7 @@ function get_screening_questions( $org_id = null ) {
   if( ! is_null( $org_id ) )
     $terms = wp_get_post_terms( $org_id, 'screening_question' );
 
-  if( ! $terms ){
+  if( ! isset( $terms ) ){
     $terms = [];
     $default_options = get_field( 'default_options', 'option' );
 
