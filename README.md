@@ -4,7 +4,7 @@
 **Requires at least:** 4.5  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 7.2  
-**Stable tag:** 3.3.7.1  
+**Stable tag:** 3.3.7.2  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.3.7.2 ###
+* BUGFIX: Refactoring screening questions to work with Taxonomy Order plugin.
 
 ### 3.3.7.1 ###
 * BUGFIX: Checking if variable isset() inside `get_screening_questions()` rather than true/false.

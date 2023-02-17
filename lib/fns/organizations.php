@@ -429,30 +429,19 @@ function get_priority_pickup_links( $pickup_code = null, $note = null ){
 function get_screening_questions( $org_id = null ) {
   $screening_questions = [];
 
-  if( ! is_null( $org_id ) )
+  if( ! is_null( $org_id ) && is_numeric( $org_id ) ){
     $terms = wp_get_post_terms( $org_id, 'screening_question' );
-
-  if( ! isset( $terms ) ){
-    $terms = [];
-    $default_options = get_field( 'default_options', 'option' );
-
-    $default_question_ids = $default_options['default_screening_questions'];
     if( WP_CLI && class_exists( 'WP_CLI' ) )
-      \WP_CLI::line( '🔔 get_screening_questions() $default_question_ids = ' . print_r( $default_question_ids, true ) );
-
-    if( is_array( $default_question_ids ) && 0 < count( $default_question_ids ) ){
-      foreach( $default_question_ids as $ID ){
-        $term = get_term( $ID );
-        $terms[ $term->term_order ] = $term;
-      }
-    }
-    if( WP_CLI && class_exists( 'WP_CLI' ) )
-      \WP_CLI::line( '🔔 get_screening_questions() $terms = ' . print_r( $terms, true ) );
+      \WP_CLI::line( '🔔 Screen Questions set for `' . get_the_title( $org_id ) . '` = ' . print_r( $terms, true ) );
   }
+
+  if( ! isset( $terms ) || empty( $terms ) ){
+    $terms = get_field( 'default_options_default_screening_questions', 'option' );
+  }
+
   foreach( $terms as $term ) {
-    $screening_questions[ $term->term_order ] = array( 'id' => $term->term_id, 'name' => $term->name, 'desc' => $term->description );
+    $screening_questions[] = array( 'id' => $term->term_id, 'name' => $term->name, 'desc' => $term->description );
   }
-  ksort( $screening_questions );
 
   return $screening_questions;
 }
