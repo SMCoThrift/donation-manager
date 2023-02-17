@@ -179,7 +179,48 @@ function add_orphaned_donation( $args ){
     if( is_null( $args['donation_id'] ) || ! is_numeric( $args['donation_id'] ) )
         return false;
 
-    $wpdb->insert( $wpdb->prefix . 'donman_orphaned_donations', $args, array( '%d', '%d', '%s') );
+    $exists = orphaned_donation_exists([ 'contact_id' => $args['contact_id'], 'donation_id' => $args['donation_id'] ]);
+
+    if( ! $exists ){
+      $wpdb->insert( $wpdb->prefix . 'donman_orphaned_donations', $args, array( '%d', '%d', '%s') );
+      if( WP_CLI && class_exists( 'WP_CLI' ) )
+        \WP_CLI::line( '✅ Adding orphaned donation #' . $args['donation_id'] . ' for contact_id = ' . $args['contact_id'] );
+    } else {
+      if( WP_CLI && class_exists( 'WP_CLI' ) )
+        \WP_CLI::line( '🚨 Orphaned Donation exists. Skipping...' );
+    }
+}
+
+/**
+ * Determines if orphaned donation exists.
+ *
+ * @param      array  $args{
+ *   @type  int  $contact_id  The contact ID.
+ *   @type  int  $donation_id The donation ID.
+ * }
+ *
+ * @return     bool    True if orphaned donation exists, False otherwise.
+ */
+function orphaned_donation_exists( $args ){
+  global $wpdb;
+  $args = shortcode_atts([
+    'contact_id'  => null,
+    'donation_id' => null,
+  ], $args );
+
+  if( is_null( $args['contact_id'] ) || ! is_numeric( $args['contact_id'] ) )
+      return false;
+
+  if( is_null( $args['donation_id'] ) || ! is_numeric( $args['donation_id'] ) )
+      return false;
+  $sql = $wpdb->prepare( "SELECT count( ID ) AS total FROM {$wpdb->prefix}donman_orphaned_donations WHERE contact_id=%d AND donation_id=%d", $args['contact_id'], $args['donation_id'] );
+  $result = $wpdb->get_results( $sql );
+  if ( $wpdb->last_error )
+    \WP_CLI::error( '🚨 wpdb error: ' . $wpdb->last_error );
+
+  $total = $result[0]->total;
+  $exists = ( $total > 0 )? true : false ;
+  return $exists;
 }
 
 /**
