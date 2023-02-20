@@ -3,6 +3,8 @@
  * Functions for interacting with the WP REST API
  */
 namespace DonationManager\restapi;
+use function DonationManager\helpers\{get_coordinates};
+use function DonationManager\organizations\{get_default_organization};
 
 /**
  * Register WP REST API routes
@@ -48,7 +50,7 @@ function get_donations_by_area( $request ){
     }
 
     // Get the Lat/Lon of our Zip Code
-    $coordinates = \DonationManager\lib\fns\helpers\get_coordinates( $request['zipcode'] );
+    $coordinates = get_coordinates( $request['zipcode'] );
 
     if( ! $coordinates ){
         $error->add( 'nocoordinates', 'No coordinates returned for `' . $request['zipcode'] . '`.' );
@@ -74,7 +76,7 @@ function get_donations_by_area( $request ){
         }
     }
 
-    $default_org = DonationManager\organizations\get_default_organization();
+    $default_org = get_default_organization();
     $default_org_id = $default_org['id'];
 
     $donation_query_args = [];
@@ -115,7 +117,7 @@ function get_donations_by_area( $request ){
                 'title' => $title,
                 'date' => $donation->post_date,
                 'zipcode' => $donor_zip,
-                'coordinates' => \DonationManager\lib\fns\helpers\get_coordinates( $donor_zip ),
+                'coordinates' => get_coordinates( $donor_zip ),
                 'number' => $y,
             ];
             if( array_key_exists( $donor_zip, $donations_by_zipcode ) ){
