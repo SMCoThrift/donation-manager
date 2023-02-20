@@ -1,10 +1,10 @@
 === Donation Manager ===
 Contributors: TheWebist
 Tags: donations, CPT
-Requires at least: 4.5
+Requires at least: 6.0.0
 Tested up to: 6.1.1
-Requires PHP: 7.2
-Stable tag: 3.3.8
+Requires PHP: 8.0
+Stable tag: 3.3.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,11 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.3.9 =
+* Styling/Layout for `[donors_in_your_area/]`.
+* Correcting namespace function calls in `api.rest.php` for use with `[donors_in_your_area/]`.
+* Adding `stat` attribute to `[donation-stats]` for calling "donations-last-month" and "donations-last-month-value".
 
 = 3.3.8 =
 * Adding `orphaned_donation_exists()`.
