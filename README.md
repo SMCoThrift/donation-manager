@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.3.9  
+**Stable tag:** 3.3.9.1  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.3.9.1 ###
+* BUGFIX: Adding PMD 2.0 images.
 
 ### 3.3.9 ###
 * Styling/Layout for `[donors_in_your_area/]`.
