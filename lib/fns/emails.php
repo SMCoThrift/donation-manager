@@ -50,9 +50,16 @@ function notify_admin( $message = '' ){
  * @return void
  */
 function send_email( $type = '' ){
-    $donor = $_SESSION['donor'];
-    $organization_name = get_the_title( $donor['org_id'] );
-    $donor_trans_dept_id = $donor['trans_dept_id'];
+    if( array_key_exists( 'donor', $_SESSION ) ){
+      $donor = $_SESSION['donor'];
+      $organization_name = get_the_title( $donor['org_id'] );
+      $donor_trans_dept_id = $donor['trans_dept_id'];
+    } else {
+      $donor = [];
+      $organization_name = '';
+      $donor_trans_dept_id = null;
+    }
+
 
     $orphaned_donation = false;
 
@@ -67,7 +74,7 @@ function send_email( $type = '' ){
     if( isset( $donor['orphan_provider_id'] ) && is_numeric( $donor['orphan_provider_id'] ) ){
       $tc = get_orphaned_provider_contact( $donor['orphan_provider_id'] );
       $organization_name = $tc['store_name'];
-    } else {
+    } else if( array_key_exists( 'trans_dept_id', $donor ) ) {
       $tc = get_trans_dept_contact( $donor['trans_dept_id'] );
 
       //* Is this an ORPHANED DONATION? `true` or `false`?
@@ -90,14 +97,22 @@ function send_email( $type = '' ){
     }
 
     // Setup preferred contact info
-    $contact_info = ( 'Email' == $donor['preferred_contact_method'] )? '<a href="mailto:' . $donor['email'] . '">' . $donor['email'] . '</a>' : $donor['phone'];
+    if( array_key_exists( 'preferred_contact_method', $donor ) ){
+      $contact_info = ( 'Email' == $donor['preferred_contact_method'] )? '<a href="mailto:' . $donor['email'] . '">' . $donor['email'] . '</a>' : $donor['phone'];
+    } else {
+      $contact_info = '';
+    }
 
     // Retrieve the donation receipt
     //$donationreceipt = $this->get_property( 'donationreceipt' );
-    $donationreceipt = $_SESSION['donationreceipt'];
+    $donationreceipt = ( array_key_exists( 'donationreceipt', $_SESSION ) )? $_SESSION['donationreceipt'] : '' ;
 
     // Does this org allow user photo uploads?
-    $allow_user_photo_uploads = get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] );
+    if( array_key_exists( 'donor', $_SESSION ) ){
+      $allow_user_photo_uploads = get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] );
+    } else {
+      $allow_user_photo_uploads = false;
+    }
 
     $headers = array();
 

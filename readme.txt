@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.1.1
 Requires PHP: 8.0
-Stable tag: 3.3.9.2
+Stable tag: 3.3.9.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.3.9.3 =
+* Correctly calling `CHHJDonationRouter` from the parent namespace inside `send_api_post()`.
+* Checking for `$_SESSION['donor']` in `send_email()` before setting variables.
 
 = 3.3.9.2 =
 * Setting `publicly_queryable` and `show_in_rest` to `false` for Donations CPT.
