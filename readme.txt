@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.1.1
 Requires PHP: 8.0
-Stable tag: 3.3.9.1
+Stable tag: 3.3.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.3.9.2 =
+* Setting `publicly_queryable` and `show_in_rest` to `false` for Donations CPT.
+* Setting `exclude_from_search` to `true` for Donations CPT.
 
 = 3.3.9.1 =
 * BUGFIX: Adding PMD 2.0 images.
