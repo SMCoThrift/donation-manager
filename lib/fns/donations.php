@@ -192,6 +192,26 @@ function add_orphaned_donation( $args ){
 }
 
 /**
+ * Gets the donation zip code given a Donation ID.
+ *
+ * @param      int  $id     The Donation ID
+ *
+ * @return     mixed    The donation zip code or FALSE if unsuccessful.
+ */
+function get_donation_zip_code( $id = null ){
+  if( is_null( $id ) )
+    return false;
+
+  $pickup_codes = wp_get_post_terms( $id, 'pickup_code', [ 'fields' => 'names' ] );
+  if( ! $pickup_codes )
+    return false;
+
+  foreach( $pickup_codes as $pickup_code ){
+    return $pickup_code;
+  }
+}
+
+/**
  * Determines if orphaned donation exists.
  *
  * @param      array  $args{

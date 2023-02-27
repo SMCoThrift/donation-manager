@@ -5,6 +5,7 @@
 namespace DonationManager\restapi;
 use function DonationManager\helpers\{get_coordinates};
 use function DonationManager\organizations\{get_default_organization};
+use function DonationManager\donations\{get_donation_zip_code};
 
 /**
  * Register WP REST API routes
@@ -112,7 +113,7 @@ function get_donations_by_area( $request ){
         foreach( $donations as $donation ){
             $title_array = explode( ' - ', $donation->post_title );
             $title = ( is_array( $title_array ) && 0 < count( $title_array ) )? $title_array[0] : 'Misc Items' ;
-            $donor_zip = get_post_meta( $donation->ID, 'donor_zip', true );
+            $donor_zip = get_donation_zip_code( $donation->ID );
             $data['donations'][] = [
                 'title' => $title,
                 'date' => $donation->post_date,

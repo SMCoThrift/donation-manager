@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.3.9.4  
+**Stable tag:** 3.3.9.5  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.3.9.5 ###
+* BUGFIX: Fixing `get_donations_by_area()` so that the zip code for a donation is returned to be used in grabbing the coordinates for a donation.
+* Adding `get_donation_zip_code()` for retrieving a donation's zip code given a Donation ID.
 
 ### 3.3.9.4 ###
 * BUGFIX: Updating `custom_save_post()` to handle integer (i.e. Org ID) returned from `organization` field.
