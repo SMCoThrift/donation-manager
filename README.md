@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.3.9.5  
+**Stable tag:** 3.3.9.6  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.3.9.6 ###
+* BUGFIX: PHP 8 compatiblity: Removing optional parameter appearing before required parameter in `DonationRouter::save_api_response()`.
+* Adding WP CLI test for `get_donation_routing_method()`.
 
 ### 3.3.9.5 ###
 * BUGFIX: Fixing `get_donations_by_area()` so that the zip code for a donation is returned to be used in grabbing the coordinates for a donation.
