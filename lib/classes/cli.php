@@ -96,6 +96,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *   - get_default_organization
      *   - get_donation_contact
      *   - get_donation_meta
+     *   - get_donation_routing_method
      *   - get_organizations
      *   - get_orphaned_donation_contacts
      *   - get_priority_organizations
@@ -172,6 +173,20 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
 
           $custom_fields = get_post_custom( $donation_id );
           WP_CLI::line('🔔 $custom_fields = ' . print_r( $custom_fields, true ) );
+          break;
+
+        case 'get_donation_routing_method':
+          if( ! isset( $args[0] ) )
+            WP_CLI::error( 'Please provide an Org ID as the first positional argument.' );
+          if( ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'Org ID is not a number!' );
+          $post = get_post( $args[0] );
+          $posttype = get_post_type( $post );
+          if( 'organization' != $posttype )
+            WP_CLI::error( '🚨 Post Type for given ID (' . $args[0] . ') is `' . $posttype . '`.' );
+          $method = DonationManager\donations\get_donation_routing_method( $args[0] );
+
+          WP_CLI::line( '🔔 get_donation_routing_method( '.$args[0].' ) = `' . $method . '`');
           break;
 
         case 'get_priority_organizations':
