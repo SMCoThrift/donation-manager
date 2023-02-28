@@ -60,7 +60,7 @@ class DMOrphanedDonations {
     $month_options[] = '<option value="' . $start_month . '">' . date( 'M Y', strtotime( $start_month ) ) . '</option>';
     $month_options = implode( '', $month_options );
 
-    $debug = ( true == WP_DEBUG )? true : false;
+    $debug = ( DONMAN_DEV_ENV )? true : false;
 
     wp_localize_script( 'dm-orphaned-donations', 'wpvars', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'month_options' => $month_options, 'debug' => $debug ) );
   }

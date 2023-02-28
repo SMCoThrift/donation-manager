@@ -58,10 +58,11 @@ class CHHJDonationRouter extends DonationRouter{
         $this->save_api_post( $donation['ID'], $args );
 
         // Don't send if we're debugging:
-        if( true === WP_DEBUG ){
-            uber_log('INFO: `WP_DEBUG` is ON. CHHJ pickup request not sent.');
+        if( DONMAN_DEV_ENV ){
+            uber_log('INFO: `DONMAN_DEV_ENV` is ON. CHHJ pickup request not sent.');
             return;
         }
+
 
         $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );
         $this->save_api_response( $donation['ID'], $response );

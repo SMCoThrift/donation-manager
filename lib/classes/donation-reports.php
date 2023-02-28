@@ -79,7 +79,7 @@ class DMReports {
 				wp_register_script( 'datatables', 'https://cdn.datatables.net/r/dt/dt-1.10.9,fh-3.0.0/datatables.min.js', array( 'jquery' ) );
 
 		    	wp_enqueue_script( 'dm-reports-donors-js', plugins_url( '../js/reports.donors.js', __FILE__ ), array( 'jquery', 'datatables' ), filemtime( plugin_dir_path( __FILE__ ) . '../js/reports.donors.js' ) );
-                $debug = ( true == WP_DEBUG )? true : false;
+                $debug = ( DONMAN_DEV_ENV )? true : false;
                 wp_localize_script( 'dm-reports-donors-js', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ), 'site_url' => site_url( '/download-donorsbyzip/'), 'debug' => $debug, 'permalink_url' => admin_url( 'options-permalink.php' ) ] );
 
                 wp_enqueue_script( 'jquery-file-download', plugins_url( '../components/vendor/jquery-file-download/src/Scripts/jquery.fileDownload.js', __FILE__ ), array( 'jquery', 'jquery-ui-dialog', 'jquery-ui-progressbar' ) );
