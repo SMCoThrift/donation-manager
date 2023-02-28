@@ -18,7 +18,7 @@ class DonationRouter {
         update_post_meta( $donation_id, 'api_post', $args );
     }
 
-    public function save_api_response( $donation_id = null, $response ){
+    public function save_api_response( $donation_id, $response ){
         $message = ( is_wp_error( $response ) )? $response->get_error_message() : print_r( $response, true );
         if( ! is_null( $donation_id ) ){
             update_post_meta( $donation_id, 'api_response', $message );
