@@ -6,6 +6,274 @@ use function DonationManager\utilities\{get_referer};
 use function DonationManager\transdepts\{get_trans_dept_contact};
 
 /**
+ * Records an orphaned donation record (i.e. analytics for orphaned donations)
+ *
+ * @since 1.2.0
+ *
+ * @param type $var Description.
+ * @param type $var Optional. Description.
+ * @return type Description. (@return void if a non-returning function)
+ */
+function add_orphaned_donation( $args ){
+    global $wpdb;
+
+    $args = shortcode_atts( array(
+        'contact_id' => null,
+        'donation_id' => null,
+        'timestamp' => current_time( 'mysql' ),
+    ), $args );
+
+    if( is_null( $args['contact_id'] ) || ! is_numeric( $args['contact_id'] ) )
+        return false;
+
+    if( is_null( $args['donation_id'] ) || ! is_numeric( $args['donation_id'] ) )
+        return false;
+
+    $exists = orphaned_donation_exists([ 'contact_id' => $args['contact_id'], 'donation_id' => $args['donation_id'] ]);
+
+    if( ! $exists ){
+      $wpdb->insert( $wpdb->prefix . 'donman_orphaned_donations', $args, array( '%d', '%d', '%s') );
+      if( WP_CLI && class_exists( 'WP_CLI' ) )
+        \WP_CLI::line( '✅ Adding orphaned donation #' . $args['donation_id'] . ' for contact_id = ' . $args['contact_id'] );
+    } else {
+      if( WP_CLI && class_exists( 'WP_CLI' ) )
+        \WP_CLI::line( '🚨 Orphaned Donation exists. Skipping...' );
+    }
+}
+
+/**
+ * Given a donation ID and a contact type, returns contact
+ * info for a donation’s donor or trans dept contact.
+ *
+ * @since 1.4.4
+ *
+ * @param int $donation_id Donation ID.
+ * @param string $contact_type Either `donor` or `transdept`.
+ * @return array Contact name and email.
+ */
+function get_donation_contact( $donation_id = null, $contact_type = null ){
+    if( is_null( $donation_id ) || is_null( $contact_type ) )
+        return false;
+
+    $contact = array();
+
+    switch( $contact_type ){
+        case 'donor':
+            $contact['contact_email'] = get_field( 'donor_email', $donation_id );
+            $contact['contact_name'] = get_field( 'donor_name', $donation_id );
+        break;
+
+        case 'transdept':
+            $id = get_field( 'trans_dept', $donation_id );
+            $contact = get_trans_dept_contact( $id );
+        break;
+    }
+
+    return $contact;
+}
+
+/**
+ * Generates a donation hash
+ *
+ * @access (for functions: only use if private)
+ * @since 1.x.x
+ *
+ * @param array $donation Donation array.
+ * @return str MD5 hash generated from donation array.
+ */
+function get_donation_hash( $donation ){
+  if( empty( $donation ) || ! is_array( $donation ) )
+    return false;
+
+  $donation_string = $donation['address']['name']['first'] . $donation['address']['name']['last'] . $donation['email'];
+  $hash = md5( $donation_string );
+  return $hash;
+}
+
+/**
+ * Compiles the donation into an HTML receipt
+ *
+ * @since 1.0.0
+ *
+ * @param array $donation Donation array.
+ * @return string Donation receipt HTML.
+ */
+function get_donation_receipt( $donation = array(), $click_to_claim = false ){
+  if( empty( $donation ) || ! is_array( $donation ) )
+    return '<p>No data sent to <code>get_donation_receipt</code>!</p>';
+
+  // Setup preferred contact info
+  $contact_info = ( 'Email' == $donation['preferred_contact_method'] )? '<a href="mailto:' . $donation['email'] . '">' . $donation['email'] . '</a>' : $donation['phone'];
+
+  // Setup the $key we use to generate the pickup address
+  $pickup_add_key = ( 'Yes' == $donation['different_pickup_address'] )? 'pickup_address' : 'address';
+
+  // Format Screening Questions
+  if( isset( $donation['screening_questions'] ) && is_array( $donation['screening_questions'] ) ){
+    $screening_questions = array();
+    foreach( $donation['screening_questions'] as $screening_question ){
+      $screening_questions[] = $screening_question['question'] . ' <em>' . $screening_question['answer'] . '</em>';
+    }
+    $screening_questions = '<ul><li>' . implode( '</li><li>', $screening_questions ) . '</li></ul>';
+  } else {
+    $screening_questions = '<em>Not applicable.</em>';
+  }
+
+  if( ! empty( $donation['address']['company'] ) ){
+    $donor_info = $donation['address']['company'] . '<br>c/o ' .$donation['address']['name']['first'] . ' ' . $donation['address']['name']['last'];
+  } else {
+    $donor_info = $donation['address']['name']['first'] . ' ' . $donation['address']['name']['last'];
+  }
+
+  if( $click_to_claim ){
+    $donor_info = $donor_info . '<br>' . $donation['address']['city'] . ', ' . $donation['address']['state'] . ' ' . $donation['address']['zip'] . '<br><a href="#">Click here to get this donor\'s full information.</a>';
+  } else {
+    $donor_info = $donor_info . '<br>' . $donation['address']['address'] . '<br>' . $donation['address']['city'] . ', ' . $donation['address']['state'] . ' ' . $donation['address']['zip'] . '<br>' . $donation['phone'] . '<br>' . $donation['email'];
+  }
+
+  $data = [
+    'id'          => $donation['ID'],
+    'donor_info'  => $donor_info,
+    'pickupaddress' => $donation[$pickup_add_key]['address'] . '<br>' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'],
+    'pickupaddress_query' => urlencode( $donation[$pickup_add_key]['address'] . ', ' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'] ),
+    'preferred_contact_method' => $donation['preferred_contact_method'] . ' - ' . $contact_info,
+    'items' => implode( ', ', $donation['items'] ),
+    'description' => nl2br( $donation['description'] ),
+    'screening_questions' => $screening_questions,
+    'pickuplocation' =>  $donation['pickuplocation'],
+    'pickup_code' => $donation['pickup_code'],
+    'preferred_code' => $donation['preferred_code'],
+    'reason' => $donation['reason'],
+  ];
+
+  if( ! empty( $donation['pickupdate1'] ) ){
+    $data['pickupdates'] = [
+      0 => [ 'date' => $donation['pickupdate1'], 'time' => $donation['pickuptime1'] ],
+      1 => [ 'date' => $donation['pickupdate2'], 'time' => $donation['pickuptime2'] ],
+      2 => [ 'date' => $donation['pickupdate3'], 'time' => $donation['pickuptime3'] ],
+    ];
+  }
+  $donationreceipt = render_template( 'email.donation-receipt', $data );
+
+  return $donationreceipt;
+}
+
+/**
+ * Returns organization’s donation routing method.
+ *
+ * @access self::send_email()
+ * @since 1.4.0
+ *
+ * @param int $org_id Organization ID.
+ * @return string Organization's routing method. Defaults to `email`.
+ */
+function get_donation_routing_method( $org_id = null ){
+  if( is_null( $org_id ) )
+    return false;
+
+  $donation_routing = get_field( 'pickup_settings_donation_routing', $org_id );
+
+  if( empty( $donation_routing ) )
+    $donation_routing = 'email';
+
+  return $donation_routing;
+}
+
+/**
+ * Gets the donation zip code given a Donation ID.
+ *
+ * @param      int  $id     The Donation ID
+ *
+ * @return     mixed    The donation zip code or FALSE if unsuccessful.
+ */
+function get_donation_zip_code( $id = null ){
+  if( is_null( $id ) )
+    return false;
+
+  $pickup_codes = wp_get_post_terms( $id, 'pickup_code', [ 'fields' => 'names' ] );
+  if( ! $pickup_codes )
+    return false;
+
+  foreach( $pickup_codes as $pickup_code ){
+    return $pickup_code;
+  }
+}
+
+/**
+ * Checks to see if a donation is a duplicate
+ *
+ * @since 1.4.6
+ *
+ * @param array $donation Donation array.
+ * @return bool Returns `true` if a duplicate exists.
+ */
+function is_duplicate_donation( $donation ){
+  $duplicate = false;
+
+  $hash = get_donation_hash( $donation );
+  $duplicate = get_transient( 'dm_donation_' . $hash );
+
+  return $duplicate;
+}
+
+/**
+ * Determines if orphaned donation exists.
+ *
+ * @param      array  $args{
+ *   @type  int  $contact_id  The contact ID.
+ *   @type  int  $donation_id The donation ID.
+ * }
+ *
+ * @return     bool    True if orphaned donation exists, False otherwise.
+ */
+function orphaned_donation_exists( $args ){
+  global $wpdb;
+  $args = shortcode_atts([
+    'contact_id'  => null,
+    'donation_id' => null,
+  ], $args );
+
+  if( is_null( $args['contact_id'] ) || ! is_numeric( $args['contact_id'] ) )
+      return false;
+
+  if( is_null( $args['donation_id'] ) || ! is_numeric( $args['donation_id'] ) )
+      return false;
+  $sql = $wpdb->prepare( "SELECT count( ID ) AS total FROM {$wpdb->prefix}donman_orphaned_donations WHERE contact_id=%d AND donation_id=%d", $args['contact_id'], $args['donation_id'] );
+  $result = $wpdb->get_results( $sql );
+  if ( $wpdb->last_error )
+    \WP_CLI::error( '🚨 wpdb error: ' . $wpdb->last_error );
+
+  $total = $result[0]->total;
+  $exists = ( $total > 0 )? true : false ;
+  return $exists;
+}
+
+/**
+ * Saves a donation hash.
+ *
+ * @param      int  $ID     The Donation ID.
+ *
+ * @return     bool    TRUE upon successful save of a donation hash.
+ */
+function save_donation_hash( $ID = null ){
+  if( is_null( $ID ) || empty( $ID ) || ! is_numeric( $ID ) )
+    return false;
+
+  $postype = get_post_type( $ID );
+  if( 'donation' != $postype )
+    return false;
+
+  $donation = get_post( $ID );
+  if( $donation ){
+    $post_date = $donation->post_date;
+    $zipcode = get_donation_zip_code( $ID );
+    $donation_hash = wp_hash_password( $post_date . $zipcode );
+    update_post_meta( $ID, 'donation_hash', $donation_hash );
+    return true;
+  }
+}
+
+/**
  * Saves a donation to the database
  *
  * @since 1.0.0
@@ -36,9 +304,6 @@ function save_donation( $donation = array() ){
   $donation['ID'] = $ID;
   $_SESSION['donor']['ID'] = $ID;
   $donationreceipt = get_donation_receipt( $donation );
-  // 09/13/2022 (09:30) - Since we're not inside an object, the following won't work.
-  // Need to figure out what to do with the below:
-  //$this->set_property( 'donationreceipt', $donationreceipt );
   $_SESSION['donationreceipt'] = $donationreceipt;
 
   $post = [
@@ -156,94 +421,6 @@ function save_donation( $donation = array() ){
 }
 
 /**
- * Records an orphaned donation record (i.e. analytics for orphaned donations)
- *
- * @since 1.2.0
- *
- * @param type $var Description.
- * @param type $var Optional. Description.
- * @return type Description. (@return void if a non-returning function)
- */
-function add_orphaned_donation( $args ){
-    global $wpdb;
-
-    $args = shortcode_atts( array(
-        'contact_id' => null,
-        'donation_id' => null,
-        'timestamp' => current_time( 'mysql' ),
-    ), $args );
-
-    if( is_null( $args['contact_id'] ) || ! is_numeric( $args['contact_id'] ) )
-        return false;
-
-    if( is_null( $args['donation_id'] ) || ! is_numeric( $args['donation_id'] ) )
-        return false;
-
-    $exists = orphaned_donation_exists([ 'contact_id' => $args['contact_id'], 'donation_id' => $args['donation_id'] ]);
-
-    if( ! $exists ){
-      $wpdb->insert( $wpdb->prefix . 'donman_orphaned_donations', $args, array( '%d', '%d', '%s') );
-      if( WP_CLI && class_exists( 'WP_CLI' ) )
-        \WP_CLI::line( '✅ Adding orphaned donation #' . $args['donation_id'] . ' for contact_id = ' . $args['contact_id'] );
-    } else {
-      if( WP_CLI && class_exists( 'WP_CLI' ) )
-        \WP_CLI::line( '🚨 Orphaned Donation exists. Skipping...' );
-    }
-}
-
-/**
- * Gets the donation zip code given a Donation ID.
- *
- * @param      int  $id     The Donation ID
- *
- * @return     mixed    The donation zip code or FALSE if unsuccessful.
- */
-function get_donation_zip_code( $id = null ){
-  if( is_null( $id ) )
-    return false;
-
-  $pickup_codes = wp_get_post_terms( $id, 'pickup_code', [ 'fields' => 'names' ] );
-  if( ! $pickup_codes )
-    return false;
-
-  foreach( $pickup_codes as $pickup_code ){
-    return $pickup_code;
-  }
-}
-
-/**
- * Determines if orphaned donation exists.
- *
- * @param      array  $args{
- *   @type  int  $contact_id  The contact ID.
- *   @type  int  $donation_id The donation ID.
- * }
- *
- * @return     bool    True if orphaned donation exists, False otherwise.
- */
-function orphaned_donation_exists( $args ){
-  global $wpdb;
-  $args = shortcode_atts([
-    'contact_id'  => null,
-    'donation_id' => null,
-  ], $args );
-
-  if( is_null( $args['contact_id'] ) || ! is_numeric( $args['contact_id'] ) )
-      return false;
-
-  if( is_null( $args['donation_id'] ) || ! is_numeric( $args['donation_id'] ) )
-      return false;
-  $sql = $wpdb->prepare( "SELECT count( ID ) AS total FROM {$wpdb->prefix}donman_orphaned_donations WHERE contact_id=%d AND donation_id=%d", $args['contact_id'], $args['donation_id'] );
-  $result = $wpdb->get_results( $sql );
-  if ( $wpdb->last_error )
-    \WP_CLI::error( '🚨 wpdb error: ' . $wpdb->last_error );
-
-  $total = $result[0]->total;
-  $exists = ( $total > 0 )? true : false ;
-  return $exists;
-}
-
-/**
  * Applies terms to the donation.
  *
  * @param      int    $ID        The Donation ID.
@@ -280,153 +457,4 @@ function tag_donation( $ID = null, $donation = [] ){
     $screening_question_ids = array_unique( $screening_question_ids );
     wp_set_object_terms( $ID, $screening_question_ids, 'screening_question' );
   }
-}
-
-/**
- * Given a donation ID and a contact type, returns contact
- * info for a donation’s donor or trans dept contact.
- *
- * @since 1.4.4
- *
- * @param int $donation_id Donation ID.
- * @param string $contact_type Either `donor` or `transdept`.
- * @return array Contact name and email.
- */
-function get_donation_contact( $donation_id = null, $contact_type = null ){
-    if( is_null( $donation_id ) || is_null( $contact_type ) )
-        return false;
-
-    $contact = array();
-
-    switch( $contact_type ){
-        case 'donor':
-            $contact['contact_email'] = get_field( 'donor_email', $donation_id );
-            $contact['contact_name'] = get_field( 'donor_name', $donation_id );
-        break;
-
-        case 'transdept':
-            $id = get_field( 'trans_dept', $donation_id );
-            $contact = get_trans_dept_contact( $id );
-        break;
-    }
-
-    return $contact;
-}
-
-/**
- * Generates a donation hash
- *
- * @access (for functions: only use if private)
- * @since 1.x.x
- *
- * @param array $donation Donation array.
- * @return str MD5 hash generated from donation array.
- */
-function get_donation_hash( $donation ){
-  if( empty( $donation ) || ! is_array( $donation ) )
-    return false;
-
-  $donation_string = $donation['address']['name']['first'] . $donation['address']['name']['last'] . $donation['email'];
-  $hash = md5( $donation_string );
-  return $hash;
-}
-
-/**
- * Compiles the donation into an HTML receipt
- *
- * @since 1.0.0
- *
- * @param array $donation Donation array.
- * @return string Donation receipt HTML.
- */
-function get_donation_receipt( $donation = array() ){
-  if( empty( $donation ) || ! is_array( $donation ) )
-    return '<p>No data sent to <code>get_donation_receipt</code>!</p>';
-
-  // Setup preferred contact info
-  $contact_info = ( 'Email' == $donation['preferred_contact_method'] )? '<a href="mailto:' . $donation['email'] . '">' . $donation['email'] . '</a>' : $donation['phone'];
-
-  // Setup the $key we use to generate the pickup address
-  $pickup_add_key = ( 'Yes' == $donation['different_pickup_address'] )? 'pickup_address' : 'address';
-
-  // Format Screening Questions
-  if( isset( $donation['screening_questions'] ) && is_array( $donation['screening_questions'] ) ){
-    $screening_questions = array();
-    foreach( $donation['screening_questions'] as $screening_question ){
-      $screening_questions[] = $screening_question['question'] . ' <em>' . $screening_question['answer'] . '</em>';
-    }
-    $screening_questions = '<ul><li>' . implode( '</li><li>', $screening_questions ) . '</li></ul>';
-  } else {
-    $screening_questions = '<em>Not applicable.</em>';
-  }
-
-  if( ! empty( $donation['address']['company'] ) ){
-    $donor_info = $donation['address']['company'] . '<br>c/o ' .$donation['address']['name']['first'] . ' ' . $donation['address']['name']['last'];
-  } else {
-    $donor_info = $donation['address']['name']['first'] . ' ' . $donation['address']['name']['last'];
-  }
-
-  $data = [
-    'id'          => $donation['ID'],
-    'donor_info'  => $donor_info . '<br>' . $donation['address']['address'] . '<br>' . $donation['address']['city'] . ', ' . $donation['address']['state'] . ' ' . $donation['address']['zip'] . '<br>' . $donation['phone'] . '<br>' . $donation['email'],
-    'pickupaddress' => $donation[$pickup_add_key]['address'] . '<br>' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'],
-    'pickupaddress_query' => urlencode( $donation[$pickup_add_key]['address'] . ', ' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'] ),
-    'preferred_contact_method' => $donation['preferred_contact_method'] . ' - ' . $contact_info,
-    'items' => implode( ', ', $donation['items'] ),
-    'description' => nl2br( $donation['description'] ),
-    'screening_questions' => $screening_questions,
-    'pickuplocation' =>  $donation['pickuplocation'],
-    'pickup_code' => $donation['pickup_code'],
-    'preferred_code' => $donation['preferred_code'],
-    'reason' => $donation['reason'],
-  ];
-
-  if( ! empty( $donation['pickupdate1'] ) ){
-    $data['pickupdates'] = [
-      0 => [ 'date' => $donation['pickupdate1'], 'time' => $donation['pickuptime1'] ],
-      1 => [ 'date' => $donation['pickupdate2'], 'time' => $donation['pickuptime2'] ],
-      2 => [ 'date' => $donation['pickupdate3'], 'time' => $donation['pickuptime3'] ],
-    ];
-  }
-  $donationreceipt = render_template( 'email.donation-receipt', $data );
-
-  return $donationreceipt;
-}
-
-/**
- * Returns organization’s donation routing method.
- *
- * @access self::send_email()
- * @since 1.4.0
- *
- * @param int $org_id Organization ID.
- * @return string Organization's routing method. Defaults to `email`.
- */
-function get_donation_routing_method( $org_id = null ){
-  if( is_null( $org_id ) )
-    return false;
-
-  $donation_routing = get_field( 'pickup_settings_donation_routing', $org_id );
-
-  if( empty( $donation_routing ) )
-    $donation_routing = 'email';
-
-  return $donation_routing;
-}
-
-/**
- * Checks to see if a donation is a duplicate
- *
- * @since 1.4.6
- *
- * @param array $donation Donation array.
- * @return bool Returns `true` if a duplicate exists.
- */
-function is_duplicate_donation( $donation ){
-  $duplicate = false;
-
-  $hash = get_donation_hash( $donation );
-  $duplicate = get_transient( 'dm_donation_' . $hash );
-
-  return $duplicate;
 }
