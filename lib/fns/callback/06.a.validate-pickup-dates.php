@@ -2,7 +2,8 @@
 use function DonationManager\utilities\{get_alert,get_posted_var};
 use function DonationManager\globals\{add_html};
 use function DonationManager\emails\{notify_admin,send_email};
-use function DonationManager\donations\{save_donation,tag_donation};
+use function DonationManager\donations\{save_donation,tag_donation,save_donation_hash};
+use function DonationManager\organizations\{is_orphaned_donation};
 
 /**
  * 06. VALIDATE PICKUP DATES
@@ -65,9 +66,9 @@ if( isset( $_POST['donor']['pickupdate1'] ) ){
     // Save the donation to the database and send the confirmation and notification emails.
     if( $ID = save_donation( $_SESSION['donor'] ) ){
       tag_donation( $ID, $_SESSION['donor'] );
+      if( is_orphaned_donation( $_SESSION['donor']['trans_dept_id'] ) )
+        $_SESSION['donor']['donation_hash'] = save_donation_hash( $ID );
 
-      // 09/13/2022 (09:58) - CONTINUE WORKING HERE:
-      // Configure the following emails:
       send_email( 'trans_dept_notification' );
       send_email( 'donor_confirmation' );
       $_SESSION['donor']['form'] = 'thank-you';
