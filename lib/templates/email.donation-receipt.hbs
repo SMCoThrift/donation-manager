@@ -4,7 +4,11 @@
 {{{donor_info}}}<br><br>
 
 <strong>PICK UP ADDRESS:</strong><br>
-<a href="http://maps.google.com/?q={{pickupaddress_query}}" target="_blank">{{{pickupaddress}}}</a><br><br>
+{{#if click_to_claim}}
+{{{pickupaddress}}}
+{{else}}
+<a href="http://maps.google.com/?q={{pickupaddress_query}}" target="_blank">{{{pickupaddress}}}</a>
+{{/if}}<br><br>
 
 <strong>PREFERRED CONTACT METHOD:</strong> {{{preferred_contact_method}}}<br><br>
 
