@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.1.1
 Requires PHP: 8.0
-Stable tag: 3.3.9.7
+Stable tag: 3.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,11 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.4.0 =
+* New Feature: `[click_to_claim]` shortcode for processing "Click to Claim" links.
+* Removing "social sharing" note on donation receipt.
+* Adding `get_contact()` for retrieving contact details of Network Providers.
 
 = 3.3.9.7 =
 * BUGFIX: Using `DONMAN_DEV_ENV` instead of `WP_DEBUG` to accomodate SpinupWP default settings in production.
