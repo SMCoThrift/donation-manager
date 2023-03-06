@@ -1,6 +1,9 @@
 <?php
 
 namespace DonationManager\donations;
+use function DonationManager\organizations\{is_orphaned_donation};
+use function DonationManager\donations\{get_orphaned_donation_notifications};
+use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
 
 /**
  * Supplies content for custom columns.
@@ -25,8 +28,24 @@ function custom_column_content( $column ){
           $text = ( 'publish' == $post_status )? 'NOT SET!' : 'not set';
           $org_name = '<code style="color: #' . $color . '; font-weight: bold;">' . $text . '</code>';
         }
-
-        echo $org_name;
+        $trans_dept = get_field( 'trans_dept', $post->ID );
+        if( is_object( $trans_dept ) && is_orphaned_donation( $trans_dept->ID ) ){
+          $notifications = get_orphaned_donation_notifications( $post->ID );
+          //echo '<pre>' . print_r( $notifications, true ) . '</pre>';
+          $rows = [];
+          if( is_array( $notifications ) && 0 < count( $notifications ) ){
+            foreach( $notifications as $notification ){
+              $cells = [];
+              $contact = get_orphaned_provider_contact( $notification->contact_id );
+              $cells[] = $contact['store_name'] . '<br>(' . $contact['contact_email'] . ')';
+              $cells[] = ( ! empty( $notification->click_timestamp ) )? date( 'm/d/Y h:ia (\E\S\T)', strtotime( $notification->click_timestamp ) ) : '' ;
+              $rows[] = '<tr><td style="padding: 4px">' . implode( '</td><td style="padding: 2px 4px">', $cells ) . '</td></tr>';
+            }
+          }
+          echo $org_name . '<table class="striped orphaned-contacts"><tbody>' . implode( '', $rows ) . '</tbody></table>';
+        } else {
+          echo $org_name;
+        }
     break;
 
     case 'trans_dept':

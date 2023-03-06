@@ -66,19 +66,6 @@ function add_orphaned_donation( $args ){
 }
 
 /**
- * Returns a "Click to Claim" URL.
- *
- * @param      string  $dh                    Donation hash.
- * @param      int     $contact_id            The contact ID
- * @param      int     $orphaned_donation_id  The orphaned donation ID
- *
- * @return     string  The "Click to Claim" link.
- */
-function get_click_to_claim_link( $dh, $contact_id ){
-  return site_url( 'click-to-claim/?dh=' . $dh . '&cid=' . $contact_id );
-}
-
-/**
  * Claims a donation.
  *
  * @param      int  $donation_id  The donation ID.
@@ -101,6 +88,19 @@ function claim_donation( $donation_id, $contact_id ){
   }
 
   return $success;
+}
+
+/**
+ * Returns a "Click to Claim" URL.
+ *
+ * @param      string  $dh                    Donation hash.
+ * @param      int     $contact_id            The contact ID
+ * @param      int     $orphaned_donation_id  The orphaned donation ID
+ *
+ * @return     string  The "Click to Claim" link.
+ */
+function get_click_to_claim_link( $dh, $contact_id ){
+  return site_url( 'click-to-claim/?dh=' . $dh . '&cid=' . $contact_id );
 }
 
 /**
@@ -264,6 +264,25 @@ function get_donation_zip_code( $id = null ){
   foreach( $pickup_codes as $pickup_code ){
     return $pickup_code;
   }
+}
+
+/**
+ * Gets the orphaned donation notifications.
+ *
+ * @param      int  $donation_id  The donation OD
+ *
+ * @return     array|false    The orphaned donation notifications.
+ */
+function get_orphaned_donation_notifications( $donation_id = null ){
+  if( is_null( $donation_id ) )
+    return false;
+
+  global $wpdb;
+  $notifications = $wpdb->get_results(
+    $wpdb->prepare( 'SELECT contact_id,click_timestamp FROM ' . $wpdb->prefix . 'donman_orphaned_donations WHERE donation_id=%d', $donation_id )
+  );
+
+  return $notifications;
 }
 
 /**
