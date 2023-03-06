@@ -16,6 +16,10 @@ Long description goes here...
 
 == Changelog ==
 
+= 3.4.1 =
+* Updating email address in Transportation Department note for Orphaned Donation emails.
+* Removing social sharing note from Donor Confirmation email.
+
 = 3.4.0 =
 * New Feature: `[click_to_claim]` shortcode for processing "Click to Claim" links.
 * Removing "social sharing" note on donation receipt.
