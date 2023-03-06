@@ -359,7 +359,7 @@ function get_priority_organizations( $pickup_code = null ){
       // a priority provider in the contacts table.
       $contacts = get_orphaned_donation_contacts( array( 'pcode' => $pickup_code, 'limit' => 1, 'priority' => 1 ) );
 
-      if( 0 < count( $contacts ) )
+      if( is_null( $contacts ) || 0 < count( $contacts ) )
           $organizations[] = $default_org;
   }
 
