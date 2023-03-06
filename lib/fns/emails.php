@@ -8,7 +8,7 @@ use function DonationManager\apirouting\{send_api_post};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact,get_orphaned_donation_contacts};
 use function DonationManager\organizations\{is_orphaned_donation};
 use function DonationManager\helpers\{get_socialshare_copy};
-use function DonationManager\donations\{get_donation_routing_method,add_orphaned_donation};
+use function DonationManager\donations\{get_donation_routing_method,add_orphaned_donation,get_donation_receipt,get_click_to_claim_link};
 
 /**
  * Sends an alert email to PMD Admin.
@@ -63,13 +63,6 @@ function send_email( $type = '' ){
 
     $orphaned_donation = false;
 
-    /**
-     * 08/23/2022 (08:24) - TODO: Refactor:
-     *
-     * - $this->get_orphaned_provider_contact
-     * - $this->_is_orphaned_donation
-     * - $this->get_orphaned_donation_contacts
-     */
     // If isset( $donor['orphan_provider_id'] ), donor is using an Orphaned By-Pass link
     if( isset( $donor['orphan_provider_id'] ) && is_numeric( $donor['orphan_provider_id'] ) ){
       $tc = get_orphaned_provider_contact( $donor['orphan_provider_id'] );
@@ -269,7 +262,7 @@ function send_email( $type = '' ){
             && 0 < count( $tc['orphaned_donation_contacts'] )
           ){
             foreach( $tc['orphaned_donation_contacts'] as $contact_id => $contact_email ){
-              $recipients[] = $contact_email;
+              $recipients[$contact_id] = $contact_email;
               add_orphaned_donation( array( 'contact_id' => $contact_id, 'donation_id' => $donor['ID'] ) );
             }
 
@@ -320,7 +313,7 @@ function send_email( $type = '' ){
           $hbs_vars = [
             'donor_name' => $donor['address']['name']['first'] . ' ' .$donor['address']['name']['last'],
             'contact_info' => str_replace( '<a href', '<a style="color: #6f6f6f; text-decoration: none;" href', $contact_info ),
-            'donationreceipt' => $donationreceipt,
+            'donationreceipt' => get_donation_receipt( $donor, $orphaned_donation ), // 03/06/2023 (10:40) - if TRUE == $orphaned_donation, the donation receipt will omit donor contact details in favor of using the "Click to Claim" link
             'orphaned_donation_note' => $orphaned_donation_note,
             'organization_name' => $organization_name,
           ];
@@ -336,8 +329,10 @@ function send_email( $type = '' ){
            * in each, we need to generate the html for each email address.
            */
           uber_log('$recipients = ' . print_r( $recipients, true ) );
-          foreach ( $recipients as $email ) {
+          foreach ( $recipients as $contact_id => $email ) {
             $hbs_vars['email'] = $email;
+            if( array_key_exists( 'donation_hash', $_SESSION['donor'] ) )
+              $hbs_vars['click_to_claim'] = get_click_to_claim_link( $_SESSION['donor']['donation_hash'], $contact_id );
             //write_log( '🔔 $hbs_vars = ' . print_r( $hbs_vars, true ) );
             $discrete_html_emails[$email] = render_template( 'email.trans-dept-notification', $hbs_vars );
           }

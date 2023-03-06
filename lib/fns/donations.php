@@ -6,6 +6,30 @@ use function DonationManager\utilities\{get_referer};
 use function DonationManager\transdepts\{get_trans_dept_contact};
 
 /**
+ * Adds a click timestamp to an Orphaned Donation.
+ *
+ * @param      int  $donation_id  The donation ID
+ * @param      int  $contact_id   The contact ID
+ *
+ * @return     int|false  Number of Orphaned Donations updated on success or FALSE on failure.
+ */
+function add_click_timestamp( $donation_id, $contact_id ){
+  uber_log('🔔 add_click_timestamp('.$donation_id.','.$contact_id.')');
+  if( ! is_numeric( $donation_id ) || ! is_numeric( $contact_id ) )
+    return false;
+
+  global $wpdb;
+  $result = $wpdb->update(
+    $wpdb->prefix . 'donman_orphaned_donations',
+    [ 'click_timestamp' => current_time( 'mysql' ) ],
+    [ 'donation_id' => $donation_id, 'contact_id' => $contact_id ]
+  );
+  uber_log('🔔 $result = '. $result);
+
+  return $result;
+}
+
+/**
  * Records an orphaned donation record (i.e. analytics for orphaned donations)
  *
  * @since 1.2.0
@@ -39,6 +63,44 @@ function add_orphaned_donation( $args ){
       if( WP_CLI && class_exists( 'WP_CLI' ) )
         \WP_CLI::line( '🚨 Orphaned Donation exists. Skipping...' );
     }
+}
+
+/**
+ * Returns a "Click to Claim" URL.
+ *
+ * @param      string  $dh                    Donation hash.
+ * @param      int     $contact_id            The contact ID
+ * @param      int     $orphaned_donation_id  The orphaned donation ID
+ *
+ * @return     string  The "Click to Claim" link.
+ */
+function get_click_to_claim_link( $dh, $contact_id ){
+  return site_url( 'click-to-claim/?dh=' . $dh . '&cid=' . $contact_id );
+}
+
+/**
+ * Claims a donation.
+ *
+ * @param      int  $donation_id  The donation ID.
+ * @param      int  $contact_id   The contact ID.
+ *
+ * @return     mixed       Returns Meta ID upon success or false on failure
+ */
+function claim_donation( $donation_id, $contact_id ){
+  if( ! is_numeric( $donation_id) )
+    return new \WP_Error( 'notanumber', __( 'Non numeric Donation ID.' ) );
+  $posttype = get_post_type( $donation_id );
+  if( 'donation' != $posttype )
+    return new \WP_Error( 'notadonation', __( 'Provided ID is not a Donation ID.' ) );
+
+  $success = false;
+  if( ! is_claimed( $donation_id ) ){
+    $success = add_post_meta( $donation_id, 'claimed', true );
+    add_post_meta( $donation_id, 'claimed_contact_id', $contact_id );
+    add_post_meta( $donation_id, 'claimed_timestamp', current_time( 'mysql' ) );
+  }
+
+  return $success;
 }
 
 /**
@@ -126,17 +188,21 @@ function get_donation_receipt( $donation = array(), $click_to_claim = false ){
   }
 
   if( $click_to_claim ){
-    $donor_info = $donor_info . '<br>' . $donation['address']['city'] . ', ' . $donation['address']['state'] . ' ' . $donation['address']['zip'] . '<br><a href="#">Click here to get this donor\'s full information.</a>';
+    $donor_info = $donor_info . '<br>' . $donation['address']['city'] . ', ' . $donation['address']['state'] . ' ' . $donation['address']['zip'] . '<br>(<em>Click the button above to get this donor\'s full information.</em>)';
+    $pickup_address = '(<em>Click the button above to get this donor\'s full information.</em>)';
+    $preferred_contact_method = '(<em>Click the button above to get this donor\'s full information.</em>)';
   } else {
     $donor_info = $donor_info . '<br>' . $donation['address']['address'] . '<br>' . $donation['address']['city'] . ', ' . $donation['address']['state'] . ' ' . $donation['address']['zip'] . '<br>' . $donation['phone'] . '<br>' . $donation['email'];
+    $pickup_address = $donation[$pickup_add_key]['address'] . '<br>' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'];
+    $preferred_contact_method = $donation['preferred_contact_method'] . ' - ' . $contact_info;
   }
 
   $data = [
     'id'          => $donation['ID'],
     'donor_info'  => $donor_info,
-    'pickupaddress' => $donation[$pickup_add_key]['address'] . '<br>' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'],
+    'pickupaddress' => $pickup_address,
     'pickupaddress_query' => urlencode( $donation[$pickup_add_key]['address'] . ', ' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'] ),
-    'preferred_contact_method' => $donation['preferred_contact_method'] . ' - ' . $contact_info,
+    'preferred_contact_method' => $preferred_contact_method,
     'items' => implode( ', ', $donation['items'] ),
     'description' => nl2br( $donation['description'] ),
     'screening_questions' => $screening_questions,
@@ -144,6 +210,7 @@ function get_donation_receipt( $donation = array(), $click_to_claim = false ){
     'pickup_code' => $donation['pickup_code'],
     'preferred_code' => $donation['preferred_code'],
     'reason' => $donation['reason'],
+    'click_to_claim' => $click_to_claim,
   ];
 
   if( ! empty( $donation['pickupdate1'] ) ){
@@ -200,6 +267,47 @@ function get_donation_zip_code( $id = null ){
 }
 
 /**
+ * Gets the first click to claim timestamp.
+ *
+ * @param      int  $contact_id   The contact identifier
+ * @param      int  $donation_id  The donation identifier
+ *
+ * @return     string|false    The first click to claim.
+ */
+function get_first_click_to_claim( $donation_id = null ){
+  if( is_null( $donation_id ) )
+    return false;
+  if( ! is_numeric( $donation_id ) )
+    return false;
+
+  $claimed_timestamp = get_post_meta( $donation_id, 'claimed_timestamp', true );
+  $claimed_contact_id = get_post_meta( $donation_id, 'claimed_contact_id', true );
+  return $claim_data = [
+    'timestamp'   => $claimed_timestamp,
+    'contact_id'  => $claimed_contact_id,
+  ];
+}
+
+/**
+ * Determines whether the specified donation is claimed.
+ *
+ * @param      int $donation_id  The donation ID
+ *
+ * @return     bool       True if the specified donation is claimed, False otherwise.
+ */
+function is_claimed( $donation_id ){
+  if( ! is_numeric( $donation_id) )
+    return new \WP_Error( 'notanumber', __( 'Non numeric Donation ID.' ) );
+  $posttype = get_post_type( $donation_id );
+  if( 'donation' != $posttype )
+    return new \WP_Error( 'notadonation', __( 'Provided ID is not a Donation ID.' ) );
+
+  $claimed = get_post_meta( $donation_id, 'claimed', true );
+
+  return $claimed;
+}
+
+/**
  * Checks to see if a donation is a duplicate
  *
  * @since 1.4.6
@@ -253,7 +361,7 @@ function orphaned_donation_exists( $args ){
  *
  * @param      int  $ID     The Donation ID.
  *
- * @return     bool    TRUE upon successful save of a donation hash.
+ * @return     mixed    Returns Donation Hash upon successful save or FALSE.
  */
 function save_donation_hash( $ID = null ){
   if( is_null( $ID ) || empty( $ID ) || ! is_numeric( $ID ) )
@@ -269,7 +377,7 @@ function save_donation_hash( $ID = null ){
     $zipcode = get_donation_zip_code( $ID );
     $donation_hash = wp_hash_password( $post_date . $zipcode );
     update_post_meta( $ID, 'donation_hash', $donation_hash );
-    return true;
+    return $donation_hash;
   }
 }
 
