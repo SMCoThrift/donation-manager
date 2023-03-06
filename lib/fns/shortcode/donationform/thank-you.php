@@ -9,6 +9,7 @@ use function DonationManager\realtors\{get_realtor_ads};
 
 add_html( '<p>Thank you for donating! We will contact you to finalize your pickup date. Below is a copy of your donation receipt which you will also receive via email.</p>' );
 $allow_user_photo_uploads = get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] );
+/*
 if( ! $allow_user_photo_uploads )
 {
   // Social Sharing
@@ -23,6 +24,7 @@ if( ! $allow_user_photo_uploads )
   if( false != $socialshare_copy )
     add_html( $social_post_text );
 }
+/**/
 
 // Retrieve the donation receipt
 $donationreceipt = get_donation_receipt( $_SESSION['donor'] );
