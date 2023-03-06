@@ -36,7 +36,9 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
 '.(($inary && isset($in['donor_info'])) ? $in['donor_info'] : null).'<br><br>
 
 <strong>PICK UP ADDRESS:</strong><br>
-<a href="http://maps.google.com/?q='.htmlspecialchars((string)(($inary && isset($in['pickupaddress_query'])) ? $in['pickupaddress_query'] : null), ENT_QUOTES, 'UTF-8').'" target="_blank">'.(($inary && isset($in['pickupaddress'])) ? $in['pickupaddress'] : null).'</a><br><br>
+'.((LR::ifvar($cx, (($inary && isset($in['click_to_claim'])) ? $in['click_to_claim'] : null), false)) ? ''.(($inary && isset($in['pickupaddress'])) ? $in['pickupaddress'] : null).'
+' : '<a href="http://maps.google.com/?q='.htmlspecialchars((string)(($inary && isset($in['pickupaddress_query'])) ? $in['pickupaddress_query'] : null), ENT_QUOTES, 'UTF-8').'" target="_blank">'.(($inary && isset($in['pickupaddress'])) ? $in['pickupaddress'] : null).'</a>
+').'<br><br>
 
 <strong>PREFERRED CONTACT METHOD:</strong> '.(($inary && isset($in['preferred_contact_method'])) ? $in['preferred_contact_method'] : null).'<br><br>
 
