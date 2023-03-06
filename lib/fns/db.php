@@ -5,13 +5,14 @@
  * - 1.0.0 - Adding donman_zipcodes table
  * - 2.0.0 - Adding donman_contacts table
  * - 3.0.0 - Adding donman_orphaned_donations table
+ * - 3.1.0 - Adding `click_timestamp` to orphaned_donations table
  *
  * @author     Mwender
  * @since      2022
  */
 
 global $donman_db_version;
-$donman_db_version = '3.0.0';
+$donman_db_version = '3.1.0';
 
 function donman_install(){
   global $wpdb;
@@ -75,6 +76,7 @@ function donman_install(){
       donation_id bigint(20) unsigned DEFAULT NULL,
       contact_id bigint(20) unsigned DEFAULT NULL,
       timestamp datetime DEFAULT NULL,
+      click_timestamp datetime DEFAULT NULL,
       PRIMARY KEY  (ID)
     ) $charset_collate;";
   }
