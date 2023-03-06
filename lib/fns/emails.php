@@ -275,10 +275,6 @@ function send_email( $type = '' ){
             // Orphaned Donation Note - Non-profit/Priority
             $template = ( true == $priority )? 'email.trans-dept.priority-donation-note' : 'email.trans-dept.orphaned-donation-note';
             $orphaned_donation_note = get_template_part( $template );
-          } else {
-            // Orphaned Donation Note - Non-profit/Priority
-            $template = ( true == $priority )? 'email.trans-dept.priority-donation-note' : 'email.trans-dept.orphaned-donation-note';
-            $orphaned_donation_note = get_template_part( $template );
           }
 
           // Record Orphaned Donation for By-Pass links
