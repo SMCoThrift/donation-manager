@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.4.2  
+**Stable tag:** 3.4.2.1  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.4.2.1 ###
+* BUGFIX: Checking if `$contacts` is null before using `count()` in `get_priority_organizations()`.
+* Including note in Trans Dept notifications in markets without any contacts.
 
 ### 3.4.2 ###
 * Listing orphaned donation notifications in the Donations admin post listing.
