@@ -477,41 +477,56 @@ class DMReports {
 
 	    	$donation_rows = array();
 	    	foreach( $donations as $donation ){
-	    		$custom_fields = get_post_custom( $donation->ID );
-	    		$donor_company = ( ! isset( $custom_fields['address_company'][0] ) )? '' : $custom_fields['address_company'][0];
-	    		$DonationAddress = ( empty( $custom_fields['pickup_address_street'][0] ) )? $custom_fields['address_street'][0] : $custom_fields['pickup_address_street'][0];
-	    		$DonationCity = ( empty( $custom_fields['pickup_address_city'][0] ) )? $custom_fields['address_city'][0] : $custom_fields['pickup_address_city'][0];
-	    		$DonationState = ( empty( $custom_fields['pickup_address_state'][0] ) )? $custom_fields['address_state'][0] : $custom_fields['pickup_address_state'][0];
-	    		$DonationZip = ( empty( $custom_fields['pickup_address_zip'][0] ) )? $custom_fields['address_zip'][0] : $custom_fields['pickup_address_zip'][0];
+	    		$address = [
+	    			'street' 	=> get_field( 'address_street', $donation->ID ),
+	    			'city' 		=> get_field( 'address_city', $donation->ID ),
+	    			'state' 	=> get_field( 'address_state', $donation->ID ),
+	    			'zip' 		=> get_field( 'address_zip', $donation->ID ),
+	    		];
+	    		$pickup_address = [
+	    			'street' 	=> get_field( 'pickup_address_street', $donation->ID ),
+	    			'city' 		=> get_field( 'pickup_address_city', $donation->ID ),
+	    			'state' 	=> get_field( 'pickup_address_state', $donation->ID ),
+	    			'zip' 		=> get_field( 'pickup_address_zip', $donation->ID ),
+	    		];
+	    		$DonationAddress = ( empty( $pickup_address['street'] ) )? $address['street'] : $pickup_address['street'];
+	    		$DonationCity = ( empty( $pickup_address['city'] ) )? $address['city'] : $pickup_address['city'];
+	    		$DonationState = ( empty( $pickup_address['state'] ) )? $address['state'] : $pickup_address['state'];
+	    		$DonationZip = ( empty( $pickup_address['zip'] ) )? $address['zip'] : $pickup_address['zip'];
 
-          $pickupdate1 = ( empty( $custom_fields['pickup_times_0_pick_up_time'] ) )? '' : $custom_fields['pickup_times_0_pick_up_time'][0];
-          $pickupdate2 = ( empty( $custom_fields['pickup_times_1_pick_up_time'] ) )? '' : $custom_fields['pickup_times_1_pick_up_time'][0];
-          $pickupdate3 = ( empty( $custom_fields['pickup_times_2_pick_up_time'] ) )? '' : $custom_fields['pickup_times_2_pick_up_time'][0];
+          $pickupdates = [];
+          if( have_rows( 'pickup_times', $donation->ID ) ):
+          	while( have_rows( 'pickup_times', $donation->ID ) ): the_row();
+          		$pickupdates[] = get_sub_field( 'pick_up_time' );
+          	endwhile;
+          endif;
+          $pickupdate1 = ( array_key_exists( 0, $pickupdates ) )? $pickupdates[0] : '';
+          $pickupdate2 = ( array_key_exists( 1, $pickupdates ) )? $pickupdates[1] : '';
+          $pickupdate3 = ( array_key_exists( 2, $pickupdates ) )? $pickupdates[2] : '';
 
-          $preferred_code = ( empty( $custom_fields['preferred_code'] ) )? '' : $custom_fields['preferred_code'][0] ;
-
+          // get_field($selector, [$post_id], [$format_value]);
 	    		$donation_row = array(
 	    			'Date' => $donation->post_date,
-	    			'DonorName' => $custom_fields['donor_name'][0],
-                    'DonorCompany' => $donor_company,
-	    			'DonorAddress' => $custom_fields['address_street'][0],
-	    			'DonorCity' => $custom_fields['address_city'][0],
-	    			'DonorState' => $custom_fields['address_state'][0],
-	    			'DonorZip' => $custom_fields['address_zip'][0],
-	    			'DonorPhone' => $custom_fields['donor_phone'][0],
-	    			'DonorEmail' => $custom_fields['donor_email'][0],
+	    			'DonorName' => get_field( 'donor_name', $donation->ID ),
+            'DonorCompany' => get_field( 'address_company', $donation->ID ),
+	    			'DonorAddress' => $address['street'],
+	    			'DonorCity' => $address['city'],
+	    			'DonorState' => $address['state'],
+	    			'DonorZip' => $address['zip'],
+	    			'DonorPhone' => get_field( 'donor_phone', $donation->ID ),
+	    			'DonorEmail' => get_field( 'donor_email', $donation->ID ),
 	    			'DonationAddress' => $DonationAddress,
 	    			'DonationCity' => $DonationCity,
 	    			'DonationState' => $DonationState,
 	    			'DonationZip' => $DonationZip,
-	    			'DonationDesc' => html_entity_decode( $custom_fields['pickup_description'][0] ),
+	    			'DonationDesc' => str_replace( [ "\r", "\n" ], '', get_field( 'pickup_description', $donation->ID ) ),
 	    			'PickupDate1' => $pickupdate1,
 	    			'PickupDate2' => $pickupdate2,
 	    			'PickupDate3' => $pickupdate3,
-	    			'PreferredDonorCode' => $preferred_code,
-				);
+	    			'PreferredDonorCode' => get_field( 'preferred_code', $donation->ID ),
+					);
 
-				$donation_rows[] = '"' . implode( '","', $donation_row ) . '"';
+					$donation_rows[] = '"' . implode( '","', $donation_row ) . '"';
 	    	}
     		set_transient( $transient_name, $donation_rows, 12 * HOUR_IN_SECONDS );
     	}
@@ -650,7 +665,7 @@ class DMReports {
 
         $_last_donation_report = get_post_meta( $args['org_id'], '_last_donation_report', true );
         if( $args['month'] == $_last_donation_report ){
-            \WP_CLI::line('Report already sent to ' . get_the_title( $args['org_id'] ) . ' for ' . $args['month'] . '.' );
+            \WP_CLI::line('Report already sent to #' . $args['org_id'] . ' ' . get_the_title( $args['org_id'] ) . ' for ' . $args['month'] . '.' );
             return false;
         }
 
@@ -698,6 +713,9 @@ class DMReports {
             $donation_value
         );
         $message[] = 'Thank you for the confidence you place in us to help you increase donations.  Know that we continue to work hard to grow the brand on your behalf, and we always welcome any ideas that will make PickUpMyDonation.com work better for you.';
+
+        //$message[] = '<hr><br>PLEASE NOTE: We updated our site on Monday, February 20, 2023. Due to a data conversion error between our old and new code, your CSV may be missing contact information for donations you received between 02/01/2023 and 02/20/2023. If that is the case with your CSV, and you would like to recover that missing data, please email us at webmaster@pickupmydonation.com. Please include your Organization Name. Thank you and our apologies.';
+
 
         // Handlebars Email Template
         $hbs_vars = [
