@@ -61,14 +61,13 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       if( ! in_array( $type, [ 'networkmembers', 'organizations', 'zipsbytransdept' ] ) )
         WP_CLI::error( '🔔 Unknown report type: ' . $type );
 
-      if( in_array( $type, [ 'networkmembers', 'organizations' ] ) && ! array_key_exists( 'month', $assoc_args ) )
-        WP_CLI::error( '🚨 Missing required `--month=YYYY-MM` parameter.' );
-
-      if( in_array( $type, [ 'networkmembers', 'organizations' ] ) ){
+      if( in_array( $type, [ 'networkmembers', 'organizations' ] ) && array_key_exists( 'month', $assoc_args ) ){
         $month = $assoc_args['month'];
         $month_array = explode( '-', $month );
         if( ! is_numeric( $month_array[0] ) || ! is_numeric( $month_array[1] ) )
           WP_CLI::error( '🚨 Provided `month` is not formatted correctly. Please provide a month in the following format: YYYY-MM.' );
+      } else {
+        $month = date( 'Y-m', strtotime( 'last day of previous month' ) );
       }
 
       $format = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table' ;
