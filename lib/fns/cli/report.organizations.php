@@ -14,7 +14,7 @@ uber_log( '🔔 $orgs = ' . print_r( $orgs, true ) );
 foreach( $orgs as $key => $org_id ){
   // Continue if we don't have any `monthly_report_emails` for the org
   $monthly_report_emails = strip_tags( get_post_meta( $org_id, 'monthly_report_emails', true ) );
-  uber_log( '🔔 Monthly Report Emails emails for `' . get_the_title( $org_id ) . '` = ' . $monthly_report_emails );
+  uber_log( '🔔 Monthly Report Emails emails for `' . get_the_title( $org_id ) . '`' . "\n - Sending to: " . $monthly_report_emails . "\n - Month: " . $month );
   if( empty( $monthly_report_emails ) )
     continue;
 
@@ -31,6 +31,9 @@ foreach( $orgs as $key => $org_id ){
     continue;
 
   $donations = $DMReports->get_donations( $org_id, $month );
+  if( is_null( $donations ) || empty( $donations ) )
+    continue;
+
   $donation_count = count( $donations );
 
   // Only send report emails to orgs with 5 or more donations during the month
