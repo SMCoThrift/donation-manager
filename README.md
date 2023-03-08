@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.4.2.2  
+**Stable tag:** 3.5.0  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.5.0 ###
+* Updating `wp dm report --type=organizations` to correctly pull data from donations.
+* Updating `wp dm report` to work without needing to enter a YYYY-MM.
 
 ### 3.4.2.2 ###
 * BUGFIX: Removing orphaned donation note from Exclusive Partners emails.
