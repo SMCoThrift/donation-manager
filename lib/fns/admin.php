@@ -6,6 +6,16 @@ use function DonationManager\donations\{get_orphaned_donation_notifications};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
 
 /**
+ * Admin CSS
+ */
+function admin_custom_css(){
+  echo '<style>
+  #taxonomy-pickup_code{width: 100px;}
+  </style>';
+}
+add_action( 'admin_head', __NAMESPACE__ . '\\admin_custom_css' );
+
+/**
  * Supplies content for custom columns.
  *
  * @param      string  $column  The column
@@ -14,6 +24,11 @@ function custom_column_content( $column ){
   global $post;
 
   switch( $column ){
+    case 'api-response':
+      //$api_response = get_post_meta( $post->ID, 'api_response', true );
+      //echo '<textarea>'.$api_response.'</textarea>';
+      break;
+
     case 'org':
         $org_id = get_field( 'organization', $post->ID );
         if( is_object( $org_id ) )
@@ -97,6 +112,7 @@ function columns_for_donation( $defaults ){
         'org' => 'Organization',
         'taxonomy-donation_option' => 'Donation Options',
         'taxonomy-pickup_code' => 'Pickup Codes',
+        'api-response'  => 'API Response',
         'date' => 'Date',
     );
     return $defaults;
