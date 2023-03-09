@@ -21,7 +21,7 @@ class DonationRouter {
     public function save_api_response( $donation_id, $response ){
         $message = ( is_wp_error( $response ) )? $response->get_error_message() : print_r( $response, true );
         if( ! is_null( $donation_id ) ){
-            update_post_meta( $donation_id, 'api_response', $message );
+            update_post_meta( $donation_id, 'api_response', serialize( $message ) );
         } else {
             wp_mail( 'webmaster@pickupmydonation.com', 'API Post Error', 'We received the following error when attempting to post Donation #' . $donation_id . ' by API:' . "\n\n" . $message );
         }
