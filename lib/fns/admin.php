@@ -14,6 +14,7 @@ function admin_custom_css(){
   .response-pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
   .response-pill.success{background-color: #09c500;}
   .response-pill.warning{background-color: #f68428;}
+  .response-pill.error2{background-color: #cb3131;}
   .response-pill.note{background-color: #ccc;}
   .response-msg{font-size: 11px; color: #999;}
   </style>';
@@ -36,10 +37,10 @@ function custom_column_content( $column ){
         $routing_method = get_donation_routing_method( $org );
       if( $org == $default_org['id'] || 'email' != $routing_method ){
         $api_response = get_post_meta( $post->ID, 'api_response', true );
-        $api_response = @unserialize( $api_response );
-        if( is_array( $api_response ) && array_key_exists( 'response', $api_response ) ){
-          $response_code = $api_response['response']['code'];
-          $response_msg = $api_response['response']['message'];
+        $response = @unserialize( $api_response );
+        if( is_array( $response ) && array_key_exists( 'response', $response ) ){
+          $response_code = $response['response']['code'];
+          $response_msg = $response['response']['message'];
 
           switch( $response_code ){
             case 200:
@@ -49,7 +50,12 @@ function custom_column_content( $column ){
             default:
               echo '<div class="response-pill warning">Response Code: ' . $response_code . '</div>';
           }
-          echo '<div class="response-msg">Return Msg: ' . $response_msg . '</div>';
+          echo '<div class="response-msg">Msg: ' . $response_msg . '</div>';
+        } else if( ! empty( $api_response ) && 's:' != substr( $api_response, 0, 2 ) ){
+          $response_css_class = ( stristr( strtolower( $api_response ), 'error' ) )? 'error2' : 'warning' ;
+          $response_notice = ( stristr( strtolower( $api_response ), 'error' ) )? 'Error' : 'Warning' ;
+          echo '<div class="response-pill ' . $response_css_class . '">' . $response_notice . '</div>';
+          echo '<div class="response-msg">Msg: ' . $api_response . '</div>';
         } else {
           echo '<div class="response-pill warning">No API Response</div>';
         }
