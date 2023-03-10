@@ -1,7 +1,7 @@
 <?php
 
 namespace DonationManager\donations;
-use function DonationManager\organizations\{is_orphaned_donation};
+use function DonationManager\organizations\{is_orphaned_donation,get_default_organization};
 use function DonationManager\donations\{get_orphaned_donation_notifications};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
 
@@ -11,6 +11,11 @@ use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
 function admin_custom_css(){
   echo '<style>
   #taxonomy-pickup_code{width: 100px;}
+  .response-pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
+  .response-pill.success{background-color: #09c500;}
+  .response-pill.warning{background-color: #f68428;}
+  .response-pill.note{background-color: #ccc;}
+  .response-msg{font-size: 11px; color: #999;}
   </style>';
 }
 add_action( 'admin_head', __NAMESPACE__ . '\\admin_custom_css' );
@@ -25,8 +30,32 @@ function custom_column_content( $column ){
 
   switch( $column ){
     case 'api-response':
-      //$api_response = get_post_meta( $post->ID, 'api_response', true );
-      //echo '<textarea>'.$api_response.'</textarea>';
+      $default_org = get_default_organization();
+      $org = get_post_meta( $post->ID, 'organization', true );
+      if( is_numeric( $org ) )
+        $routing_method = get_donation_routing_method( $org );
+      if( $org == $default_org['id'] || 'email' != $routing_method ){
+        $api_response = get_post_meta( $post->ID, 'api_response', true );
+        $api_response = @unserialize( $api_response );
+        if( is_array( $api_response ) && array_key_exists( 'response', $api_response ) ){
+          $response_code = $api_response['response']['code'];
+          $response_msg = $api_response['response']['message'];
+
+          switch( $response_code ){
+            case 200:
+              echo '<div class="response-pill success">Success</div>';
+              break;
+
+            default:
+              echo '<div class="response-pill warning">Response Code: ' . $response_code . '</div>';
+          }
+          echo '<div class="response-msg">Return Msg: ' . $response_msg . '</div>';
+        } else {
+          echo '<div class="response-pill warning">No API Response</div>';
+        }
+      } else {
+        echo '<div class="response-pill note">Not Sent/Emailed</div>';
+      }
       break;
 
     case 'org':
