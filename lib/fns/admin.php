@@ -10,7 +10,8 @@ use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
  */
 function admin_custom_css(){
   echo '<style>
-  #taxonomy-pickup_code{width: 100px;}
+  .post-type-donation #taxonomy-pickup_code{width: 100px;}
+  .post-type-trans_dept #taxonomy-pickup_code{width: 60%;}
   .response-pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
   .response-pill.success{background-color: #09c500;}
   .response-pill.warning{background-color: #f68428;}

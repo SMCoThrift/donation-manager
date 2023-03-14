@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.1.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.6.1  
+**Stable tag:** 3.6.1.1  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.6.1.1 ###
+* Updating admin column width for Pickup Codes on Transportation Department CPT listing.
 
 ### 3.6.1 ###
 * Updating CHHJ API Response to show plaintext errors stored in `api_response` meta field.
