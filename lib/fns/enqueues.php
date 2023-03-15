@@ -76,9 +76,12 @@ function enqueue_scripts(){
       } // switch( $_SESSION['donor']['form'] )
   } // if( isset( $_SESSION['donor']['form'] ) )
 
-  if( ! wp_script_is( 'jquery', 'done' ) )
-    wp_enqueue_script( 'jquery' );
+  if(is_user_logged_in()) { 
+     wp_enqueue_style( 'user-arl', DONMAN_PLUGIN_URL . 'lib/css/user-arl.css' );
+  }
 
+  if( ! wp_script_is( 'jquery', 'done' ) )
+  wp_enqueue_script( 'jquery' );
   wp_register_script( 'googlemaps', 'https://maps.googleapis.com/maps/api/js?key=' . DM_GOOGLE_MAPS_API_KEY, null, '1.0', true ); // &callback=initMap
   wp_register_script( 'donors-by-zipcode', DONMAN_PLUGIN_URL . 'lib/js/donors-by-zipcode.js', ['googlemaps'], filemtime( DONMAN_PLUGIN_PATH . 'lib/js/donors-by-zipcode.js' ), true );
   $zipCodeMapsUrl = 'https://zipcodes.pickupmydonation.com/zipcodes/' ;
