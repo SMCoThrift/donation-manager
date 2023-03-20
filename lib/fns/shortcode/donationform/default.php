@@ -11,7 +11,10 @@ add_html( $html );
 if( current_user_can( 'activate_plugins') && ! isset( $_COOKIE['dmdebug'] ) ){
   add_html( '<div style="text-align: center; font-size: 12px; margin-top: -20px;"><a href="./?dmdebug=true">Start Debug Mode</a></div>' );
 } else if( current_user_can( 'activate_plugins') && isset( $_COOKIE['dmdebug'] ) && 'on' == $_COOKIE['dmdebug'] ){
-  add_html( '<div style="text-align: center; font-size: 12px; margin-top: -20px; color: #999;">Debug Mode is ON.</div>' );
+  $msg = 'Debug Mode is ON.';
+  if( isset( $_COOKIE['dmdebug_verbose'] ) && 'on' == $_COOKIE['dmdebug_verbose'] )
+    $msg.= ' Verbose Output is ON.';
+  add_html( '<div style="text-align: center; font-size: 12px; margin-top: -20px; color: #999;">' . $msg . '</div>' );
   $available_templates = glob( trailingslashit( DONMAN_PLUGIN_PATH ) . 'lib/templates/form0.*.hbs' );
   if( is_array( $available_templates ) ){
     $templates = [];

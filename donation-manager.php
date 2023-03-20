@@ -29,6 +29,8 @@ define( 'GENERIC_DOMAINS', ['gmail.com', 'hotmail.com', 'verizon.net', 'comcast.
 
 $dmdebug = ( isset( $_COOKIE['dmdebug'] ) && 'on' == $_COOKIE['dmdebug'] )? true : false ;
 define( 'DMDEBUG', $dmdebug );
+$dmdebug_verbose = ( isset( $_COOKIE['dmdebug_verbose'] ) && 'on' == $_COOKIE['dmdebug_verbose'] )? true : false ;
+define( 'DMDEBUG_VERBOSE', $dmdebug_verbose );
 
 /**
  * Start our session
