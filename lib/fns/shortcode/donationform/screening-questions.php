@@ -31,13 +31,15 @@ foreach( $screening_questions as $question ) {
 $pickup_settings = get_field( 'pickup_settings', $_SESSION['donor']['org_id'] );
 
 $provide_additional_details = $pickup_settings['provide_additional_details'] === 'true' ? true : false ;
-uber_log( '🔔 $provide_additional_details = ' . $provide_additional_details );
+if( DMDEBUG_VERBOSE )
+  uber_log( '🔔 $provide_additional_details = ' . $provide_additional_details );
 $additional_details = null;
 if( $provide_additional_details )
     $additional_details = ( isset( $_POST['donor']['additional_details'] ) )? esc_textarea( $_POST['donor']['additional_details'] ) : '' ;
 
 $allow_user_photo_uploads = $pickup_settings['allow_user_photo_uploads']; // 09/19/2022 (08:28) - switched to ACF true/false field
-uber_log( '🔔 $allow_user_photo_uploads = ' . $allow_user_photo_uploads );
+if( DMDEBUG_VERBOSE )
+  uber_log( '🔔 $allow_user_photo_uploads = ' . $allow_user_photo_uploads );
 
 $hbs_vars = [
   'questions' => $questions,

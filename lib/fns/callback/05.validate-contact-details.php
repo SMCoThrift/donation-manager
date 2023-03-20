@@ -8,7 +8,8 @@ use function DonationManager\utilities\{get_alert};
  */
 if( isset( $_POST['donor']['address'] ) ) {
     $match_pickupcode_and_zipcode = function( $confirmation, $form ){
-      uber_log('🔔 $confirmation = ' . $confirmation . "\n" . '🔔 $form->ZIP = ' . $form->ZIP );
+      if( DMDEBUG_VERBOSE )
+        uber_log('🔔 $confirmation = ' . $confirmation . "\n" . '🔔 $form->ZIP = ' . $form->ZIP );
 
       // Only check specific zip codes.
       $zipcodes_to_check = [ 37116 ];

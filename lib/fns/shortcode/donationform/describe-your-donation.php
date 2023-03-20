@@ -8,7 +8,8 @@ use function DonationManager\realtors\{get_realtor_ads};
 $org_id = $_SESSION['donor']['org_id'];
 $pickup_settings = get_field( 'pickup_settings', $org_id );
 
-uber_log('🔔 $org_id = ' . $org_id );
+if( DMDEBUG_VERBOSE )
+  uber_log('🔔 $org_id = ' . $org_id );
 
 $step_one_notice = get_field( 'pickup_settings_step_one_notice', $org_id );
 if( ! empty( $step_one_notice ) ){

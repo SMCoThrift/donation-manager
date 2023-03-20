@@ -328,7 +328,8 @@ function send_email( $type = '' ){
            * Rather than generating one email html, if we want a unique unsubscribe link
            * in each, we need to generate the html for each email address.
            */
-          uber_log('$recipients = ' . print_r( $recipients, true ) );
+          if( DMDEBUG_VERBOSE )
+            uber_log('$recipients = ' . print_r( $recipients, true ) );
           foreach ( $recipients as $contact_id => $email ) {
             $hbs_vars['email'] = $email;
             if( array_key_exists( 'donation_hash', $_SESSION['donor'] ) )
