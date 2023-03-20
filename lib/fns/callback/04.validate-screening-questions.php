@@ -9,7 +9,7 @@ if( isset( $_POST['donor']['questions'] ) ) {
     $each_question_answered = function( $value, $form ){
         $answered = true;
         foreach( $value as $key => $id ){
-            if( ! array_key_exists( $id, $_POST['donor']['answers'] ) )
+            if( is_array( $_POST['donor']['answers'] ) && ! array_key_exists( $id, $_POST['donor']['answers'] ) )
                 $answered = false;
         }
         return $answered;

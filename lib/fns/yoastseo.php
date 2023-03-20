@@ -12,7 +12,7 @@ namespace DonationManager\yoastseo;
  */
 function add_seo_page_metadesc( $description ){
   global $post;
-  if( has_shortcode( $post->post_content, 'organization-seo-page' ) ){
+  if( ! is_null( $post->post_content ) && has_shortcode( $post->post_content, 'organization-seo-page' ) ){
     //return 'This is a test description.';
 
     $regex_pattern = get_shortcode_regex();
