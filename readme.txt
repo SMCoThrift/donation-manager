@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.1.1
 Requires PHP: 8.0
-Stable tag: 3.6.3.2
+Stable tag: 3.6.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,9 @@ Long description goes here...
 
 == Changelog ==
 
+= 3.6.3.3 =
+* BUGFIXES: Checking for variables before using in code.
+* Adding option to turn on Debug Mode with Verbose set to ON.
 
 = 3.6.3.2 =
 * Checking for variables existence.
