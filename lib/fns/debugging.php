@@ -1,4 +1,19 @@
 <?php
+/**
+ * Sets $_COOKIE[‘dmdebug’] for debuging purposes.
+ *
+ * @since 1.?.?
+ *
+ * @return void
+ */
+function set_debug_cookie(){
+    if( ! isset( $_GET['dmdebug'] ) )
+        return;
+
+    $debug = ( 'false' === strtolower( $_GET['dmdebug'] ) )? false : 'on';
+    setcookie( 'dmdebug', $debug, time() + 3600, COOKIEPATH, COOKIE_DOMAIN );
+}
+add_action( 'init', 'set_debug_cookie', 98 );
 
 /**
  * Enhanced logging.
