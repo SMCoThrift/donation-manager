@@ -83,8 +83,14 @@ foreach( $donation_options as $key => $opt ) {
   $checked = '';
   if( isset( $_SESSION['donor']['items'][$opt['term_id']] ) )
       $checked = ' checked="checked"';
-  if( isset( $_POST['donor'] ) && array_key_exists( 'options', $_POST['donor'] ) && trim( $_POST['donor']['options'][$key]['field_value'] ) == $opt['value'] )
-      $checked = ' checked="checked"';
+  if(
+    isset( $_POST['donor'] )
+    && array_key_exists( 'options', $_POST['donor'] )
+    && array_key_exists( 'field_value', $_POST['donor']['options'][$key] )
+    && trim( $_POST['donor']['options'][$key]['field_value'] ) == $opt['value']
+  ){
+    $checked = ' checked="checked"';
+  }
 
   $checkboxes[] = [
     'key' => $key,
