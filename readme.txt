@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.1.1
 Requires PHP: 8.0
-Stable tag: 3.6.2.1
+Stable tag: 3.6.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.6.3 =
+* Introducing `DMDEBUG_VERBOSE` constant for "verbose mode" debugging.
+* Moved several `uber_log()` called into "verbose mode" during the `[donationform]` process.
 
 = 3.6.2.1 =
 * Bugfix: Addressing correct namespace in `[unsubscribe-orphaned-contact]` shortcode.
