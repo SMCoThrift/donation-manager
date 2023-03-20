@@ -13,8 +13,10 @@ function set_debug_cookie(){
     $debug = ( 'false' === strtolower( $_GET['dmdebug'] ) )? false : 'on';
     setcookie( 'dmdebug', $debug, time() + 3600, COOKIEPATH, COOKIE_DOMAIN );
 
-    $verbose = ( 'false' === strtolower( $_GET['verbose'] ) )? false : 'on';
-    setcookie( 'dmdebug_verbose', $verbose, time() + 3600, COOKIEPATH, COOKIE_DOMAIN );
+    if( isset( $_GET['verbose'] ) ){
+      $verbose = ( 'false' === strtolower( $_GET['verbose'] ) )? false : 'on';
+      setcookie( 'dmdebug_verbose', $verbose, time() + 3600, COOKIEPATH, COOKIE_DOMAIN );
+    }
 }
 add_action( 'init', 'set_debug_cookie', 98 );
 
