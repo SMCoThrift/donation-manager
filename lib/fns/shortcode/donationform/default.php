@@ -9,7 +9,7 @@ if( ! empty( $args['template'] ) && template_exists( $args['template'] ) )
 $html = render_template( $template, [ 'nextpage' => $nextpage ] );
 add_html( $html );
 if( current_user_can( 'activate_plugins') && ! isset( $_COOKIE['dmdebug'] ) ){
-  add_html( '<div style="text-align: center; font-size: 12px; margin-top: -20px;"><a href="./?dmdebug=true">Start Debug Mode</a></div>' );
+  add_html( '<div style="text-align: center; font-size: 12px; margin-top: -20px;"><a href="./?dmdebug=true">Start Debug Mode</a> • <a href="./?dmdebug=true&verbose=true">Debug with Verbose Output</a></div>' );
 } else if( current_user_can( 'activate_plugins') && isset( $_COOKIE['dmdebug'] ) && 'on' == $_COOKIE['dmdebug'] ){
   $msg = 'Debug Mode is ON.';
   if( isset( $_COOKIE['dmdebug_verbose'] ) && 'on' == $_COOKIE['dmdebug_verbose'] )
