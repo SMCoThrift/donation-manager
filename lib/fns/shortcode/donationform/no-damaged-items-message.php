@@ -10,7 +10,11 @@ $organization = get_the_title( $_SESSION['donor']['org_id'] );
 
 // Priority Donation Backlinks
 // 08/16/2022 (11:05) - TODO refactor DonationManager\organizations\get_priority_pickup_links();
-$priority_html = get_priority_pickup_links( $_SESSION['donor']['pickup_code'] );
+$priority_html = (
+  isset( $_SESSION['donor'] )
+  && is_array( $_SESSION['donor'] )
+  && array_key_exists( 'pickup_code', $_SESSION['donor'] )
+)? get_priority_pickup_links( $_SESSION['donor']['pickup_code'] ) : false ;
 
 $search = array( '{organization}', '{priority_pickup_option}' );
 $replace = array( $organization, $priority_html );
