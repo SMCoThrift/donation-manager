@@ -96,8 +96,11 @@ if( isset( $_POST['donor']['address'] ) ) {
       $_SESSION['donor']['pickup_code'] = ( 'Yes' == $_POST['donor']['different_pickup_address'] )? $_POST['donor']['pickup_address']['zip'] : $_POST['donor']['address']['zip'] ;
 
     // Redirect to next step
-    $pickup_settings = get_field( 'pickup_settings', $_SESSION['donor']['org_id'] );
-    $_SESSION['donor']['form'] = ( 'yes' == $pickup_settings['skip_pickup_dates'] )? 'location-of-items' : 'select-preferred-pickup-dates';
+    $skip_pickup_dates_array = get_field( 'pickup_settings_skip_pickup_dates', $_SESSION['donor']['org_id'] );
+    $skip_pickup_dates = $skip_pickup_dates_array[0];
+    if( DMDEBUG_VERBOSE )
+      uber_log( '🔔 $skip_pickup_dates = ' . $skip_pickup_dates );
+    $_SESSION['donor']['form'] = ( 'yes' == $skip_pickup_dates )? 'location-of-items' : 'select-preferred-pickup-dates';
 
     //$_SESSION['donor']['form'] = 'select-preferred-pickup-dates';
     session_write_close();
