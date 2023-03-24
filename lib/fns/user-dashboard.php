@@ -1,5 +1,7 @@
 <?php 
 namespace DonationManager\users;
+use function DonationManager\utilities\{get_alert};
+
 function current_user_info_shortcode() {
     if ( is_user_logged_in() ) {
         $current_user = wp_get_current_user();
@@ -30,25 +32,26 @@ function current_user_info_shortcode() {
 add_shortcode( 'current_user_info', __NAMESPACE__ . '\\current_user_info_shortcode' );
 
 function my_organization_form_shortcode() {
-    $current_user = wp_get_current_user();
-    $organization_id = get_user_meta( $current_user->ID, 'organization', true );
-    if ( $organization_id ) :
-        ob_start();
-        acf_form_head();
-        acf_form(
-            array(
-                'post_id' => $organization_id,
-                'post_title' => false,
-                'fields' => array( 'monthly_report_emails', 'website', 'pickup_settings'),
-                //'exclude' => array('field_6255be3bb3b79.realtor_ad_standard_banner','field_6255be3bb3b79.realtor_ad_medium_banner','field_6255be3bb3b79.realtor_ad_link','field_6255be3bb3b79.realtor_description'),
-                'submit_value' => 'Save',
-                'updated_message' => 'Your information has been saved.',
-                    // we can add custom url after saving 
-                //'return' => add_query_arg( '', '', get_permalink( $organization_id ) )
-            )
-        );
-        return ob_get_clean();
-    endif;
+  $current_user = wp_get_current_user();
+  $organization_id = get_user_meta( $current_user->ID, 'organization', true );
+  if ( $organization_id ){
+    ob_start();
+    acf_form_head();
+    acf_form(
+      [
+        'post_id' => $organization_id,
+        'post_title' => false,
+        'fields' => ['monthly_report_emails', 'website', 'pickup_settings_skip_pickup_dates', 'pickup_settings_pickup_dates', 'pickup_settings_minimum_scheduling_interval', 'pickup_settings_step_one_notice', 'pickup_settings_provide_additional_details', 'pickup_settings_allow_user_photo_uploads', 'pickup_settings_pause_pickups' ],
+        'submit_value' => 'Save',
+        'updated_message' => 'Your information has been saved.',
+            // we can add custom url after saving
+        //'return' => add_query_arg( '', '', get_permalink( $organization_id ) )
+      ]
+    );
+    return ob_get_clean();
+  } else {
+    return get_alert([ 'description' => 'Error: No Organization assigned to user.' ]);
+  }
 }
 // shortcode usage [my_organization_form]
 add_shortcode( 'my_organization_form', __NAMESPACE__ . '\\my_organization_form_shortcode' );

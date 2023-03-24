@@ -5,7 +5,8 @@
     height: 42px;
     width: 42px;
     position: relative;
-}.nav-user {
+}
+.nav-user {
 	display: none;
     position: absolute;
     background: #235776;
@@ -14,24 +15,25 @@
     padding-right: 15px;
     left: 40px;
     padding-bottom: 20px;
-}.avatar span {
+}
+.avatar span {
     color: #fff;
     font-size: 20px;
     padding-left: 15px;
     position: absolute;
 
     top: 10px;
-}.nav-user a {
+}
+.nav-user a {
     color: #fff;
-}ul.nav-user li {
+}
+ul.nav-user li {
     padding-top: 10px;
-}.avatar:hover ul, li, a {
+}
+.avatar:hover ul, li, a {
 	display: block;
 	 z-index: 99;
 }
-/*FIELDS THAT HIDE IN THE DASBOARD OF THE USERS*/
-.acf-field-626160ae3f2b8, .acf-field-626160923f2b7, .acf-field-626160923f2b7, .acf-field-62615ff13f2b5, .acf-field-6261605b3f2b6 {
-    display: none;
-}form#acf-form button {
+form#acf-form button {
     background: transparent;
 }
