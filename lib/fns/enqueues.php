@@ -67,7 +67,7 @@ function enqueue_scripts(){
   } // if( isset( $_SESSION['donor']['form'] ) )
 
   if(is_user_logged_in()) { 
-     wp_enqueue_style( 'user-arl', DONMAN_PLUGIN_URL . 'lib/css/user-arl.css' );
+     wp_enqueue_style( 'user-dashboard', DONMAN_PLUGIN_URL . 'lib/css/user-dashboard.css' );
   }
 
   if( ! wp_script_is( 'jquery', 'done' ) )
