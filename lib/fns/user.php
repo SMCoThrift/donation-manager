@@ -16,7 +16,6 @@ function register_user( $record, $handler ){
   $form_name = $record->get_form_settings( 'form_name' );
   if( 'user_registration' != $form_name )
     return;
-
   // Get our form field values
   $raw_fields = $record->get( 'fields' );
   $fields = [];
@@ -25,11 +24,9 @@ function register_user( $record, $handler ){
       default:
         $fields[$id] = $field['value'];
     }
-
   }
   // Add the user to WordPress
   if( ! email_exists( $fields['email'] ) && ! username_exists( $fields['email'] ) ){
-
       // Create organization post
     $org_data = array(
       'post_title' => $fields['organization'],
@@ -37,8 +34,6 @@ function register_user( $record, $handler ){
       'post_status' => 'draft'
     );
     $organization_id = wp_insert_post( $org_data );
-
-
     $user_id = wp_insert_user([
       'user_pass' => wp_generate_password( 8, false ),
       'user_login' => $fields['email'],
@@ -46,32 +41,26 @@ function register_user( $record, $handler ){
       'display_name' => $fields['firstname'],
       'first_name' => $fields['firstname'],
       'last_name' => $fields['lastname'],
-      'role' => 'pending' // Set user role to "pending"
+      'role' => '' // Set user role to "pending"
     ]);
 
-    // Set the user's status to "pending"
-    $user = new WP_User( $user_id );
-    $user->set_role( 'pending' );
+    $user = new \WP_User( $user_id );
     
      // Add user meta data
     add_user_meta( $user_id, 'organization', $organization_id, true );
     add_user_meta( $user_id, 'phone', $fields['phone'], true );
-    
-    // Add organization meta data
-    add_post_meta( $organization_id, 'organization', $fields['organization'], true );
+
 
     //\NCCAgent\userprofiles\create_user_message( $user_id );
-    //
-        $to = get_option('admin_email');
-        $subject = 'New Organization Registration';
-        $message = 'A new organization has been registered and is waiting for approval. Please log in to the website to review and approve the organization.';
     return true;
+
   } else {
     //ncc_error_log('🔔 A user with the email `' . $fields['email'] . '` or NPN `' . $fields['npn'] . '` already exists!' );
     return false;
   }
 }
 add_action( 'elementor_pro/forms/new_record', __NAMESPACE__ . '\\register_user', 10, 2 );
+
 
 //STATUS ADMIN ROLE USERS DISPLAY COLUMN
 function custom_user_columns( $columns ) {
@@ -88,7 +77,8 @@ function custom_user_column_content( $value, $column_name, $user_id ) {
       $status = get_user_meta( $user_id, 'user_status', true );
       $user = get_userdata( $user_id );
       $user_roles = $user->roles;
-
+      //need to fix this.
+     //error_log(print_r($user_roles[0]));
     if ( empty( $user_roles ) ) {
          $value = '<span style="color:orange;font-weight:bold;">Pending</span>';
       }elseif($user_roles[0] === 'rejected' ) {
@@ -119,36 +109,50 @@ function add_rejected_role() {
 add_action( 'init', __NAMESPACE__ . '\\add_rejected_role' );
 
 
-//IF CHANGE THE ROLE OF THE USERS OR TO REVIEW THE APPLICATION THIS IS NOT YET DONE
-function send_user_role_email( $user_id, $old_role, $new_role ) {
-    $user = get_userdata( $user_id );
-    $email = $user->user_email;
-    $subject = 'Your role has been changed';
-    $message = 'Your role has been changed to ' . $new_role . '.';
+function send_role_change_email( $user_id, $old_user_data ) {
+    $new_user_data = get_userdata( $user_id );
+    // $reset_key = get_password_reset_key( $new_user_data );
+    // error_log(print_r($reset_key));
 
-    if ( $new_role == 'subscriber' ) {
-        // Send email to user with password reset link
-        $key = get_password_reset_key( $user );
-        $reset_link = network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user->user_login ), 'login' );
-        $message .= ' Please use this link to set your password: ' . $reset_link;
-        
-        // Set the user's custom post type status to "publish"
-        update_user_meta( $user_id, 'organization_status', 'publish' );
-    } elseif ( $new_role == 'rejected' ) {
-        // Send email to user with rejection message
-        $message .= ' Unfortunately, your application has been rejected.';
+    $new_role = ! empty( $new_user_data->roles ) ? $new_user_data->roles[0] : '';
+
+    if ( in_array( $new_role, array( 'subscriber', 'administrator' ) ) ) {
+        // Retrieve the organization ID from the user's metadata
+        $organization_id = get_user_meta( $user_id, 'organization', true );
+
+        // Retrieve the organization post object
+        $organization = get_post( $organization_id );
+
+        // Assign the user as the author of the organization post
+        wp_update_post( array(
+            'ID' => $organization_id,
+            'post_author' => $user_id
+        ) );
+
+        // Send an email to the user to notify them that they have been approved
+          // Define the recipient email address
+          $to = $new_user_data->user_email;
+
+          // Define the email subject
+          $subject = 'Your Account Has Been Approved';
+
+
+          $key = wp_generate_password( 20, false );
+          $login = $new_user_data->user_email;
+          $url = site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . urlencode($login).'&wp_lang=en_US' );
+
+          error_log(print_r($key));
+
+          // Define the email message
+          $message = 'Hello ' . $new_user_data->display_name . ', your account has been approved. Please click the generated link to set your password : <a href="'.  $url .'">generate your password</a>'; 
+
+          $headers = array(
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . get_bloginfo( 'name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>',
+          );
+          // Send the email using wp_mail()
+          wp_mail( $to, $subject, $message, $headers );
     }
-
-    wp_mail( $email, $subject, $message );
 }
-add_action( 'set_user_role', __NAMESPACE__ . '\\send_user_role_email', 10, 4 );
 
-
-
-
-
-
-
-
-
-
+add_action( 'profile_update', __NAMESPACE__ . '\\send_role_change_email', 10, 2 );

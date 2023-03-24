@@ -65,7 +65,7 @@ function cptui_register_my_cpts_organization() {
     "query_var" => true,
     "menu_position" => 6,
     "menu_icon" => "dashicons-groups",
-    "supports" => [ "title", "editor", "thumbnail" ],
+    "supports" => [ "title", "editor", "thumbnail" , "author" ],
     "show_in_graphql" => false,
   ];
 
