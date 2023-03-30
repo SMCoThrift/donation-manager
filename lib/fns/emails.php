@@ -7,7 +7,6 @@ use function DonationManager\transdepts\{get_trans_dept_contact};
 use function DonationManager\apirouting\{send_api_post};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact,get_orphaned_donation_contacts};
 use function DonationManager\organizations\{is_orphaned_donation};
-use function DonationManager\helpers\{get_socialshare_copy};
 use function DonationManager\donations\{get_donation_routing_method,add_orphaned_donation,get_donation_receipt,get_click_to_claim_link};
 
 /**
@@ -198,15 +197,6 @@ function send_email( $type = '' ){
           if( $website = get_post_meta( $donor['org_id'], 'website', true ) )
             $hbs_vars['website'] = $website;
 
-          // Social Sharing
-          if( ! $allow_user_photo_uploads )
-          {
-            $donation_id_hashtag = '#id' . $donor['ID'];
-            $socialshare_copy = get_socialshare_copy( $organization_name, $donation_id_hashtag );
-            $hbs_vars['donation_id_hashtag'] = $donation_id_hashtag;
-            $hbs_vars['socialshare_copy'] = $socialshare_copy;
-          }
-
           $html = render_template( 'email.donor-confirmation', $hbs_vars );
 
           $recipients = array( $donor['address']['name']['first'] . ' ' . $donor['address']['name']['last'] . ' <' . $donor['email'] . '>' );
@@ -282,13 +272,6 @@ function send_email( $type = '' ){
             add_orphaned_donation( [ 'contact_id' => $donor['orphan_provider_id'], 'donation_id' => $donor['ID'] ] );
           }
 
-          // Add links to check social media for this donation
-          if( ! $allow_user_photo_uploads )
-          {
-            $donation_id_hashtag = 'id' . $donor['ID'];
-            $social_links = '<strong>DONATION PHOTO:</strong><br>This donor *may* have tweeted a photo of this donation. <strong><a href="https://twitter.com/hashtag/' . $donation_id_hashtag . '">Click here</a></strong> to check Twitter.';
-          }
-
           // User Uploaded Photos
           $user_uploaded_image = '';
           if( isset( $donor['image'] ) && ! empty( $donor['image'] ) && is_array( $donor['image'] ) )
@@ -317,8 +300,7 @@ function send_email( $type = '' ){
             'orphaned_donation_note' => $orphaned_donation_note,
             'organization_name' => $organization_name,
           ];
-          if( isset( $social_links ) && ! empty( $social_links ) )
-            $hbs_vars['social_links'] = $social_links;
+
           if( isset( $user_uploaded_image ) && ! empty( $user_uploaded_image ) )
             $hbs_vars['user_uploaded_image'] = $user_uploaded_image;
 
