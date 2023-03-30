@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.2  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.6.4.1  
+**Stable tag:** 3.6.4.2  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.6.4.2 ###
+* Adding `custom_column_api_response_content()` to handle display of HTML in the API Response column in admin Donation CPT listings.
 
 ### 3.6.4.1 ###
 * Saving API response code and message as separate fields.

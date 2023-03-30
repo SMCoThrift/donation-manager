@@ -32,37 +32,8 @@ function custom_column_content( $column ){
 
   switch( $column ){
     case 'api-response':
-      $default_org = get_default_organization();
-      $org = get_post_meta( $post->ID, 'organization', true );
-      if( is_numeric( $org ) )
-        $routing_method = get_donation_routing_method( $org );
-      if( $org == $default_org['id'] || 'email' != $routing_method ){
-        $api_response = get_post_meta( $post->ID, 'api_response', true );
-        $response = @unserialize( $api_response );
-        if( is_array( $response ) && array_key_exists( 'response', $response ) ){
-          $response_code = $response['response']['code'];
-          $response_msg = $response['response']['message'];
-
-          switch( $response_code ){
-            case 200:
-              echo '<div class="response-pill success">Success</div>';
-              break;
-
-            default:
-              echo '<div class="response-pill warning">Response Code: ' . $response_code . '</div>';
-          }
-          echo '<div class="response-msg">Msg: ' . $response_msg . '</div>';
-        } else if( ! empty( $api_response ) && 's:' != substr( $api_response, 0, 2 ) ){
-          $response_css_class = ( stristr( strtolower( $api_response ), 'error' ) )? 'error2' : 'warning' ;
-          $response_notice = ( stristr( strtolower( $api_response ), 'error' ) )? 'Error' : 'Warning' ;
-          echo '<div class="response-pill ' . $response_css_class . '">' . $response_notice . '</div>';
-          echo '<div class="response-msg">Msg: ' . $api_response . '</div>';
-        } else {
-          echo '<div class="response-pill warning">No API Response</div>';
-        }
-      } else {
-        echo '<div class="response-pill note">Not Sent/Emailed</div>';
-      }
+      $html = custom_column_api_response_content( $post->ID );
+      echo $html;
       break;
 
     case 'org':
@@ -108,6 +79,77 @@ function custom_column_content( $column ){
 add_action( 'manage_donation_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 add_action( 'manage_store_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 add_action( 'manage_trans_dept_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
+
+/**
+ * Returns the HTML for the API Response column.
+ *
+ * @param      int     $donation_id  The donation identifier
+ *
+ * @return     string  HTML for the API Response column.
+ */
+function custom_column_api_response_content( $donation_id ){
+  $html = [];
+  $default_org = get_default_organization();
+  $org = get_post_meta( $donation_id, 'organization', true );
+  if( is_numeric( $org ) )
+    $routing_method = get_donation_routing_method( $org );
+
+  if( 480325 > $donation_id ){
+    if( $org == $default_org['id'] || 'email' != $routing_method ){
+      $api_response = get_post_meta( $donation_id, 'api_response', true );
+      $response = @unserialize( $api_response );
+      if( is_array( $response ) && array_key_exists( 'response', $response ) ){
+        $response_code = $response['response']['code'];
+        $response_msg = $response['response']['message'];
+
+        switch( $response_code ){
+          case 200:
+            $html[] = '<div class="response-pill success">Success</div>';
+            break;
+
+          default:
+            $html[] = '<div class="response-pill warning">Response Code: ' . $response_code . '</div>';
+        }
+        $html[] = '<div class="response-msg">Msg: ' . $response_msg . '</div>';
+      } else if( ! empty( $api_response ) && 's:' != substr( $api_response, 0, 2 ) ){
+        $response_css_class = ( stristr( strtolower( $api_response ), 'error' ) )? 'error2' : 'warning' ;
+        $response_notice = ( stristr( strtolower( $api_response ), 'error' ) )? 'Error' : 'Warning' ;
+        $html[] = '<div class="response-pill ' . $response_css_class . '">' . $response_notice . '</div>';
+        $html[] = '<div class="response-msg">Msg: ' . $api_response . '</div>';
+      } else {
+        $html[] = '<div class="response-pill warning">No API Response</div>';
+      }
+    } else {
+      $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
+    }
+  } else {
+    /**
+     * After donations with an ID of >= 480325 have the Response Code
+     * and Message stored as separate meta fields.
+     */
+    $response_code = get_post_meta( $donation_id, 'api_response_code', true );
+    $response_message = get_post_meta( $donation_id, 'api_response_message', true );
+    switch( $response_code ){
+      case 200:
+        $html[] = '<div class="response-pill success">Success</div>';
+        break;
+
+      case 400:
+      case 401:
+      case 402:
+      case 403:
+      case 404:
+        $html[] = '<div class="response-pill error2">Error</div>';
+        break;
+
+      default:
+        $html[] = '<div class="response-pill warning">Warning (Code: ' . $response_code . ')</div>';
+    }
+    $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+  }
+
+  return implode( '', $html );
+}
 
 /**
  * Handles sorting for custom columns.
