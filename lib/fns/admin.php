@@ -93,10 +93,12 @@ function custom_column_api_response_content( $donation_id ){
   $org = get_post_meta( $donation_id, 'organization', true );
   if( is_numeric( $org ) )
     $routing_method = get_donation_routing_method( $org );
+  //$html[] = 'routing_method: ' . $routing_method . '<br>';
+  $api_response = get_post_meta( $donation_id, 'api_response', true );
 
   if( 480325 > $donation_id ){
     if( $org == $default_org['id'] || 'email' != $routing_method ){
-      $api_response = get_post_meta( $donation_id, 'api_response', true );
+
       $response = @unserialize( $api_response );
       if( is_array( $response ) && array_key_exists( 'response', $response ) ){
         $response_code = $response['response']['code'];
@@ -123,29 +125,45 @@ function custom_column_api_response_content( $donation_id ){
       $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
     }
   } else {
-    /**
-     * After donations with an ID of >= 480325 have the Response Code
-     * and Message stored as separate meta fields.
-     */
-    $response_code = get_post_meta( $donation_id, 'api_response_code', true );
-    $response_message = get_post_meta( $donation_id, 'api_response_message', true );
-    switch( $response_code ){
-      case 200:
-        $html[] = '<div class="response-pill success">Success</div>';
-        break;
+    if( $org == $default_org['id'] || 'email' != $routing_method ){
+      /**
+       * After donations with an ID of >= 480325 have the Response Code
+       * and Message stored as separate meta fields.
+       */
+      $response_code = get_post_meta( $donation_id, 'api_response_code', true );
+      $response_message = get_post_meta( $donation_id, 'api_response_message', true );
+      switch( $response_code ){
+        case 200:
+        case 201:
+        case 202:
+        case 203:
+        case 204:
+        case 205:
+          $html[] = '<div class="response-pill success">Success</div>';
+          $html[] = '<div class="response-msg">' . $response_code . '/' . $response_message . '</div>';
+          break;
 
-      case 400:
-      case 401:
-      case 402:
-      case 403:
-      case 404:
-        $html[] = '<div class="response-pill error2">Error</div>';
-        break;
+        case 400:
+        case 401:
+        case 402:
+        case 403:
+        case 404:
+          $html[] = '<div class="response-pill error2">Error</div>';
+          $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+          break;
 
-      default:
-        $html[] = '<div class="response-pill warning">Warning (Code: ' . $response_code . ')</div>';
+        default:
+          if( empty( $response_code ) && is_string( $api_response ) && stristr( strtolower( $api_response ), 'operation timed out' ) ){
+            $html[] = '<div class="response-pill error2">Error</div>';
+            $html[] = '<div class="response-msg">API Msg: ' . $api_response . '</div>';
+          } else {
+            $html[] = '<div class="response-pill warning">Warning (Code: ' . $response_code . ')</div>';
+            $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+          }
+      }
+    } else {
+      $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
     }
-    $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
   }
 
   return implode( '', $html );
