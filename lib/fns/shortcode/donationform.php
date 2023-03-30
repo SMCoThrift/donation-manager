@@ -68,8 +68,20 @@ function donationform( $atts ){
       $form = 'describe-your-donation';
   }
 
-  if( isset( $_SESSION['donor']['org_id'] ) )
-    $allow_user_photo_uploads = get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] );
+  if( isset( $_SESSION['donor']['org_id'] ) ){
+    /**
+     * Used to switch on interface elements for User Photo Uploads.
+     *
+     * Used in the following files included by require_once():
+     * - lib/fns/shortcode/donationform/contact-details.php
+     *
+     * @var        array
+     */
+    $user_photo_uploads = [
+      'on'        => get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] ),
+      'required'  => get_field( 'pickup_settings_user_photo_uploads_required', $_SESSION['donor']['org_id'] ),
+    ];
+  }
 
   $form_filename = DONMAN_PLUGIN_PATH . 'lib/fns/shortcode/donationform/' . $form . '.php';
   /**

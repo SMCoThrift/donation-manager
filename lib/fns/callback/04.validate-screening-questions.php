@@ -36,13 +36,19 @@ if( isset( $_POST['donor']['questions'] ) ) {
         }
     }
 
+    // Photo Upload settings
+    $user_photo_uploads = [
+      'on'        => $pickup_settings['allow_user_photo_uploads'],
+      'required'  => $pickup_settings['user_photo_uploads_required'],
+    ];
+
     // The following doesn't validate on my local machine. Is this due to a CORS issue?
     if( isset( $_POST['user_photo_id'] ) && is_array( $_POST['user_photo_id'] ) )
         uber_log( '🔔 user_photo_id = ' . print_r( $_POST['user_photo_id'], true ) );
     if( isset( $_POST['image_public_id'] ) )
         uber_log( 'image_public_id = ' . $_POST['image_public_id'] );
-    if( $allow_user_photo_uploads = get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] ) )
-    {
+
+    if( $user_photo_uploads['on'] && $user_photo_uploads['required'] ){
         $form->addRules([
             'user_photo_id' => ['required']
         ]);

@@ -99,7 +99,9 @@
                     "ui": 0,
                     "return_format": "value",
                     "ajax": 0,
-                    "placeholder": ""
+                    "placeholder": "",
+                    "allow_custom": 0,
+                    "search_placeholder": ""
                 },
                 {
                     "key": "field_62615dc03f2ae",
@@ -192,7 +194,9 @@
                     "ui": 0,
                     "return_format": "value",
                     "ajax": 0,
-                    "placeholder": ""
+                    "placeholder": "",
+                    "allow_custom": 0,
+                    "search_placeholder": ""
                 },
                 {
                     "key": "field_62615f283f2b1",
@@ -244,11 +248,33 @@
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
-                        "width": "",
+                        "width": "50",
                         "class": "",
                         "id": ""
                     },
+                    "acfe_save_meta": 0,
                     "message": "Yes",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_6422e85f50317",
+                    "label": "Make User Photo Uploads a required field?",
+                    "name": "user_photo_uploads_required",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "acfe_save_meta": 0,
+                    "message": "Yes, require user photo uploads.",
                     "default_value": 0,
                     "ui": 0,
                     "ui_on_text": "",
@@ -297,7 +323,9 @@
                     "max_width": 936,
                     "max_height": 120,
                     "max_size": ".25",
-                    "mime_types": "png,jpeg,gif,jpg"
+                    "mime_types": "png,jpeg,gif,jpg",
+                    "uploader": "",
+                    "acfe_thumbnail": 0
                 },
                 {
                     "key": "field_6261605b3f2b6",
@@ -322,7 +350,9 @@
                     "max_width": 600,
                     "max_height": 500,
                     "max_size": ".25",
-                    "mime_types": "png,jpg,jpeg,gif"
+                    "mime_types": "png,jpg,jpeg,gif",
+                    "uploader": "",
+                    "acfe_thumbnail": 0
                 },
                 {
                     "key": "field_626160923f2b7",
@@ -361,7 +391,12 @@
                     "media_upload": 0,
                     "delay": 0
                 }
-            ]
+            ],
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
         },
         {
             "key": "field_62ed43d16b5df",
@@ -382,6 +417,8 @@
             "max": 0,
             "layout": "table",
             "button_label": "Add Row",
+            "rows_per_page": 20,
+            "acfe_repeater_stylised_button": 0,
             "sub_fields": [
                 {
                     "key": "field_62ed43e46b5e0",
@@ -428,8 +465,7 @@
                     "delay": 0,
                     "parent_repeater": "field_62ed43d16b5df"
                 }
-            ],
-            "rows_per_page": 20
+            ]
         }
     ],
     "location": [
@@ -450,5 +486,12 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1673272425
+    "acfe_display_title": "",
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1680009484
 }

@@ -101,9 +101,15 @@ function send_email( $type = '' ){
 
     // Does this org allow user photo uploads?
     if( array_key_exists( 'donor', $_SESSION ) ){
-      $allow_user_photo_uploads = get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] );
+      $user_photo_uploads = [
+        'on'        => get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] ),
+        'required'  => get_field( 'pickup_settings_user_photo_uploads_required', $_SESSION['donor']['org_id'] ),
+      ];
     } else {
-      $allow_user_photo_uploads = false;
+      $user_photo_uploads = [
+        'on'        => false,
+        'required'  => false,
+      ];
     }
 
     $headers = array();
@@ -189,7 +195,7 @@ function send_email( $type = '' ){
             'donationreceipt' => $donationreceipt,
             'trans_contact' => $trans_contact,
             'orphaned_donation_note' => $orphaned_donation_note,
-            'allow_user_photo_uploads' => $allow_user_photo_uploads,
+            'allow_user_photo_uploads' => $user_photo_uploads['on'],
           ];
           if( $logo_url = get_the_post_thumbnail_url( $donor['org_id'], 'full' ) )
             $hbs_vars['organization_logo'] = $logo_url;

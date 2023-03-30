@@ -25,8 +25,11 @@ foreach( $screening_questions as $question ) {
 /**
  * Setup our Pick Up Settings:
  *
- * @type  bool  $provide_additional_details Does the organization allow donors to provide additional details when answering "Yes" to one of the screening questions?
- * @type  bool  $allow_user_photo_uploads   Does the organization allow donors to upload photos of their donations?
+ * @type  bool   $provide_additional_details Does the organization allow donors to provide additional details when answering "Yes" to one of the screening questions?
+ * @type  array  $user_photo_uploads {
+ *   @type  bool $on        TRUE if User Photo Uploads are allowed.
+ *   @type  bool $required  TRUE if User Photo Uploads are required.
+ * }
  */
 $pickup_settings = get_field( 'pickup_settings', $_SESSION['donor']['org_id'] );
 
@@ -37,9 +40,12 @@ $additional_details = null;
 if( $provide_additional_details )
     $additional_details = ( isset( $_POST['donor']['additional_details'] ) )? esc_textarea( $_POST['donor']['additional_details'] ) : '' ;
 
-$allow_user_photo_uploads = $pickup_settings['allow_user_photo_uploads']; // 09/19/2022 (08:28) - switched to ACF true/false field
+$user_photo_uploads = [
+  'on'        => $pickup_settings['allow_user_photo_uploads'],
+  'required'  => $pickup_settings['user_photo_uploads_required'],
+];
 if( DMDEBUG_VERBOSE )
-  uber_log( '🔔 $allow_user_photo_uploads = ' . $allow_user_photo_uploads );
+  uber_log( '🔔 $user_photo_uploads = ' . print_r( $user_photo_uploads, true ) );
 
 $hbs_vars = [
   'questions' => $questions,
@@ -52,7 +58,7 @@ $hbs_vars = [
  * 08/11/2022 (09:19) - TODO: Get Cloudinary Photo Uploads working:
  */
 // jQuery/Cloudinary Photo Upload
-if( $allow_user_photo_uploads )
+if( $user_photo_uploads['on'] )
 {
   uber_log('🔔 allowing user photo uploads...');
 
