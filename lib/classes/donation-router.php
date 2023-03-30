@@ -31,7 +31,15 @@ class DonationRouter {
    * @param      mixed  $response     The response
    */
   public function save_api_response( $donation_id, $response ){
-    $message = ( is_wp_error( $response ) )? $response->get_error_message() : serialize( $response );
+    $message = '';
+    if( is_wp_error( $response ) ){
+      $message = $response->get_error_message();
+    } else if( is_array( $response ) || is_object( $response ) ){
+      $message = serialize( $response );
+    } else {
+      $message = $response;
+    }
+
     if( ! is_null( $donation_id ) ){
       update_post_meta( $donation_id, 'api_response', $message );
     } else {
