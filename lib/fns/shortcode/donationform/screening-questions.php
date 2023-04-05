@@ -52,6 +52,8 @@ $hbs_vars = [
   'additional_details' => $additional_details,
   'nextpage' => $nextpage,
   'provide_additional_details' => $provide_additional_details,
+  'user_photo_uploads_on' => $user_photo_uploads['on'],
+  'user_photo_uploads_required' => $user_photo_uploads['required'],
 ];
 
 /**

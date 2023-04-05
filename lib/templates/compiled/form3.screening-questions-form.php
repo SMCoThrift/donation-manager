@@ -61,7 +61,8 @@ span.label-text{font-size: 1.25em; font-weight: bold;}
     <div class="help-block">Please be considerate of the costs associated with large item pick ups to our organization. We will gladly and thankully pick up items that will help us further the mission of our organization. However we must respectfully deny items that create an additional disposal liability.</div>
   </div>
 ' : '').''.((LR::ifvar($cx, (($inary && isset($in['file_upload_input'])) ? $in['file_upload_input'] : null), false)) ? '  <div id="donation-photo" style="margin-bottom: 2em;">
-    <h3>Upload one or more photos of your donation:</h3>
+    <h3>Upload one or more photos of your donation</h3>
+    <p><em>'.((LR::ifvar($cx, (($inary && isset($in['user_photo_uploads_required'])) ? $in['user_photo_uploads_required'] : null), false)) ? '<strong>*Required:</strong> Include one or more photos of your donation.' : 'Optional: You may include one or more photos of your donation.').'</em></p>
     '.(($inary && isset($in['file_upload_input'])) ? $in['file_upload_input'] : null).'
     <div class="progress_bar" style=""></div>
     <div class="preview" style="display: none;"></div>
