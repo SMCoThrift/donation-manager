@@ -48,33 +48,32 @@ if( isset( $_POST['donor']['questions'] ) ) {
     if( isset( $_POST['image_public_id'] ) )
         uber_log( 'image_public_id = ' . $_POST['image_public_id'] );
 
-    if( $user_photo_uploads['on'] && $user_photo_uploads['required'] ){
-        $form->addRules([
-            'user_photo_id' => ['required']
-        ]);
+    if( $user_photo_uploads['on'] ){
+      if( $user_photo_uploads['required'] )
+        $form->addRules([ 'user_photo_id' => ['required'] ]);
 
-        if( isset( $_POST['user_photo_id'] ) && ! empty( $_POST['user_photo_id'] ) ){
-            $y = 0;
-            $public_image_ids = ( stristr( $_POST['image_public_id'], ',' ) )? explode( ',', $_POST['image_public_id'] ) : [ $_POST['image_public_id'] ] ;
-            foreach( $_POST['user_photo_id'] as $user_photo_id ){
-                $preloaded = new \Cloudinary\PreloadedFile( $user_photo_id );
-                if( $preloaded->is_valid() ){
-                    $identifier = $preloaded->identifier();
-                } else {
-                    uber_log('Invalid upload signature.');
-                    preg_match( '/image\/upload\/[0-9A-Za-z]+\/([0-9A-Za-z]+\.[a-z]+)#/', $user_photo_id, $matches );
-                    uber_log( $matches );
-                    $identifier = $matches[1];
-                }
+      if( isset( $_POST['user_photo_id'] ) && ! empty( $_POST['user_photo_id'] ) ){
+        $y = 0;
+        $public_image_ids = ( stristr( $_POST['image_public_id'], ',' ) )? explode( ',', $_POST['image_public_id'] ) : [ $_POST['image_public_id'] ] ;
+        foreach( $_POST['user_photo_id'] as $user_photo_id ){
+          $preloaded = new \Cloudinary\PreloadedFile( $user_photo_id );
+          if( $preloaded->is_valid() ){
+            $identifier = $preloaded->identifier();
+          } else {
+            uber_log('Invalid upload signature.');
+            preg_match( '/image\/upload\/[0-9A-Za-z]+\/([0-9A-Za-z]+\.[a-z]+)#/', $user_photo_id, $matches );
+            uber_log( $matches );
+            $identifier = $matches[1];
+          }
 
-                $_SESSION['donor']['image'][] = [
-                    'user_photo_id' => $user_photo_id,
-                    'identifier'    => $identifier,
-                    'public_id'     => $public_image_ids[$y],
-                ];
-                $y++;
-            }
+          $_SESSION['donor']['image'][] = [
+            'user_photo_id' => $user_photo_id,
+            'identifier'    => $identifier,
+            'public_id'     => $public_image_ids[$y],
+          ];
+          $y++;
         }
+      }
     }
 
     $step = 'contact-details';
