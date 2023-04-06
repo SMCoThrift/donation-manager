@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.6.4.3
+Stable tag: 3.6.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.6.5 =
+* Updating User Photo Uploads to include an ACF Option for making them required. Now, by default, User Photo Uploads are "optional".
+* Removed `get_socialshare_copy()` as it is no longer in use.
 
 = 3.6.4.3 =
 * Better response code handling for API Response column in Donation CPT admin listings.
