@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.2  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.6.5.1  
+**Stable tag:** 3.6.5.2  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.6.5.2 ###
+* BUGFIX: Correctly spliting multiple organization emails when sending monthly reports.
 
 ### 3.6.5.1 ###
 * Adding post_type=page as additional display param for City Pages ACF Field Group.
