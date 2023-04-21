@@ -65,7 +65,7 @@ function cptui_register_my_cpts_trans_dept() {
     "query_var" => true,
     "menu_position" => 6,
     "menu_icon" => "dashicons-networking",
-    "supports" => [ "title" ],
+    "supports" => [ "title","author" ],
     "show_in_graphql" => false,
   ];
 

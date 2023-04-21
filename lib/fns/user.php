@@ -141,8 +141,6 @@ function send_role_change_email( $user_id, $old_user_data ) {
           $login = $new_user_data->user_email;
           $url = site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . urlencode($login).'&wp_lang=en_US' );
 
-          error_log(print_r($key));
-
           // Define the email message
           $message = 'Hello ' . $new_user_data->display_name . ', your account has been approved. Please click the generated link to set your password : <a href="'.  $url .'">generate your password</a>'; 
 
