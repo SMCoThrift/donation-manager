@@ -37,3 +37,7 @@ ul.nav-user li {
 form#acf-form button {
     background: transparent;
 }
+/*HIDE TEMPORARY*/
+.acf-field-629f7024abec7 {
+    display: none;
+}
