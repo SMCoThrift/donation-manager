@@ -2,7 +2,7 @@
 
 namespace DonationManager\shortcodes;
 use function DonationManager\utilities\{get_alert};
-
+use function DonationManager\organizations\{get_org_transdepts};
 
 /**
  * Shows the ACF organization form.
@@ -37,54 +37,62 @@ function show_acf_transdept_form(){
     $organization_id = get_user_meta( $current_user->ID, 'organization', true );
 
     if( $organization_id ){
-        $post_id = 'new_post';
-        $field_values = array();
+      $trans_depts = get_org_transdepts( $organization_id );
 
-        // Check if the form has been submitted
-        if( isset( $_POST['acf'] ) && wp_verify_nonce( $_POST['acf']['_acf_nonce'], 'new_post' ) ) {
-            // Save the form data
-            $post_id = acf_form_save_post( 'new_post' );
-            
-            // Automatically assign the organization of the user to the organization field
-            if( $post_id ) {
-                update_field( 'organization', $organization_id, $post_id );
-            }
-        } else {
-            // Retrieve the saved field values if the form hasn't been submitted
-            $args = array(
-                'post_type' => 'trans_dept',
-                'post_status' => 'publish',
-                'author' => $current_user->ID,
-                'posts_per_page' => 1
-            );
-            $trans_depts = get_posts( $args );
-            if( $trans_depts ) {
-                $post_id = $trans_depts[0]->ID;
-                $field_values['organization'] = get_field('organization', $post_id);
-                $field_values['contact_title'] = get_field('contact_title', $post_id);
-                $field_values['contact_name'] = get_field('contact_name', $post_id);
-                $field_values['contact_email'] = get_field('contact_email', $post_id);
-                $field_values['phone'] = get_field('phone', $post_id);
-                $field_values['pickup_codes'] = get_field('pickup_codes', $post_id);
-                
-            }
+      $post_id = 'new_post';
+      $field_values = array();
+
+      // Check if the form has been submitted
+      if( isset( $_POST['acf'] ) && wp_verify_nonce( $_POST['acf']['_acf_nonce'], 'new_post' ) ) {
+        // If no Transportation Department exists for the current user,
+        // save our form data as a new Transportation Department.
+
+        // Save the form data
+        $post_id = acf_form_save_post( 'new_post' );
+
+        // Automatically assign the organization of the user to the organization field
+        if( $post_id ) {
+          update_field( 'organization', $organization_id, $post_id );
         }
+      } else {
+          // Retrieve the saved field values if the form hasn't been submitted
+          if( 1 === count( $trans_depts ) ) {
+            $trans_dept_id = $trans_depts[0];
+            if( $trans_dept_id ):
+              $field_values['organization'] = get_field( 'organization', $trans_dept_id );
+              $field_values['contact_title'] = get_field( 'contact_title', $trans_dept_id );
+              $field_values['contact_name'] = get_field( 'contact_name', $trans_dept_id );
+              $field_values['contact_email'] = get_field( 'contact_email', $trans_dept_id );
+              $field_values['phone'] = get_field( 'phone', $trans_dept_id );
 
-        ob_start();
-        acf_form(array(
-            'post_id' => $post_id, // Pass the post ID to the form
-            'post_title' => true,
-            'post_type' => 'trans_dept',
-            'new_post' => array(
-                'post_type' => 'trans_dept',
-                'post_status' => 'publish'
-            ),
-            'fields' => ['organization','contact_title', 'contact_name', 'contact_email', 'phone','pickup_codes'],
-            'submit_value' => 'Update',
-            'field_values' => $field_values // Pass the field values to the form
-        ));
+              $pickup_codes = wp_get_post_terms( $trans_dept_id, 'pickup_code', [ 'fields' => 'names' ] );
+              uber_log('🔔 $pickup_codes = ' . print_r( $pickup_codes, true ) );
 
-        return ob_get_clean();
+              $field_values['pickup_codes'] = $pickup_codes;
+            endif;
+            ob_start();
+            acf_form( array(
+              'post_id' => $trans_dept_id, // Pass the post ID to the form
+              'post_title' => true,
+              'post_type' => 'trans_dept',
+              'new_post' => array(
+                  'post_type' => 'trans_dept',
+                  'post_status' => 'publish'
+              ),
+              'fields' => [ 'organization', 'contact_title', 'contact_name', 'contact_email', 'phone', 'pickup_codes' ],
+              'submit_value' => 'Update',
+              'field_values' => $field_values // Pass the field values to the form
+            ) );
+            return ob_get_clean();
+
+          } else if( 1 < count( $trans_depts ) ) {
+            return get_alert([
+              'title' => 'Multiple Transportation Departments',
+              'description' => 'There are multiple transportation departments assigned to your organization.',
+            ]);
+          }
+      }
+
     } else {
         return get_alert([ 'description' => 'Error: No Organization assigned to user.' ]);
     }
@@ -163,38 +171,41 @@ function validate_and_save_zipcode( $valid, $value, $field, $input ){
     }
 
     // load data
-    $repeater_field = isset($_POST['acf']['field_64241976176e9']) ? $_POST['acf']['field_64241976176e9'] : ''; // repeater parent key
-    $invalid_zips = array(); // initialize array to hold invalid zip codes
-    $valid_zips = array(); // initialize array to hold valid zip codes
-    foreach ($repeater_field as $row) {
-        $zip_code_fields = $row['field_642419a0176ea']; // specific field
+    $repeater_field = isset( $_POST['acf']['field_64241976176e9'] ) ? $_POST['acf']['field_64241976176e9'] : ''; // repeater parent key
+    $invalid_zips = []; // initialize array to hold invalid zip codes
+    $valid_zips = []; // initialize array to hold valid zip codes
+    foreach ( $repeater_field as $row ) {
+        $zip_code = $row['field_642419a0176ea']; // specific field
+        uber_log( $zip_code, '$zip_code' );
 
         // check if the zipcode is already assigned to a term in the pickup_code taxonomy
-        $args = array(
-            'post_type' => 'trans_dept',
-            'posts_per_page' => -1,
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'pickup_code',
-                    'field' => 'name',
-                    'terms' => $zip_code_fields,
-                ),
-            ),
-        );
-        $existing_posts = get_posts($args);
-        if (!empty($existing_posts)) {
-            $invalid_zips[] = $zip_code_fields;
+        $args = [
+          'post_type' => 'trans_dept',
+          'posts_per_page' => -1,
+          'exclude' => null,
+          'tax_query' => [
+            [
+              'taxonomy' => 'pickup_code',
+              'field' => 'name',
+              'terms' => $zip_code,
+            ],
+          ],
+        ];
+        $existing_transdepts = get_posts( $args );
+        if ( ! empty( $existing_transdepts ) ) {
+            $invalid_zips[] = $zip_code;
         } else {
-            $valid_zips[] = $zip_code_fields;
+            $valid_zips[] = $zip_code;
         }
     }
 
     // If there are invalid zip codes, construct the validation message
-    if (!empty($invalid_zips)) {
-        $invalid_zip_message = 'This Zipcode ' . implode(',', $invalid_zips) . ' is already assigned to other Transportation Department.';
+    if ( ! empty( $invalid_zips ) ) {
+        $invalid_zip_message = 'This Zipcode ' . implode( ',', $invalid_zips ) . ' is already assigned to other Transportation Department.';
         $valid = $invalid_zip_message;
     }
-        error_log(print_r($valid, true));
+    uber_log( $valid, '$valid' );
+
     // save the validated zip code fields to the repeater
     $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : '';
     wp_set_post_terms($post_id, $valid_zips, 'pickup_code', true);
