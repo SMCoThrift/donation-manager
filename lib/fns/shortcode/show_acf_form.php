@@ -79,9 +79,10 @@ function show_acf_transdept_form(){
                   'post_type' => 'trans_dept',
                   'post_status' => 'publish'
               ),
-              'fields' => [ 'organization', 'contact_title', 'contact_name', 'contact_email', 'phone', 'pickup_codes' ],
+              'fields' => [ 'contact_title', 'contact_name', 'contact_email', 'phone' ],
               'submit_value' => 'Update',
-              'field_values' => $field_values // Pass the field values to the form
+              'field_values' => $field_values,
+              'updated_message' => get_alert([ 'description' => 'Your Transportation Department details have been updated.', 'type' => 'success' ]),
             ) );
             return ob_get_clean();
 
