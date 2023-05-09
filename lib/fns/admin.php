@@ -18,9 +18,34 @@ function admin_custom_css(){
   .response-pill.error2{background-color: #cb3131;}
   .response-pill.note{background-color: #ccc;}
   .response-msg{font-size: 11px; color: #999;}
+  table.chhj-stats{width: 100%;}
+  table.chhj-stats thead th{background-color: #e7e8e9;}
+  table.chhj-stats th, table.chhj-stats td{padding: 2px 4px;}
+  table.chhj-stats tr:first-child th:first-child{width: 25%;}
+  table.chhj-stats tr:first-child th:nth-child(2), table.chhj-stats tr:first-child th:nth-child(3), table.chhj-stats tr:first-child th:nth-child(4){width: 25%;}
+  table.chhj-stats td, table.chhj-stats tbody th{text-align: right;}
+  table.chhj-stats tbody tr:nth-child(even){background-color: #eee;}
   </style>';
 }
 add_action( 'admin_head', __NAMESPACE__ . '\\admin_custom_css' );
+
+function chhj_stats_dashboard_widget() {
+  wp_add_dashboard_widget( 'chhj-stats', 'College Hunks API Stats', function(){
+    $chhj_donations = get_option( 'chhj_donations' );
+    echo '<p>The following stats reflect the number of donations sent to College Hunks via their API:</p>';
+    echo '<table class="chhj-stats"><thead><tr><th>Date</th><th>Non-Priority</th><th>Priority</th><th>Total</th></tr></thead><tbody>';
+    foreach( $chhj_donations as $month => $stats ){
+      $date = date_create( $month );
+      echo '<tr>';
+      echo '<th>' . date_format( $date, 'M Y') . '</th>';
+      echo '<td>' . number_format( $stats['non-priority'] ) . '</td><td>' . number_format( $stats['priority'] ) . '</td>';
+      echo '<td>' . number_format( ( $stats['non-priority'] + $stats['priority'] ) ) . '</td>';
+      echo '</tr>';
+    }
+    echo '</tbody></table>';
+  }, null, null );
+}
+add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\chhj_stats_dashboard_widget' );
 
 /**
  * Supplies content for custom columns.
