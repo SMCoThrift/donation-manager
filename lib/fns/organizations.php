@@ -489,6 +489,7 @@ function get_screening_questions( $org_id = null ) {
  * @return     array  An array of transportation deparment IDs.
  */
 function get_org_transdepts( $org_id ){
+
   $trans_depts = [];
 
   $args = [

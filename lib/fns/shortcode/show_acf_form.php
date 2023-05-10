@@ -35,10 +35,12 @@ add_shortcode( 'show_acf_organization_form', __NAMESPACE__ . '\\show_acf_organiz
 function show_acf_transdept_form(){
     $current_user = wp_get_current_user();
     $organization_id = get_user_meta( $current_user->ID, 'organization', true );
+       // error_log( print_r( $organization_id, true ));
 
     if( $organization_id ){
       $trans_depts = get_org_transdepts( $organization_id );
-
+          //error_log( print_r( get_org_transdepts($organization_id), true ));
+        
       $post_id = 'new_post';
       $field_values = array();
 
@@ -99,69 +101,6 @@ function show_acf_transdept_form(){
 }
 
 add_shortcode( 'show_acf_transdept_form', __NAMESPACE__ . '\\show_acf_transdept_form' );
-
-
-// ==============
-
-// function validate_and_save_zipcode( $valid, $value, $field, $input ){
-
-//     // bail early if value is already invalid
-//     if( !$valid ) {
-//         return $valid;
-//     }
-
-//     // load data
-//     $repeater_field = isset($_POST['acf']['field_64241976176e9']) ? $_POST['acf']['field_64241976176e9'] : ''; // repeater parent key
-//     $invalid_zips = array(); // initialize array to hold invalid zip codes
-//     $valid_zips = array(); // initialize array to hold valid zip codes
-//     foreach ($repeater_field as $row) {
-//         $zip_code_fields = $row['field_642419a0176ea']; // specific field
-
-//         // check if the zipcode is already assigned to a term in the pickup_code taxonomy
-//         $args = array(
-//             'post_type' => 'trans_dept',
-//             'posts_per_page' => -1,
-//             'tax_query' => array(
-//                 array(
-//                     'taxonomy' => 'pickup_code',
-//                     'field' => 'name',
-//                     'terms' => $zip_code_fields,
-//                 ),
-//             ),
-//         );
-//         $existing_posts = get_posts($args);
-//         if (!empty($existing_posts)) {
-//             $invalid_zips[] = $zip_code_fields;
-//         } else {
-//             $valid_zips[] = $zip_code_fields;
-//         }
-//     }
-
-//     // If there are invalid zip codes, construct the validation message
-//     if (!empty($invalid_zips)) {
-//         $invalid_zip_message = 'This Zipcode ' . implode(',', $invalid_zips) . ' is already assigned to other Transportation Department.';
-//         $valid = $invalid_zip_message;
-//     } else {
-//         $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : '';
-//         wp_set_post_terms($post_id, $valid_zips, 'pickup_code', true);
-
-//         // save the validated zip code fields to the repeater
-//         $repeater_key = 'field_64241976176e9';
-//         $new_rows = array();
-//         foreach ($repeater_field as $row) {
-//             $zip_code_fields = $row['field_642419a0176ea']; // specific field
-//             if (in_array($zip_code_fields, $valid_zips)) {
-//                 $new_rows[] = $row; // add row to new array if zip code is valid
-//             }
-//         }
-//         $_POST['acf'][$repeater_key] = $new_rows;
-//     }
-
-//     // return
-//     return $valid;
-// }
-
-// add_filter('acf/validate_value/key=field_64241976176e9', __NAMESPACE__ . '\\validate_and_save_zipcode', 10, 4);
 
 function validate_and_save_zipcode( $valid, $value, $field, $input ){
 
@@ -225,10 +164,6 @@ function validate_and_save_zipcode( $valid, $value, $field, $input ){
 }
 
 add_filter('acf/validate_value/key=field_64241976176e9', __NAMESPACE__ . '\\validate_and_save_zipcode', 10, 4);
-
-
-
-
 
 
 // ========================
