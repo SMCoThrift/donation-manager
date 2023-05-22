@@ -12,11 +12,12 @@ function admin_custom_css(){
   echo '<style>
   .post-type-donation #taxonomy-pickup_code{width: 100px;}
   .post-type-trans_dept #taxonomy-pickup_code{width: 60%;}
-  .response-pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
+  .response-pill, .pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
   .response-pill.success{background-color: #09c500;}
   .response-pill.warning{background-color: #f68428;}
   .response-pill.error2{background-color: #cb3131;}
   .response-pill.note{background-color: #ccc;}
+  .pill.api{background-color: #0082c8;}
   .response-msg{font-size: 11px; color: #999;}
   table.chhj-stats{width: 100%;}
   table.chhj-stats thead th{background-color: #e7e8e9;}
@@ -95,6 +96,11 @@ function custom_column_content( $column ){
         }
     break;
 
+    case 'routing_method':
+      $routing_method = get_field( 'pickup_settings_donation_routing', $post->ID );
+      echo ( 'chhj_api' == $routing_method )? '<div class="pill api">CHHJ API</div>' : '<div class="pill">' . ucfirst( $routing_method ) . '</div>' ;
+      break;
+
     case 'trans_dept':
       $trans_dept = get_field( 'trans_dept', $post->ID );
       echo $trans_dept->post_title;
@@ -103,6 +109,7 @@ function custom_column_content( $column ){
 }
 add_action( 'manage_donation_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 add_action( 'manage_store_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
+add_action( 'manage_organization_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 add_action( 'manage_trans_dept_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 
 /**
@@ -257,6 +264,25 @@ function columns_for_store( $defaults ){
     return $defaults;
 }
 add_filter( 'manage_store_posts_columns', __NAMESPACE__ . '\\columns_for_store' );
+
+/**
+ * Adds columns to admin organization custom post_type listings.
+ *
+ * @since 1.0.1
+ *
+ * @param array $defaults Array of default columns for the CPT.
+ * @return array Modified array of columns.
+ */
+function columns_for_organization( $defaults ){
+    $defaults = array(
+        'cb' => '<input type="checkbox" />',
+        'title' => 'Title',
+        'routing_method' => 'Routing Method',
+        'date' => 'Date',
+    );
+    return $defaults;
+}
+add_filter( 'manage_organization_posts_columns', __NAMESPACE__ . '\\columns_for_organization' );
 
 /**
  * Adds columns to admin trans_dept custom post_type listings.

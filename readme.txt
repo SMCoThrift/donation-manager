@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.6.6
+Stable tag: 3.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.7.0 =
+* Adding "Routing Method" column to Organization admin listing.
 
 = 3.6.6 =
 * Adding "College Hunks API Stats" dashboard widget.
