@@ -98,7 +98,7 @@ function custom_column_content( $column ){
 
     case 'routing_method':
       $routing_method = get_field( 'pickup_settings_donation_routing', $post->ID );
-      echo ( 'chhj_api' == $routing_method )? '<div class="pill api">CHHJ API</div>' : '<div class="pill">' . ucfirst( $routing_method ) . '</div>' ;
+      echo ( 'chhj_api' == $routing_method || 'api-chhj' == $routing_method )? '<div class="pill api">CHHJ API</div>' : '<div class="pill">' . ucfirst( $routing_method ) . '</div>' ;
       break;
 
     case 'trans_dept':
