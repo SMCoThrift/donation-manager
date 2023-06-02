@@ -204,7 +204,7 @@ function get_donation_receipt( $donation = array(), $click_to_claim = false ){
     'pickupaddress_query' => urlencode( $donation[$pickup_add_key]['address'] . ', ' . $donation[$pickup_add_key]['city'] . ', ' . $donation[$pickup_add_key]['state'] . ' ' . $donation[$pickup_add_key]['zip'] ),
     'preferred_contact_method' => $preferred_contact_method,
     'items' => implode( ', ', $donation['items'] ),
-    'description' => nl2br( $donation['description'] ),
+    'description' => stripslashes( nl2br( $donation['description'] ) ),
     'screening_questions' => $screening_questions,
     'pickuplocation' =>  $donation['pickuplocation'],
     'pickup_code' => $donation['pickup_code'],
