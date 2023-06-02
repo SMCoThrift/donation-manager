@@ -56,7 +56,9 @@ if( isset( $_POST['donor']['options'] ) ) {
           $_SESSION['donor']['items'][$term_id] = $option['field_value'];
       }
     }
-    $_SESSION['donor']['description'] = $_POST['donor']['description'];
+    $_SESSION['donor']['description'] = strip_tags( $_POST['donor']['description'] );
+    if( DONMAN_DEV_ENV )
+      uber_log( '🔔 Donation Descripton = ' . $_SESSION['donor']['description'] );
 
     /**
      * For Priority Pick Ups, we need to skip the screening questions
