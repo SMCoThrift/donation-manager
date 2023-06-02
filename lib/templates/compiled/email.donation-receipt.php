@@ -50,7 +50,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
 <strong>ITEMS:</strong> '.htmlspecialchars((string)(($inary && isset($in['items'])) ? $in['items'] : null), ENT_QUOTES, 'UTF-8').'<br><br>
 
 <strong>CUSTOMER DESCRIPTION:</strong><br>
-'.htmlspecialchars((string)(($inary && isset($in['description'])) ? $in['description'] : null), ENT_QUOTES, 'UTF-8').'<br><br>
+'.(($inary && isset($in['description'])) ? $in['description'] : null).'<br><br>
 
 <strong>SCREENING QUESTIONS:</strong><br>
 '.(($inary && isset($in['screening_questions'])) ? $in['screening_questions'] : null).'<br><br>
