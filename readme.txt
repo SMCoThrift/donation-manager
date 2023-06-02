@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.7.0.1
+Stable tag: 3.7.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.7.0.2 =
+* Allowing HTML in "Customer Description" field inside `email.donation-receipt.hbs`.
 
 = 3.7.0.1 =
 * Accepting `api-chhj` in addition to `chhj_api` as valid matching conditions for "Routing Method" column for Organization admin listing.
