@@ -82,16 +82,28 @@ add_action( 'acf/save_post', __NAMESPACE__ . '\\my_publish_organization', 20 );
 // add_action('wp_ajax_nopriv_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
 // 
 function is_pickup_code_available_callback() {
+  /**
+   * Do this check for each pickup_code:
+   *
+   * 1. Is the "pickup_code" assigned to *any* trans_dept? If "no", "code is available".
+   * 2. If "yes", if the trans_dept the child of a priority org? If "yes", code is available.
+   * 3. If "no", code is not available.
+   */
+
+
   $codes = explode(',', $_POST['codes']);
   $available_codes = array();
 
   foreach ($codes as $code) {
+
     $term = get_term_by('name', trim($code), 'pickup_code');
     $current_user = wp_get_current_user();
-    $organization_id = get_user_meta($current_user->ID, 'organization', true);
-    $pickup_settings = get_field('pickup_settings', $organization_id);
-    $priority_pickup = $pickup_settings['priority_pickup'];
-    $assigned_posts = get_posts([
+
+    //$organization_id = get_user_meta($current_user->ID, 'organization', true);
+    //$pickup_settings = get_field('pickup_settings', $organization_id);
+    //$priority_pickup = $pickup_settings['priority_pickup'];
+
+    $assigned_trans_depts = get_posts([
       'post_type' => 'trans_dept',
       'tax_query' => [
         [
@@ -102,16 +114,23 @@ function is_pickup_code_available_callback() {
       ]
     ]);
 
-    if (empty($assigned_posts)) {
-      // Check if it's assigned to any pickup code, if not, then it's available
+
+
+    if ( empty( $assigned_trans_depts ) ) {
+      // Check if the Pickup Code is assigned to any Trans. Dept. If "NO", then it's available.
       $available_codes[] = $code;
     } else {
-      // If not available, validate if the priority_pickup is set to true or false
-      if ($priority_pickup) {
-        
-        // If organization priority_pickup is true, then it's available
-        $available_codes[] = $code;
+      // Check each returned trans_dept to see if the trans_dept is the
+      // child of a "Non Priority" Org. If "YES", then the code is NOT available,
+      // and we must continue to the next pickup_code.
+      foreach( $assigned_trans_depts as $trans_dept ){
+        $parent_org = get_field( 'organization', $trans_dept->ID );
+        $priority = get_field( 'pickup_settings_priority_pickup', $parent_org->ID );
+        if( ! $priority ){
+          continue;
+        }
       }
+      $available_codes[] = $code;
     }
   }
 
