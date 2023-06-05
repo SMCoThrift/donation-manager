@@ -2,9 +2,9 @@
 Contributors: TheWebist
 Tags: donations, CPT
 Requires at least: 6.0.0
-Tested up to: 6.1.1
+Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.6.1
+Stable tag: 3.7.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,71 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.7.0.2 =
+* Allowing HTML in "Customer Description" field inside `email.donation-receipt.hbs`.
+
+= 3.7.0.1 =
+* Accepting `api-chhj` in addition to `chhj_api` as valid matching conditions for "Routing Method" column for Organization admin listing.
+
+= 3.7.0 =
+* Adding "Routing Method" column to Organization admin listing.
+
+= 3.6.6 =
+* Adding "College Hunks API Stats" dashboard widget.
+
+= 3.6.5.4 =
+* Updating "Click to Claim" link text in compiled file.
+
+= 3.6.5.3 =
+* Updating link in "Click To Claim" emails from "Click To Claim This Donation" to "View This Donation".
+
+= 3.6.5.2 =
+* BUGFIX: Correctly spliting multiple organization emails when sending monthly reports.
+
+= 3.6.5.1 =
+* Adding post_type=page as additional display param for City Pages ACF Field Group.
+
+= 3.6.5 =
+* Updating User Photo Uploads to include an ACF Option for making them required. Now, by default, User Photo Uploads are "optional".
+* Removed `get_socialshare_copy()` as it is no longer in use.
+
+= 3.6.4.3 =
+* Better response code handling for API Response column in Donation CPT admin listings.
+
+= 3.6.4.2 =
+* Adding `custom_column_api_response_content()` to handle display of HTML in the API Response column in admin Donation CPT listings.
+
+= 3.6.4.1 =
+* Saving API response code and message as separate fields.
+* Better handling of API response data.
+
+= 3.6.4 =
+* Restoring "Skip Pick Up Dates" functionality.
+
+= 3.6.3.3 =
+* BUGFIXES: Checking for variables before using in code.
+* Adding option to turn on Debug Mode with Verbose set to ON.
+
+= 3.6.3.2 =
+* Checking for variables existence.
+
+= 3.6.3.1 =
+* BUGFIX: Checking if variable is_array() before running array_key_exists() in `04.validate-screening-questions.php`.
+* Checking if array key exists in `describe-your-donation.php`.
+
+= 3.6.3 =
+* Introducing `DMDEBUG_VERBOSE` constant for "verbose mode" debugging.
+* Moved several `uber_log()` called into "verbose mode" during the `[donationform]` process.
+
+= 3.6.2.1 =
+* Bugfix: Addressing correct namespace in `[unsubscribe-orphaned-contact]` shortcode.
+
+= 3.6.2 =
+* Updating `wp dm fixzips` to work with new PMD 3.0 data structures.
+
+= 3.6.1.1 =
+* Updating admin column width for Pickup Codes on Transportation Department CPT listing.
 
 = 3.6.1 =
 * Updating CHHJ API Response to show plaintext errors stored in `api_response` meta field.

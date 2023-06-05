@@ -10,16 +10,43 @@ use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
  */
 function admin_custom_css(){
   echo '<style>
-  #taxonomy-pickup_code{width: 100px;}
-  .response-pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
+  .post-type-donation #taxonomy-pickup_code{width: 100px;}
+  .post-type-trans_dept #taxonomy-pickup_code{width: 60%;}
+  .response-pill, .pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
   .response-pill.success{background-color: #09c500;}
   .response-pill.warning{background-color: #f68428;}
   .response-pill.error2{background-color: #cb3131;}
   .response-pill.note{background-color: #ccc;}
+  .pill.api{background-color: #0082c8;}
   .response-msg{font-size: 11px; color: #999;}
+  table.chhj-stats{width: 100%;}
+  table.chhj-stats thead th{background-color: #e7e8e9;}
+  table.chhj-stats th, table.chhj-stats td{padding: 2px 4px;}
+  table.chhj-stats tr:first-child th:first-child{width: 25%;}
+  table.chhj-stats tr:first-child th:nth-child(2), table.chhj-stats tr:first-child th:nth-child(3), table.chhj-stats tr:first-child th:nth-child(4){width: 25%;}
+  table.chhj-stats td, table.chhj-stats tbody th{text-align: right;}
+  table.chhj-stats tbody tr:nth-child(even){background-color: #eee;}
   </style>';
 }
 add_action( 'admin_head', __NAMESPACE__ . '\\admin_custom_css' );
+
+function chhj_stats_dashboard_widget() {
+  wp_add_dashboard_widget( 'chhj-stats', 'College Hunks API Stats', function(){
+    $chhj_donations = get_option( 'chhj_donations' );
+    echo '<p>The following stats reflect the number of donations sent to College Hunks via their API:</p>';
+    echo '<table class="chhj-stats"><thead><tr><th>Date</th><th>Non-Priority</th><th>Priority</th><th>Total</th></tr></thead><tbody>';
+    foreach( $chhj_donations as $month => $stats ){
+      $date = date_create( $month );
+      echo '<tr>';
+      echo '<th>' . date_format( $date, 'M Y') . '</th>';
+      echo '<td>' . number_format( $stats['non-priority'] ) . '</td><td>' . number_format( $stats['priority'] ) . '</td>';
+      echo '<td>' . number_format( ( $stats['non-priority'] + $stats['priority'] ) ) . '</td>';
+      echo '</tr>';
+    }
+    echo '</tbody></table>';
+  }, null, null );
+}
+add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\chhj_stats_dashboard_widget' );
 
 /**
  * Supplies content for custom columns.
@@ -31,37 +58,8 @@ function custom_column_content( $column ){
 
   switch( $column ){
     case 'api-response':
-      $default_org = get_default_organization();
-      $org = get_post_meta( $post->ID, 'organization', true );
-      if( is_numeric( $org ) )
-        $routing_method = get_donation_routing_method( $org );
-      if( $org == $default_org['id'] || 'email' != $routing_method ){
-        $api_response = get_post_meta( $post->ID, 'api_response', true );
-        $response = @unserialize( $api_response );
-        if( is_array( $response ) && array_key_exists( 'response', $response ) ){
-          $response_code = $response['response']['code'];
-          $response_msg = $response['response']['message'];
-
-          switch( $response_code ){
-            case 200:
-              echo '<div class="response-pill success">Success</div>';
-              break;
-
-            default:
-              echo '<div class="response-pill warning">Response Code: ' . $response_code . '</div>';
-          }
-          echo '<div class="response-msg">Msg: ' . $response_msg . '</div>';
-        } else if( ! empty( $api_response ) && 's:' != substr( $api_response, 0, 2 ) ){
-          $response_css_class = ( stristr( strtolower( $api_response ), 'error' ) )? 'error2' : 'warning' ;
-          $response_notice = ( stristr( strtolower( $api_response ), 'error' ) )? 'Error' : 'Warning' ;
-          echo '<div class="response-pill ' . $response_css_class . '">' . $response_notice . '</div>';
-          echo '<div class="response-msg">Msg: ' . $api_response . '</div>';
-        } else {
-          echo '<div class="response-pill warning">No API Response</div>';
-        }
-      } else {
-        echo '<div class="response-pill note">Not Sent/Emailed</div>';
-      }
+      $html = custom_column_api_response_content( $post->ID );
+      echo $html;
       break;
 
     case 'org':
@@ -98,6 +96,11 @@ function custom_column_content( $column ){
         }
     break;
 
+    case 'routing_method':
+      $routing_method = get_field( 'pickup_settings_donation_routing', $post->ID );
+      echo ( 'chhj_api' == $routing_method || 'api-chhj' == $routing_method )? '<div class="pill api">CHHJ API</div>' : '<div class="pill">' . ucfirst( $routing_method ) . '</div>' ;
+      break;
+
     case 'trans_dept':
       $trans_dept = get_field( 'trans_dept', $post->ID );
       echo $trans_dept->post_title;
@@ -106,7 +109,97 @@ function custom_column_content( $column ){
 }
 add_action( 'manage_donation_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 add_action( 'manage_store_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
+add_action( 'manage_organization_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
 add_action( 'manage_trans_dept_posts_custom_column', __NAMESPACE__ . '\\custom_column_content', 10, 2 );
+
+/**
+ * Returns the HTML for the API Response column.
+ *
+ * @param      int     $donation_id  The donation identifier
+ *
+ * @return     string  HTML for the API Response column.
+ */
+function custom_column_api_response_content( $donation_id ){
+  $html = [];
+  $default_org = get_default_organization();
+  $org = get_post_meta( $donation_id, 'organization', true );
+  if( is_numeric( $org ) )
+    $routing_method = get_donation_routing_method( $org );
+  //$html[] = 'routing_method: ' . $routing_method . '<br>';
+  $api_response = get_post_meta( $donation_id, 'api_response', true );
+
+  if( 480325 > $donation_id ){
+    if( $org == $default_org['id'] || 'email' != $routing_method ){
+
+      $response = @unserialize( $api_response );
+      if( is_array( $response ) && array_key_exists( 'response', $response ) ){
+        $response_code = $response['response']['code'];
+        $response_msg = $response['response']['message'];
+
+        switch( $response_code ){
+          case 200:
+            $html[] = '<div class="response-pill success">Success</div>';
+            break;
+
+          default:
+            $html[] = '<div class="response-pill warning">Response Code: ' . $response_code . '</div>';
+        }
+        $html[] = '<div class="response-msg">Msg: ' . $response_msg . '</div>';
+      } else if( ! empty( $api_response ) && 's:' != substr( $api_response, 0, 2 ) ){
+        $response_css_class = ( stristr( strtolower( $api_response ), 'error' ) )? 'error2' : 'warning' ;
+        $response_notice = ( stristr( strtolower( $api_response ), 'error' ) )? 'Error' : 'Warning' ;
+        $html[] = '<div class="response-pill ' . $response_css_class . '">' . $response_notice . '</div>';
+        $html[] = '<div class="response-msg">Msg: ' . $api_response . '</div>';
+      } else {
+        $html[] = '<div class="response-pill warning">No API Response</div>';
+      }
+    } else {
+      $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
+    }
+  } else {
+    if( $org == $default_org['id'] || 'email' != $routing_method ){
+      /**
+       * After donations with an ID of >= 480325 have the Response Code
+       * and Message stored as separate meta fields.
+       */
+      $response_code = get_post_meta( $donation_id, 'api_response_code', true );
+      $response_message = get_post_meta( $donation_id, 'api_response_message', true );
+      switch( $response_code ){
+        case 200:
+        case 201:
+        case 202:
+        case 203:
+        case 204:
+        case 205:
+          $html[] = '<div class="response-pill success">Success</div>';
+          $html[] = '<div class="response-msg">' . $response_code . '/' . $response_message . '</div>';
+          break;
+
+        case 400:
+        case 401:
+        case 402:
+        case 403:
+        case 404:
+          $html[] = '<div class="response-pill error2">Error</div>';
+          $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+          break;
+
+        default:
+          if( empty( $response_code ) && is_string( $api_response ) && stristr( strtolower( $api_response ), 'operation timed out' ) ){
+            $html[] = '<div class="response-pill error2">Error</div>';
+            $html[] = '<div class="response-msg">API Msg: ' . $api_response . '</div>';
+          } else {
+            $html[] = '<div class="response-pill warning">Warning (Code: ' . $response_code . ')</div>';
+            $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+          }
+      }
+    } else {
+      $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
+    }
+  }
+
+  return implode( '', $html );
+}
 
 /**
  * Handles sorting for custom columns.
@@ -171,6 +264,25 @@ function columns_for_store( $defaults ){
     return $defaults;
 }
 add_filter( 'manage_store_posts_columns', __NAMESPACE__ . '\\columns_for_store' );
+
+/**
+ * Adds columns to admin organization custom post_type listings.
+ *
+ * @since 1.0.1
+ *
+ * @param array $defaults Array of default columns for the CPT.
+ * @return array Modified array of columns.
+ */
+function columns_for_organization( $defaults ){
+    $defaults = array(
+        'cb' => '<input type="checkbox" />',
+        'title' => 'Title',
+        'routing_method' => 'Routing Method',
+        'date' => 'Date',
+    );
+    return $defaults;
+}
+add_filter( 'manage_organization_posts_columns', __NAMESPACE__ . '\\columns_for_organization' );
 
 /**
  * Adds columns to admin trans_dept custom post_type listings.

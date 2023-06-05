@@ -308,7 +308,8 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
 
         // Get ORG Name and send along to get_zip_associations()
         if( ! is_null( $id ) ){
-          $org = get_post_meta( $id, 'organization', true );
+          $org_id = get_post_meta( $id, 'organization', true );
+          $org = get_post( $org_id, ARRAY_A );
           if( isset( $org['post_title'] ) )
             $args['org_name'] = $this->filter_name( $org['post_title'], 'organization' );
         }
@@ -396,6 +397,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      * @return     array|boolean  Returns array of zipcode, trans_dept, notes, and franchisee when zip code associations are found.
      */
     private function get_zip_associations( $args ){
+      //WP_CLI::error( '🔔 get_zip_associations( ' . print_r( $args, true ) . ' );' );
 
         $defaults = [
             'zip_code' => null,
@@ -445,7 +447,10 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
                       $trans_dept_name = get_the_title( $post_id );
                       $trans_dept_name = $this->filter_name( $trans_dept_name );
 
-                      $org = get_post_meta( $post_id, 'organization', true );
+                      $org_id = get_post_meta( $post_id, 'organization', true );
+                      $org = get_post( $org_id, ARRAY_A );
+                      //WP_CLI::error( '$org = ' . print_r( $org, true ) );
+
                       if( isset( $org['post_title'] ) ){
                         $org_id = $org['ID'];
                         $org_name = $org['post_title'];
@@ -477,7 +482,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
                               }
                             }
                           } elseif( empty( $args['org_name'] ) ) {
-                            $notes[] = 'No org mapped to franchisee';
+                            $notes[] = '`'.$args['franchisee'].'` not in franchisee_map.php';
                             $this->mapping_suggestions[] = [
                               'org' => $org_name,
                               'PMD_trans_dept' => $trans_dept_name,

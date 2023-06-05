@@ -33,7 +33,8 @@ if( false == $organizations || 0 == count( $organizations ) ){
     if( is_array( $contacts ) && 0 < count( $contacts ) )
         $organizations[] = $default_priority_org;
 }
-uber_log('🔔💥👉 $organizations = ' . print_r( $organizations, true ) );
+if( DMDEBUG_VERBOSE )
+  uber_log('🔔💥👉 $organizations = ' . print_r( $organizations, true ) );
 
 if( 0 == count( $organizations ) )
     add_html( get_alert(['title' => 'No default organization found!', 'type' => 'warning', 'description' => 'No default organization has been specified in the Donation Manager settings.']) );

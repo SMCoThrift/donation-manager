@@ -84,7 +84,7 @@ if( isset( $_POST['donor']['pickupdate1'] ) ){
     $errors = $form->getErrors();
     $error_msg = array();
     foreach( $errors as $field => $array ){
-      if( true == $array['required'] )
+      if( array_key_exists( 'required', $array ) && true == $array['required'] )
           $error_msg[] = '<strong><em>' . $field . '</em></strong> is a required field.';
       if( isset( $array['max_length'] ) )
           $error_msg[] = '<strong><em>' . $field . '</em></strong> can not exceed <em>' . $array['max_length'] . '</em> characters.';

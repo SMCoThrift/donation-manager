@@ -665,9 +665,10 @@ class DMReports {
 
         $_last_donation_report = get_post_meta( $args['org_id'], '_last_donation_report', true );
         if( $args['month'] == $_last_donation_report ){
-            \WP_CLI::line('Report already sent to #' . $args['org_id'] . ' ' . get_the_title( $args['org_id'] ) . ' for ' . $args['month'] . '.' );
+            \WP_CLI::line('  [X] Report already sent to #' . $args['org_id'] . ' ' . get_the_title( $args['org_id'] ) . ' for ' . $args['month'] . '.' );
             return false;
         }
+        \WP_CLI::line('  [>] Sending ' . $args['month'] . ' report for #' . $args['org_id'] . ' ' . get_the_title( $args['org_id'] ) . '.' );
 
         $eol = PHP_EOL;
 

@@ -27,19 +27,3 @@ function track_url_path(){
         $_SESSION['donor']['url_path'][] = $referer;
 }
 add_action( 'init', __NAMESPACE__ . '\\track_url_path', 100 );
-
-/**
- * Sets $_COOKIE[‘dmdebug’] for debuging purposes.
- *
- * @since 1.?.?
- *
- * @return void
- */
-function set_debug_cookie(){
-    if( ! isset( $_GET['dmdebug'] ) )
-        return;
-
-    $debug = ( 'false' === strtolower( $_GET['dmdebug'] ) )? false : 'on';
-    setcookie( 'dmdebug', $debug, time() + 3600, COOKIEPATH, COOKIE_DOMAIN );
-}
-add_action( 'init', __NAMESPACE__ . '\\set_debug_cookie', 98 );

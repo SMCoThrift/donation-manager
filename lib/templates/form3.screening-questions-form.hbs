@@ -34,7 +34,8 @@ span.label-text{font-size: 1.25em; font-weight: bold;}
   {{/if}}
   {{#if file_upload_input}}
   <div id="donation-photo" style="margin-bottom: 2em;">
-    <h3>Upload one or more photos of your donation:</h3>
+    <h3>Upload one or more photos of your donation</h3>
+    <p><em>{{#if user_photo_uploads_required}}<strong>*Required:</strong> Include one or more photos of your donation.{{else}}Optional: You may include one or more photos of your donation.{{/if}}</em></p>
     {{{file_upload_input}}}
     <div class="progress_bar" style=""></div>
     <div class="preview" style="display: none;"></div>

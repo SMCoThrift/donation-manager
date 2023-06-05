@@ -41,12 +41,14 @@ function handle_form_submissions(){
   }
 
   if( is_null( $callback ) ){
-    uber_log( '🔔 handle_form_submissions() $callback is null. No `init` form processing.' );
+    if( DMDEBUG_VERBOSE )
+      uber_log( '🔔 handle_form_submissions() $callback is null. No `init` form processing.' );
     return;
   }
 
   $callback_filename = DONMAN_PLUGIN_PATH . 'lib/fns/callback/' . $callback . '.php';
-  uber_log( '📂 $callback_filename = ' . basename( $callback_filename ) );
+  if( DMDEBUG_VERBOSE )
+    uber_log( '📂 $callback_filename = ' . basename( $callback_filename ) );
 
   /**
    * If $callback_filename does not exist, "bail" and show alert:

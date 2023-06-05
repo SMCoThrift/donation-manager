@@ -8,7 +8,8 @@ use function DonationManager\realtors\{get_realtor_ads};
 $org_id = $_SESSION['donor']['org_id'];
 $pickup_settings = get_field( 'pickup_settings', $org_id );
 
-uber_log('🔔 $org_id = ' . $org_id );
+if( DMDEBUG_VERBOSE )
+  uber_log('🔔 $org_id = ' . $org_id );
 
 $step_one_notice = get_field( 'pickup_settings_step_one_notice', $org_id );
 if( ! empty( $step_one_notice ) ){
@@ -82,8 +83,14 @@ foreach( $donation_options as $key => $opt ) {
   $checked = '';
   if( isset( $_SESSION['donor']['items'][$opt['term_id']] ) )
       $checked = ' checked="checked"';
-  if( isset( $_POST['donor'] ) && array_key_exists( 'options', $_POST['donor'] ) && trim( $_POST['donor']['options'][$key]['field_value'] ) == $opt['value'] )
-      $checked = ' checked="checked"';
+  if(
+    isset( $_POST['donor'] )
+    && array_key_exists( 'options', $_POST['donor'] )
+    && array_key_exists( 'field_value', $_POST['donor']['options'][$key] )
+    && trim( $_POST['donor']['options'][$key]['field_value'] ) == $opt['value']
+  ){
+    $checked = ' checked="checked"';
+  }
 
   $checkboxes[] = [
     'key' => $key,

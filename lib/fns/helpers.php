@@ -121,23 +121,6 @@ function get_donations_value( $donations = 0 ){
 }
 
 /**
- * Gets the socialshare copy.
- *
- * @param      string   $organization         The organization
- * @param      string   $donation_id_hashtag  The donation identifier hashtag
- *
- * @return     boolean/string  FALSE or The socialshare copy.
- */
-function get_socialshare_copy( $organization = '', $donation_id_hashtag = '' ){
-  if( empty( $organization ) || empty( $donation_id_hashtag ) )
-    return false;
-
-  $format = 'I just used @pickupdonations to schedule a donation pick up from %1$s. That was simple! #MyStuffMadeADifference %2$s';
-
-  return sprintf( $format, $organization, $donation_id_hashtag );
-}
-
-/**
  * Retrieves the options for "What led you to donate today?"
  */
 function get_donation_reason_select(){

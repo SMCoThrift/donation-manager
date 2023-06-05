@@ -121,11 +121,6 @@ function get_organizations( $pickup_code ) {
       $priority_pickup = false;
       $pause_pickups = false;
       if( $pickup_settings ){
-        // 08/03/2022 (03:16) - not current stored
-        // if( array_key_exists( 'alternate_donate_now_url', $pickup_settings ) )
-        //   $alternate_donate_now_url = $pickup_settings['alternate_donate_now_url']; // 08/03/2022 (03:16) - not current stored
-        $alternate_donate_now_url = null;
-
         if( array_key_exists( 'priority_pickup', $pickup_settings ) )
           $priority_pickup = $pickup_settings['priority_pickup'];
 
@@ -141,7 +136,7 @@ function get_organizations( $pickup_code ) {
           'name'                      => $organization->post_title,
           'desc'                      => $organization->post_content,
           'trans_dept_id'             => $trans_dept->ID,
-          'alternate_donate_now_url'  => $alternate_donate_now_url,
+          'alternate_donate_now_url'  => null,
           'priority_pickup'           => $priority_pickup,
           'pause_pickups'             => $pause_pickups,
           'edit_url'                  => $edit_url,
