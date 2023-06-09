@@ -17,6 +17,7 @@ function send_api_post( $donation ){
   }
 
   switch( $donation['routing_method'] ){
+    case 'chhj_api':
     case 'api-chhj':
       require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.php';
       require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.chhj.php';
