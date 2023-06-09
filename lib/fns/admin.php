@@ -128,6 +128,13 @@ function custom_column_api_response_content( $donation_id ){
   //$html[] = 'routing_method: ' . $routing_method . '<br>';
   $api_response = get_post_meta( $donation_id, 'api_response', true );
 
+  /**
+   * Starting with Donation #480325, we store two new
+   * custom field values:
+   *
+   * - api_response_code - the HTTP Response Code (e.g. 200) retrieved from $CHHJ_API['response']['code'].
+   * - api_response_message - this is the "Message" retrieved from $CHHJ_API['response']['message'].
+   */
   if( 480325 > $donation_id ){
     if( $org == $default_org['id'] || 'email' != $routing_method ){
 
