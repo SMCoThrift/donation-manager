@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.7.0.3
+Stable tag: 3.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.7.1 =
+* Adding `ksort()` to stats displayed by `chhj_stats_dashboard_widget()`.
+* Adding "Success Rate" column to `chhj_stats_dashboard_widget()`.
 
 = 3.7.0.3 =
 * BUGFIX: Adjusting switch statement in `lib/fns/apirouting.php` to route donations to the CHHJ API when `$routing_method` is also equal to `chhj_api`. This is in addition to accepting `api-chhj`. This fixes the issue where although the `trans_dept_notification` switch in `lib/fns/emails.php` was calling `send_api_post()` if `if( 'email' != $donor['routing_method'] )`, the actual `send_api_post()` function did not have a switch statement to handle the PMD 3.0 `$routing_method` value of `chhj_api` as defined in the ACF Field under each organization's "Pickup Settings".

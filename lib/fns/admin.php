@@ -33,14 +33,16 @@ add_action( 'admin_head', __NAMESPACE__ . '\\admin_custom_css' );
 function chhj_stats_dashboard_widget() {
   wp_add_dashboard_widget( 'chhj-stats', 'College Hunks API Stats', function(){
     $chhj_donations = get_option( 'chhj_donations' );
+    ksort( $chhj_donations );
     echo '<p>The following stats reflect the number of donations sent to College Hunks via their API:</p>';
-    echo '<table class="chhj-stats"><thead><tr><th>Date</th><th>Non-Priority</th><th>Priority</th><th>Total</th></tr></thead><tbody>';
+    echo '<table class="chhj-stats"><thead><tr><th>Date</th><th>Non-Priority</th><th>Priority</th><th>Total</th><th>Success Rate</th></tr></thead><tbody>';
     foreach( $chhj_donations as $month => $stats ){
       $date = date_create( $month );
       echo '<tr>';
       echo '<th>' . date_format( $date, 'M Y') . '</th>';
       echo '<td>' . number_format( $stats['non-priority'] ) . '</td><td>' . number_format( $stats['priority'] ) . '</td>';
       echo '<td>' . number_format( ( $stats['non-priority'] + $stats['priority'] ) ) . '</td>';
+      echo '<td>' . $stats['success_rate_percentage'] . '%</td>';
       echo '</tr>';
     }
     echo '</tbody></table>';
