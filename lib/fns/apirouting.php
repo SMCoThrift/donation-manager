@@ -46,6 +46,9 @@ function is_valid_pickupcode( $search = 'College Hunks', $pickup_code = null ){
     return $valid;
 
   $organizations = get_organizations( $pickup_code );
+  if( WP_CLI && DMDEBUG_VERBOSE )
+    \WP_CLI::line( '🔔 $organizations = ' . print_r( $organizations, true ) );
+
   switch( $search ){
     default:
       foreach ( $organizations as $organization ) {

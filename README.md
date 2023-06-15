@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.2  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.7.2  
+**Stable tag:** 3.7.2.1  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.7.2.1 ###
+* Adding `wp dm test` for `is_valid_pickupcode()`.
 
 ### 3.7.2 ###
 * Updatin `send_api_post()` to only post to an external API if the pickup code is valid for the organization.

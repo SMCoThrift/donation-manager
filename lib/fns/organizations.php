@@ -14,23 +14,23 @@ use function DonationManager\orphanedproviders\{get_orphaned_donation_contacts};
  * @return     array|bool  The default organization.
  */
 function get_default_organization( $priority = false ) {
-  if( WP_CLI )
+  if( WP_CLI && DMDEBUG_VERBOSE )
       \WP_CLI::line( '🔔 running get_default_organization()... ');
 
   $default_organization = get_field( 'default_organization', 'option' );
-  if( WP_CLI )
+  if( WP_CLI && DMDEBUG_VERBOSE )
     \WP_CLI::line( '🔔 default_organization = ' . print_r( $default_organization, true ) );
   if( ! $default_organization ){
-    if( WP_CLI )
+    if( WP_CLI && DMDEBUG_VERBOSE )
       \WP_CLI::line( '🚨 No default organization set! Check the settings page for the plugin.' );
     return false;
   }
 
   $default_trans_dept = get_field( 'default_transportation_department', 'option' );
-  if( WP_CLI )
+  if( WP_CLI && DMDEBUG_VERBOSE )
     \WP_CLI::line( '🔔 default_trans_dept = ' . print_r( $default_trans_dept, true ) );
   if( ! $default_trans_dept ){
-    if( WP_CLI )
+    if( WP_CLI && DMDEBUG_VERBOSE )
       \WP_CLI::line( '🚨 No default transportation department set! Check the settings page for the plugin.' );
     return false;
   }

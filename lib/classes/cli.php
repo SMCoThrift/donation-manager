@@ -103,6 +103,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *   - get_trans_dept_ids
      *   - is_orphaned_donation
      *   - is_priority
+     *   - is_valid_pickupcode
      *   - save_donation
      * ---
      *
@@ -251,6 +252,18 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
             WP_CLI::line( '👉 Donation IS orphaned.' );
           } else {
             WP_CLI::line( '👉 Donation is NOT orphaned.' );
+          }
+          break;
+
+        case 'is_valid_pickupcode':
+          if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'This test requires a numeric Pickup Code as the first postional argument.' );
+          $pickup_code = $args[0];
+          $is_valid_pickupcode = DonationManager\apirouting\is_valid_pickupcode( 'College Hunks', $pickup_code );
+          if( $is_valid_pickupcode ){
+            WP_CLI::line( '✅ `' . $pickup_code . '` is a valid "College Hunks" pickup code.' );
+          } else {
+            WP_CLI::line( '🚨 `' . $pickup_code . '` is NOT a valid "College Hunks" pickup code.' );
           }
           break;
 
