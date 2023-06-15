@@ -21,7 +21,7 @@ function send_api_post( $donation ){
     case 'chhj_api':
     case 'api-chhj':
       $is_chhj_pickupcode = is_valid_pickupcode( 'College Hunks', $donation['pickup_code'] );
-      if( $is_valid_pickupcode ){
+      if( $is_chhj_pickupcode ){
         require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.php';
         require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.chhj.php';
         $CHHJDonationRouter = \CHHJDonationRouter::get_instance();
