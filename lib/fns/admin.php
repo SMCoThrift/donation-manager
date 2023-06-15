@@ -4,6 +4,7 @@ namespace DonationManager\donations;
 use function DonationManager\organizations\{is_orphaned_donation,get_default_organization};
 use function DonationManager\donations\{get_orphaned_donation_notifications};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
+use function DonationManager\organizations\{get_organizations};
 
 /**
  * Admin CSS
@@ -197,9 +198,20 @@ function custom_column_api_response_content( $donation_id ){
           if( empty( $response_code ) && is_string( $api_response ) && stristr( strtolower( $api_response ), 'operation timed out' ) ){
             $html[] = '<div class="response-pill error2">Error</div>';
             $html[] = '<div class="response-msg">API Msg: ' . $api_response . '</div>';
-          } else {
+          } elseif( ! empty( $response_code ) ) {
             $html[] = '<div class="response-pill warning">Warning (Code: ' . $response_code . ')</div>';
             $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+          } elseif( ! metadata_exists( 'post', $donation_id, 'api_post' ) ) {
+            $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
+            $pickup_codes = wp_get_post_terms( $donation_id, 'pickup_code', [ 'fields' => 'names' ] );
+            $pickup_code = $pickup_codes[0];
+            $organizatons = get_organizations( $pickup_code );
+            $html[] = '<p style="margin-top: 4px;">Available orgs for ' . $pickup_code .':</p>';
+            $html[] = '<ul>';
+            foreach( $organizatons as $organizaton ){
+              $html[] = '<li>' . $organizaton['name'] . '</li>';
+            }
+            $html[] = '</ul>';
           }
       }
     } else {
