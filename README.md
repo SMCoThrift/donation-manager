@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.2  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.7.1  
+**Stable tag:** 3.7.2  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,11 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.7.2 ###
+* Updatin `send_api_post()` to only post to an external API if the pickup code is valid for the organization.
+* Adding `is_valid_pickupcode()` for determining if a pickup code is valid given a search string to compare against the returned organizations for the pickup code.
+* Updating "API Response" column to list available organizations for a given pickup code when no `api_post` meta field value exists.
 
 ### 3.7.1 ###
 * Adding `ksort()` to stats displayed by `chhj_stats_dashboard_widget()`.
