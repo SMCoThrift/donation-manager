@@ -6,6 +6,7 @@
             "key": "field_626aa08347f2e",
             "label": "Organization",
             "name": "organization",
+            "aria-label": "",
             "type": "post_object",
             "instructions": "",
             "required": 0,
@@ -22,12 +23,37 @@
             "return_format": "id",
             "multiple": 0,
             "allow_null": 0,
-            "ui": 1
+            "ui": 1,
+            "save_custom": 0,
+            "save_post_type": "",
+            "save_post_status": ""
+        },
+        {
+            "key": "field_648c6d1f20e62",
+            "label": "Use this transportation department's name when displaying to users?",
+            "name": "use_transportation_department_name",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Rather than displaying the organization's name to users, display the name of this transportation department. (HINT: Use this option when we have one parent organization with many transportation departments.)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_save_meta": 0,
+            "message": "Yes",
+            "default_value": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
         },
         {
             "key": "field_626aa2147c3ab",
             "label": "Contact Title",
             "name": "contact_title",
+            "aria-label": "",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -47,6 +73,7 @@
             "key": "field_626aa2257c3ac",
             "label": "Contact Name",
             "name": "contact_name",
+            "aria-label": "",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -66,6 +93,7 @@
             "key": "field_626aa2547c3ad",
             "label": "Contact Email",
             "name": "contact_email",
+            "aria-label": "",
             "type": "email",
             "instructions": "",
             "required": 0,
@@ -84,6 +112,7 @@
             "key": "field_626aa2697c3ae",
             "label": "CC Emails",
             "name": "cc_emails",
+            "aria-label": "",
             "type": "text",
             "instructions": "Comma separated list of additional contacts.",
             "required": 0,
@@ -103,6 +132,7 @@
             "key": "field_626aa3e706d0d",
             "label": "Phone",
             "name": "phone",
+            "aria-label": "",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -122,6 +152,7 @@
             "key": "field_626aa4428ac24",
             "label": "Ads",
             "name": "ads",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -136,11 +167,14 @@
             "max": 3,
             "layout": "table",
             "button_label": "Add an Ad",
+            "rows_per_page": 20,
+            "acfe_repeater_stylised_button": 0,
             "sub_fields": [
                 {
                     "key": "field_626aa4688ac25",
                     "label": "Ad",
                     "name": "ad",
+                    "aria-label": "",
                     "type": "image",
                     "instructions": "Ads may be either 468x120px or 500x500px *only* with a maximum allowed file size of 200Kb!",
                     "required": 0,
@@ -160,12 +194,15 @@
                     "max_height": 500,
                     "max_size": ".2",
                     "mime_types": "jpg,gif,png,jpeg",
-                    "parent_repeater": "field_626aa4428ac24"
+                    "parent_repeater": "field_626aa4428ac24",
+                    "uploader": "",
+                    "acfe_thumbnail": 0
                 },
                 {
                     "key": "field_626aa4f68ac26",
                     "label": "Ad URL",
                     "name": "ad_url",
+                    "aria-label": "",
                     "type": "url",
                     "instructions": "The URL this graphic should point to.",
                     "required": 0,
@@ -179,8 +216,7 @@
                     "placeholder": "",
                     "parent_repeater": "field_626aa4428ac24"
                 }
-            ],
-            "rows_per_page": 20
+            ]
         }
     ],
     "location": [
@@ -201,5 +237,12 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1664995936
+    "acfe_display_title": "",
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1686928168
 }

@@ -129,11 +129,17 @@ function get_organizations( $pickup_code ) {
       }
 
       $edit_url = ( current_user_can( 'edit_posts' ) && isset( $org ) )? get_edit_post_link( $org->ID, 'link' ) : false ;
+      $use_transportation_department_name = get_post_meta( $trans_dept->ID, 'use_transportation_department_name', true );
+      if( $use_transportation_department_name ){
+        $org_name = str_replace( [ 'Transportation Dept', 'Store' ], '', $trans_dept->post_title );
+      } else {
+        $org_name = $organization->post_title;
+      }
 
       if( $organization ){
         $organizations[] = [
           'id'                        => $organization->ID,
-          'name'                      => $organization->post_title,
+          'name'                      => $org_name,
           'desc'                      => $organization->post_content,
           'trans_dept_id'             => $trans_dept->ID,
           'alternate_donate_now_url'  => null,
