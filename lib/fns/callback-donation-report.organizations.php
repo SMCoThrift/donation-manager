@@ -208,7 +208,7 @@ switch( $switch ){
 			$donation_count = $this->get_donations( $id, $month, true );
 			$org->count = ( is_numeric( $donation_count ) )? $donation_count : '0' ;
 
-			$org->button = get_submit_button( $date->format( 'M Y' ), 'secondary small export-csv', 'export-csv-' . $id, false, array( 'aria-org-id' => $id ) );
+			$org->button = '<input type="submit" name="export-csv-' . $id . '" value="' .$date->format( 'M Y' ) . '" class="secondary small export-csv" aria-org-id="' . $id . '" />';
 			set_transient( $transient_name, $org, 1 * HOUR_IN_SECONDS );
 		}
 

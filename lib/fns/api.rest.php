@@ -210,7 +210,7 @@ function get_donations_by_month( $data ){
             $org_data['count'] = $org->get_donation_count( $month );
         }
 
-        $org_data['button'] = get_submit_button( date( 'M Y', strtotime( $month ) ), 'secondary small export-csv', 'export-csv-' . $org->id, false, array( 'aria-org-id' => $org->id ) );
+        $org_data['button'] = '<input type="submit" name="export-csv-' . $org->id . '" value="' . date( 'M Y', strtotime( $month ) ) . '" class="secondary small export-csv" aria-org-id="' . $org->id . '" />';
 
         $org_array[] = $org_data;
     }

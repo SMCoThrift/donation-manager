@@ -37,7 +37,7 @@ switch ( $switch ) {
 
         // Button for downloading a CSV of this data
         if( ! empty( $zipcode ) )
-            $response->download_csv_button = get_submit_button( 'Download ' . $zipcode . ' CSV', 'secondary small export-csv', 'download-zipcode-csv', false, ['aria-zipcode' => $zipcode, 'aria-radius' => $radius ] );
+            $response->download_csv_button = '<input type="submit" name="download-zipcode-csv" value="Download ' . $zipcode . ' CSV" class="secondary small export-csv" aria-zipcode="' . $zipcode . '" aria-radius="' . $radius . '" />';
 
         $response->zipcode = $zipcode;
         $response->radius = intval( $radius );
