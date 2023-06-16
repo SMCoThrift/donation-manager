@@ -237,10 +237,26 @@ function send_email( $type = '' ){
             $donor['routing_method'] = get_donation_routing_method( $donor['org_id'] );
             if( 'email' != $donor['routing_method'] ){
               send_api_post( $donor );
+
+              /**
+               * 06/16/2023 (10:44) - NEW METHOD:
+               *
+               * *ALWAYS* return when `routing_method` != `email`
+               *
+               * Previously, the following code would send an email in addition
+               * to using the non-email routing method. However, so that the
+               * customer receipt will contain the full Transportation Department
+               * contact details, I am updating the code here so that we return
+               * after send_api_post().
+               */
+              return;
+
+              /* OLD METHOD: Only return if `contact_email` and `cc_emails` are empty:
               // If we have no trans dept email contacts, return from this function as we
               // we've already sent the trans dept notification.
               if( empty( $tc['contact_email'] ) && empty( $tc['cc_emails'] ) )
                 return;
+              /**/
             }
           }
 
