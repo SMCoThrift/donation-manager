@@ -9,7 +9,14 @@ use function DonationManager\globals\{add_html,get_html};
 /**
  * Renders our donation form.
  *
- * @param      <type>  $atts   The atts
+ * @param      array  $atts {
+ *    Optional. An array of arguments.
+ *
+ *    @type  string  $nextpage  Specify the permalink of the next page where
+ *                              the donation form will $_POST its submission.
+ *    @type  string  $template  Specify the Handlebars template used to render
+ *                              the form.
+ * }
  *
  * @return     string  Donation form HTML.
  */
@@ -45,7 +52,7 @@ function donationform( $atts ){
    *
    *  In the event that we ever want to change this behavior, we
    *  could add some settings to the Donation Settings page we
-   *  create with the PODS plugin. These settings would define
+   *  create with the ACF plugin. These settings would define
    *  which form displays on which page. Otherwise, we setup
    *  $_SESSION['donor']['form'] inside callback_init().
    */
