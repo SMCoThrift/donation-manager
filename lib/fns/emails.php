@@ -175,8 +175,17 @@ function send_email( $type = '' ){
          * @context  Donor
          */
         case 'donor_confirmation':
+          $contact_name = ( empty( $tc['contact_name'] ) )? 'Scheduling Coordinator' :  $tc['contact_name'] ;
+          $contact_title = ( empty( $tc['contact_title'] ) )? 'Pick Up Scheduling' : $tc['contact_title'];
 
-          $trans_contact = $tc['contact_name'] . ' (<a href="mailto:' . $tc['contact_email'] . '">' . $tc['contact_email'] . '</a>)<br>' . $organization_name . ', ' . $tc['contact_title'] . '<br>' . $tc['phone'];
+          $trans_contact = $contact_name;
+          if( ! empty( $tc['contact_email'] ) )
+            $trans_contact.= ' (<a href="mailto:' . $tc['contact_email'] . '">' . $tc['contact_email'] . '</a>)';
+
+          $trans_contact.= '<br>' . $organization_name . ', ' . $contact_title;
+
+          if( ! empty( $tc['phone'] ) )
+            $trans_contact.= '<br>' . $tc['phone'];
 
           $orphaned_donation_note = '';
           if(
