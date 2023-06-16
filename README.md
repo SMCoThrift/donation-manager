@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.2  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.7.2.2  
+**Stable tag:** 3.7.3  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,12 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.7.3 ###
+* Adding option to use the Transportation Department's name when displaying to users in the "Select Your Organization" list. This allows us to use one parent Organization for multiple Transportation Departments.
+* `send_email()` now always returns before sending the `trans_dept_notification` if the `routing_method` is not `email`.
+* Setting defaults for Transportation Contact details in the `donor_confirmation` email.
+* Removing dependency on `get_submit_button()` WP helper function as this function can only be used in an admin context ( see [get_submit_button user contributed notes](https://developer.wordpress.org/reference/functions/get_submit_button/#comment-3641)). Was throwing an error when calling via the WP REST API.
 
 ### 3.7.2.2 ###
 * BUGFIX: Correcting variable name to `$is_chhj_pickupcode` in `send_api_post()`.
