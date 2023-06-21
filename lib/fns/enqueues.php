@@ -27,7 +27,7 @@ function enqueue_scripts(){
               $scheduling_interval = 2;
 
               if( isset( $_SESSION['donor']['org_id'] ) && is_numeric( $_SESSION['donor']['org_id'] ) ) {
-                  $pickup_dow_array = get_post_meta( $_SESSION['donor']['org_id'], 'pickup_days', false );
+                  $pickup_dow_array = get_field( 'pickup_settings_pickup_dates', $_SESSION['donor']['org_id'] );
                   $pickup_dow_array = array_unique( $pickup_dow_array );
 
                   if( isset( $pickup_dow_array[0] ) && is_array( $pickup_dow_array[0] ) && ( 0 == count( $pickup_dow_array[0] ) ) )
@@ -40,7 +40,7 @@ function enqueue_scripts(){
                       }
                   }
 
-                  $scheduling_interval = get_post_meta( $_SESSION['donor']['org_id'], 'minimum_scheduling_interval', true );
+                  $scheduling_interval = get_field( 'pickup_settings_minimum_scheduling_interval', $_SESSION['donor']['org_id'] );
               }
 
               if( empty( $scheduling_interval ) || ! is_numeric( $scheduling_interval ) )
