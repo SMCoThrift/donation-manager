@@ -4,7 +4,7 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.2  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.7.4  
+**Stable tag:** 3.7.5  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 ## Changelog ##
+
+### 3.7.5 ###
+* Using `usort()` to sort Pick Up Times returned by `get_pickuptimes()`.
 
 ### 3.7.4 ###
 * Adding "Store Relations" and "Org Page Options" to `lib/acf-json/`.

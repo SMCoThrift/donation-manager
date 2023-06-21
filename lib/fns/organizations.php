@@ -273,6 +273,10 @@ function get_pickuptimes( $org_id ){
   if( 0 == count( $terms ) )
     $terms = get_field( 'default_options_default_pickup_times', 'option' );
 
+  usort( $terms, function( $a, $b ){
+    return $a->term_order <=> $b->term_order;
+  });
+
   $pickuptimes = [];
   if( 0 < count( $terms ) ){
     foreach( $terms as $term ){
@@ -282,7 +286,6 @@ function get_pickuptimes( $org_id ){
       ];
     }
   }
-  //uber_log( '🔔 $pickuptimes = ' . print_r( $pickuptimes, true ) );
 
   return $pickuptimes;
 }
