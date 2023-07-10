@@ -51,36 +51,6 @@ function my_publish_organization( $post_id ) {
 add_action( 'acf/save_post', __NAMESPACE__ . '\\my_publish_organization', 20 );
 
 
-// function is_pickup_code_available_callback() {
-//   $code = $_POST['code'];
-//   $term = get_term_by('name', $code, 'pickup_code');
-//   $current_user = wp_get_current_user();
-//   $organization_id = get_user_meta( $current_user->ID, 'organization', true );
-//   $pickup_settings = get_field('pickup_settings', $organization_id);
-//   $priority_pickup = $pickup_settings['priority_pickup'];
-//   $assigned_posts = get_posts(['post_type' => 'trans_dept','tax_query' => [['taxonomy' => 'pickup_code','field' => 'term_id','terms' => $term->term_id]]
-//   ]);
-//   // error_log(print_r($priority_pickup), true);
-//   if (empty($assigned_posts)) {
-//         //check if its assign to any pickup code if not then available
-//     echo 'This pickup code is available.';
-//   } else {
-//         //if not available validate if the priority_pickup is set to true or false 
-//         if($priority_pickup) {
-//            // if organization priority_pickup is true then available
-//           echo 'This pickup code is available.';
-//           wp_die();
-//         }else {
-//           // if organization priority_pickup is false then not available
-//           echo 'Invalid pickup code';
-//           wp_die();
-//         }
-//   }
-//   wp_die();
-// }
-// add_action('wp_ajax_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
-// add_action('wp_ajax_nopriv_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
-// 
 function is_pickup_code_available_callback() {
   /**
    * Do this check for each pickup_code:
@@ -89,20 +59,15 @@ function is_pickup_code_available_callback() {
    * 2. If "yes", if the trans_dept the child of a priority org? If "yes", code is available.
    * 3. If "no", code is not available.
    */
-
-
   $codes = explode(',', $_POST['codes']);
   $available_codes = array();
 
+  // $organization_id = get_user_meta( $current_user->ID, 'organization', true );
+  // $priority_settings_account = get_field('pickup_settings', $organization_id);
+
+
   foreach ($codes as $code) {
-
     $term = get_term_by('name', trim($code), 'pickup_code');
-    $current_user = wp_get_current_user();
-
-    //$organization_id = get_user_meta($current_user->ID, 'organization', true);
-    //$pickup_settings = get_field('pickup_settings', $organization_id);
-    //$priority_pickup = $pickup_settings['priority_pickup'];
-
     $assigned_trans_depts = get_posts([
       'post_type' => 'trans_dept',
       'tax_query' => [
@@ -113,36 +78,31 @@ function is_pickup_code_available_callback() {
         ]
       ]
     ]);
-
-
-
     if ( empty( $assigned_trans_depts ) ) {
       // Check if the Pickup Code is assigned to any Trans. Dept. If "NO", then it's available.
       $available_codes[] = $code;
     } else {
-      // Check each returned trans_dept to see if the trans_dept is the
-      // child of a "Non Priority" Org. If "YES", then the code is NOT available,
-      // and we must continue to the next pickup_code.
       foreach( $assigned_trans_depts as $trans_dept ){
         $parent_org = get_field( 'organization', $trans_dept->ID );
-        $priority = get_field( 'pickup_settings_priority_pickup', $parent_org->ID );
-        if( ! $priority ){
-          continue;
+      //  $priority = get_field( 'pickup_settings_priority_pickup', $parent_org->ID);
+        $priority = get_field( 'pickup_settings_priority_pickup', $parent_org );
+      //2. If "yes", if the trans_dept the child of a priority org? If "yes", code is available.
+        if( $priority ){
+             $available_codes[] = $code;
         }
+
+
       }
-      $available_codes[] = $code;
     }
   }
-
   if (!empty($available_codes)) {
+  
     echo 'The following pickup codes are available: ' . implode(', ', $available_codes);
   } else {
     echo implode(', ', $codes);
   }
-
   wp_die();
 }
-
 add_action('wp_ajax_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
 add_action('wp_ajax_nopriv_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
 
@@ -153,10 +113,14 @@ function pickup_form_shortcode() {
 ?>
   <form id="pickup-form">
     <label for="pickup-code">Pickup Codes</label>
+     <p id="indicator"></p>
     <p>Enter your five digit pickup codes (i.e.zip codes) to check their availability within our system or separated with comma example 11154,88785,87835.</p>
-    <input type="text" id="pickup-code"  name="pickup-code" />
+<!--     <input type="text" id="pickup-code"  name="pickup-code" /> -->
+
+<input id="pickup-code"  name="pickup-code" class="zipcodes-data"  autocomplete="off" maxlength="5" placeholder="example 30031,30034, 303433">
     <button type="submit" class = "pickupcode-btn">Check Availability</button>
   </form>
+
       <p><span id="invalid-pickup-count"></p>
    <ul id="pickup-code-result">
   </ul>

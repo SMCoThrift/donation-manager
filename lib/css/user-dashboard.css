@@ -72,6 +72,8 @@ a.valid {
 p.result-output {
     padding-top: 10px;
     font-size: 13px;
+        width: 100%;
+    display: flex;
 }
 a.valid {
     display: inherit;
@@ -108,4 +110,25 @@ ul.user-pickup-code li a {
     padding: 7px 15px 7px 15px;
     border-radius: 19px;
     font-weight: 800;
+}a.highlight {
+    background: #e5a38e!important;
+}p#indicator {
+    font-size: 12px;
+    color: red;
+}
+
+/*OVERRIDE ON THE SELECT TOM CSS*/
+.ts-control {
+    padding: 11px 12px!important;
+    width: 50%!important;
+    float: left!important;
+    margin-right: 5px;
+}
+.ts-dropdown {
+    position: absolute;
+    top: 45px!important;
+    width: 50%!important;
+}
+.ts-dropdown-content {
+    margin-top: 10px!important;
 }
