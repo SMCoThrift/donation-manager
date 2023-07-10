@@ -181,7 +181,8 @@ function get_trans_dept_contact( $trans_dept_id = '' ) {
         if( empty( $org_default_trans_dept_contact ) )
           $org_default_trans_dept_contact = get_field( 'default_trans_dept_contact', $org_id );
 
-        $trans_dept_contact[ $array_key ] = $org_default_trans_dept_contact[ $array_key ];
+        if( is_array( $org_default_trans_dept_contact ) && array_key_exists( $array_key, $org_default_trans_dept_contact ) )
+          $trans_dept_contact[ $array_key ] = $org_default_trans_dept_contact[ $array_key ];
       }
     }
 
