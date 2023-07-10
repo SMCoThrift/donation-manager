@@ -137,7 +137,16 @@ function get_organizations( $pickup_code ) {
 
       // Contact Emails
       $trans_dept_contact_emails = [];
-      $trans_dept_contact_emails[] = get_field( 'contact_email', $trans_dept->ID );
+      $contact_email = get_field( 'contact_email', $trans_dept->ID );
+
+      // If no contact email for the Trans Dept, check the parent Organization:
+      if( empty( $contact_email ) && ! empty( $org_id ) && is_numeric( $org_id ) ){
+        $contact_email = get_field( 'default_trans_dept_contact_contact_email', $org_id );
+        if( ! empty( $contact_email ) )
+          $trans_dept_contact_emails[] = $contact_email;
+      } else if( ! empty( $contact_email ) && is_email( $contact_email ) ){
+        $trans_dept_contact_emails[] = $contact_email;
+      }
 
       $cc_emails = get_field( 'cc_emails', $trans_dept->ID );
       if( ! empty( $cc_emails ) ){
