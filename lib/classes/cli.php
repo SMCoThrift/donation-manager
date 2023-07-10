@@ -100,6 +100,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *   - get_orphaned_donation_contacts
      *   - get_priority_organizations
      *   - get_screening_questions
+     *   - get_trans_dept_contact
      *   - get_trans_dept_ids
      *   - is_orphaned_donation
      *   - is_priority
@@ -233,6 +234,14 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
           }
           $screening_questions = DonationManager\organizations\get_screening_questions( $org_id );
           WP_CLI::line( '🔔 get_screening_questions() returns $screening_questions = ' . print_r( $screening_questions, true ) );
+          break;
+
+        case 'get_trans_dept_contact':
+          if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'This test requires a numeric Trans Dept ID as the first postional argument.' );
+          $trans_dept_id = $args[0];
+          $trans_dept_contact = DonationManager\transdepts\get_trans_dept_contact( $trans_dept_id );
+          WP_CLI::line( '🔔 get_trans_dept_contact( ' . $trans_dept_id . ' ) returns ' . print_r( $trans_dept_contact, true ) );
           break;
 
         case 'get_trans_dept_ids':
