@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.8.0
+Stable tag: 3.8.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.8.0.1 =
+* BUGFIX: Accounting for "Pick Up Days of the Week" values stored as "strings" from PMD 2.0 Org imports. Now we set the available pick up days to the default (Mon-Sat) when this happens.
 
 = 3.8.0 =
 * Now orphaned donations are sent to priority partners using the Email delivery method. Previously, orhpans would only get sent using the API method which meant that only College Hunks would receive orphaned donations.

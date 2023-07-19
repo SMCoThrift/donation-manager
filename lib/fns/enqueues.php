@@ -30,6 +30,16 @@ function enqueue_scripts(){
                   $pickup_dow_array = get_field( 'pickup_settings_pickup_dates', $_SESSION['donor']['org_id'] );
                   $pickup_dow_array = array_unique( $pickup_dow_array );
 
+                  /**
+                   * BUGFIX: Pickup Days of the Week were stored as strings in PMD 2.0.
+                   * In PMD 3.0, we store these values as numbers (0-6 for Sun-Sat).
+                   * However, we still have some old string values from importing PMD 2.0
+                   * orgs. The follow code accounts for this by discarding the values
+                   * saved for the Org and using the default values above.
+                   */
+                  if( isset( $pickup_dow_array ) && is_array( $pickup_dow_array ) && isset( $pickup_dow_array[0] ) && ! is_numeric( $pickup_dow_array[0] ) )
+                    unset( $pickup_dow_array );
+
                   if( isset( $pickup_dow_array[0] ) && is_array( $pickup_dow_array[0] ) && ( 0 == count( $pickup_dow_array[0] ) ) )
                       unset( $pickup_dow_array ); // No pickup days set for org, skip $pickup_dow_array processing b/c it is empty!
 
