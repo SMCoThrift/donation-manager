@@ -267,9 +267,9 @@ function send_email( $type = '' ){
              * Orgs and include them in the distribution.
              */
             $orgs = get_organizations( $donor['pickup_code'] );
+            $priority_recipients = [];
             foreach ( $orgs as $org ) {
               if( $org['priority_pickup'] && array_key_exists( 'trans_dept_emails', $org ) && 0 < count( $org['trans_dept_emails'] ) ){
-                $priority_recipients = [];
                 // Get the trans_dept email contact
                 foreach( $org['trans_dept_emails'] as $priority_email ){
                   $priority_recipients[] = $priority_email;
