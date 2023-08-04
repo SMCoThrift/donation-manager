@@ -11,7 +11,7 @@ use function DonationManager\organizations\{get_organizations};
  */
 function admin_custom_css(){
   echo '<style>
-  .post-type-donation #taxonomy-pickup_code{width: 100px;}
+  .post-type-donation #taxonomy-pickup_code, .post-type-donation .column-fee-based{width: 100px;}
   .post-type-trans_dept #taxonomy-pickup_code{width: 60%;}
   .response-pill, .pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
   .response-pill.success{background-color: #09c500;}
@@ -63,6 +63,12 @@ function custom_column_content( $column ){
     case 'api-response':
       $html = custom_column_api_response_content( $post->ID );
       echo $html;
+      break;
+
+    case 'fee-based':
+      $fee_based = get_post_meta( $post->ID, 'fee_based', true );
+      if( $fee_based )
+        echo '✅';
       break;
 
     case 'org':
@@ -262,6 +268,7 @@ function columns_for_donation( $defaults ){
         'taxonomy-donation_option' => 'Donation Options',
         'taxonomy-pickup_code' => 'Pickup Codes',
         'api-response'  => 'API Response',
+        'fee-based' => 'Fee Based',
         'date' => 'Date',
     );
     return $defaults;

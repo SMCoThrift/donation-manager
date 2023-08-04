@@ -266,16 +266,19 @@ function send_email( $type = '' ){
              * zip code. Then we'll retrieve any emails for PRIORITY
              * Orgs and include them in the distribution.
              */
-            $orgs = get_organizations( $donor['pickup_code'] );
-            $priority_recipients = [];
-            foreach ( $orgs as $org ) {
-              if( $org['priority_pickup'] && array_key_exists( 'trans_dept_emails', $org ) && 0 < count( $org['trans_dept_emails'] ) ){
-                // Get the trans_dept email contact
-                foreach( $org['trans_dept_emails'] as $priority_email ){
-                  $priority_recipients[] = $priority_email;
+            $fee_based = ( array_key_exists( 'fee_based', $donor ) )? $donor['fee_based'] : true ;
+            if( $fee_based ){
+              $orgs = get_organizations( $donor['pickup_code'] );
+              $priority_recipients = [];
+              foreach ( $orgs as $org ) {
+                if( $org['priority_pickup'] && array_key_exists( 'trans_dept_emails', $org ) && 0 < count( $org['trans_dept_emails'] ) ){
+                  // Get the trans_dept email contact
+                  foreach( $org['trans_dept_emails'] as $priority_email ){
+                    $priority_recipients[] = $priority_email;
+                  }
                 }
-              }
-            }
+              } // foreach
+            } // if ( $fee_based )
           }
 
           $recipients = array( $tc['contact_email'] );
@@ -460,7 +463,8 @@ function send_email( $type = '' ){
       // Send API post to CHHJ-API, College Hunks Hauling receives
       // all orphans via this:
       $donor['routing_method'] = 'api-chhj';
-      send_api_post( $donor );
+      if( $donor['fee_based'] )
+        send_api_post( $donor );
     } else {
       if( 'trans_dept_notification' == $type ){
         foreach ($recipients as $email ) {

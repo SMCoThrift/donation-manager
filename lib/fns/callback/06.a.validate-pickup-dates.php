@@ -31,17 +31,6 @@ if( isset( $_POST['donor']['pickupdate1'] ) ){
     'Pickup Location' => [ 'required', 'trim' ],
   ]);
 
-  /*
-  $form->setValues( array(
-    'Preferred Pickup Date 1' => $_POST['donor']['pickupdate1'],
-    'Date 1 Time' => $_POST['donor']['pickuptime1'],
-    'Preferred Pickup Date 2' => $_POST['donor']['pickupdate2'],
-    'Date 2 Time' => $_POST['donor']['pickuptime2'],
-    'Preferred Pickup Date 3' => $_POST['donor']['pickupdate3'],
-    'Date 3 Time' => $_POST['donor']['pickuptime3'],
-    'Pickup Location' => $_POST['donor']['pickuplocation'],
-  ));
-  /**/
   $form->setValues( array(
     'Preferred Pickup Date 1' => get_posted_var( 'donor:pickupdate1' ),
     'Date 1 Time' => get_posted_var( 'donor:pickuptime1' ),
@@ -57,7 +46,8 @@ if( isset( $_POST['donor']['pickupdate1'] ) ){
       $_SESSION['donor']['pickupdate' . $x ] = $_POST['donor']['pickupdate' . $x ];
       $_SESSION['donor']['pickuptime' . $x ] = $_POST['donor']['pickuptime' . $x ];
     }
-    $_SESSION['donor']['pickuplocation' ] = $_POST['donor']['pickuplocation' ];
+    $_SESSION['donor']['pickuplocation'] = $_POST['donor']['pickuplocation'];
+    $_SESSION['donor']['fee_based'] = $_POST['donor']['fee_based'];
 
     // Notify admin if missing ORG or TRANS DEPT
     if( empty( $_SESSION['donor']['org_id'] ) || empty( $_SESSION['donor']['trans_dept_id'] ) )
@@ -94,7 +84,12 @@ if( isset( $_POST['donor']['pickupdate1'] ) ){
           $error_msg[] = '<strong><em>' . $field . '</em></strong> matches another date. Please select three <em>unique</em> dates.';
     }
     if( 0 < count( $error_msg ) ){
-      $error_msg_html = '<div class="alert alert-danger"><p>Please correct the following errors:</p><ul><li>' .implode( '</li><li>', $error_msg ) . '</li></ul></div>';
+      $error_msg_html = get_alert([
+        'description' => '<p>Please correct the following errors:</p><ul><li>' .implode( '</li><li>', $error_msg ) . '</li></ul>',
+        'type'  => 'danger',
+      ]);
+
+      //$error_msg_html = '<div class="alert alert-danger"><p>Please correct the following errors:</p><ul><li>' .implode( '</li><li>', $error_msg ) . '</li></ul></div>';
       add_html( $error_msg_html );
     }
   }

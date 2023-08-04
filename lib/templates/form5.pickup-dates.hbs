@@ -5,17 +5,18 @@ label.pickup-date{font-size: 16px; font-weight: bold;}
 .date-column:first-child{margin-left: 0;}
 .date-column:last-child{margin-right: 0;}
 .date-column .available-times{margin-top: .25em;}
+label.pickup-date{font-size: 15px;}
 @media(min-width: 768px){
   .elementor-column.elementor-col-33.date-column{width: 32%;}
 }
 </style>
 <form action="" method="post">
-  <p class="lead">Please select three <em>POTENTIAL</em> pickup dates.</p>
+  <p class="lead">Please select three <em>POTENTIAL</em> pick up dates.</p>
   {{{date_note}}}
   <div class="row elementor-form-fields-wrapper elementor-labels-above row-pickup-dates">
     {{#each pickupdates}}
     <div class="elementor-column elementor-col-33 date-column" style="display: block;">
-      <label class="pickup-date" for="donor[pickupdate{{@index}}]">Preferred Pickup Date {{@index}}<span class="required">*</span>:</label><br />
+      <label class="pickup-date" for="donor[pickupdate{{@index}}]">Preferred Pick Up Date {{@index}}<span class="required">*</span>:</label><br />
       <input type="text" name="donor[pickupdate{{@index}}]" id="pickupdate{{@index}}" class="date" gldp-id="gldatepicker{{@index}}" value="{{value}}" />
       <div style="position: relative;">
         <div gldp-el="gldatepicker{{@index}}" style="width: 400px; height: 300px;"></div>
@@ -48,7 +49,31 @@ label.pickup-date{font-size: 16px; font-weight: bold;}
       {{/each}}
     </div>
   </div>
+  <br/>
+
+  {{#if orphaned_donation}}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="elementor-alert elementor-widget elementor-alert-warning">
+        <span class="elementor-alert-description">
+          <h2 style="font-size: 24px; margin-bottom: 4px;"><strong style="font-size: 16px; text-transform: uppercase; display: block; margin-bottom: 6px;">Important note regarding your donation:</strong>Free and Fee-Based Providers, Your choice!</h2>
+          <p>We do our best to connect you with a local organization that will pick up your items for free. Unfortunately, we are unable to guarantee a free pick up in your market. If a free pick up provider can't perform a free pick up, a fee-based organization may be able to take your item to a nonprofit in your area.</p>
+          <p><strong>Would you like for us to send your request to a fee-based pick up service for a competitive quote?</strong></p>
+          <div class="radio">
+            <label for="fee_based_true">
+              <input type="radio" name="donor[fee_based]" id="fee_based_true" value="1"{{checked_fee_based_true}}> Yes, please send this request to free <strong><em>and fee-based</em></strong> pick up services.
+            </label>
+            <label for="fee_based_false">
+              <input type="radio" name="donor[fee_based]" id="fee_based_false" value="0"{{checked_fee_based_false}}> No, only send this request to free pick up services.
+            </label>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
   <br />
+  {{/if}}
+
   <div class="row">
     <div class="col-md-12 elementor-align-justify"><p><button type="submit" class="btn btn-block btn-primary" style="width: 100%;">Finish and Submit</button></p></div>
   </div>
