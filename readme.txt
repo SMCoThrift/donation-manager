@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.8.0.1
+Stable tag: 3.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,9 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.9.0 =
+* Adding "Fee-Based" option on Step 4 allowing donors to choose whether or not we send their donation to fee-based providers.
 
 = 3.8.0.1 =
 * BUGFIX: Accounting for "Pick Up Days of the Week" values stored as "strings" from PMD 2.0 Org imports. Now we set the available pick up days to the default (Mon-Sat) when this happens.
