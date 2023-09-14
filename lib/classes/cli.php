@@ -32,8 +32,8 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *
      * ## EXAMPLES
      *
-     * wp donations archive 2012 --skip-themes
-     * wp donations archive 2015 --month=6 --skip-themes
+     * wp dm archive 2012 --skip-themes
+     * wp dm archive 2015 --month=6 --skip-themes
      */
     function archive( $args, $assoc_args ){
       require_once( DONMAN_PLUGIN_PATH . 'lib/fns/cli/donations.archive.php' );

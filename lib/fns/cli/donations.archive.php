@@ -68,10 +68,11 @@
       $progress->finish();
     }
 
+    $donation_stats = [ 'year' => $year, 'month' => $month, 'donations' => $no_of_archived_donations ];
     if( ! $dry_run )
-      add_row( 'donation_stats', [ 'year' => $year, 'month' => $month, 'donations' => $no_of_archived_donations ], 'option' );
+      add_row( 'donation_stats', $donation_stats, 'option' );
 
     if( $dry_run ){
       WP_CLI::warning('This was a `dry run`. To actually archive the donations, run with flag `--dry-run=false`.');
-      WP_CLI::line('If this had not been a `dry run`, $archived_donations would have been set to: ' . "\n\n" . print_r( $archived_donations, true ) );
+      WP_CLI::line('If this had not been a `dry run`, the following stat would have been added to `donation_stats`: ' . "\n\n" . print_r( $donation_stats, true ) );
     }

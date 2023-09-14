@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.9.0
+Stable tag: 3.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.9.1 =
+* Updating output for `wp dm archive` to correctly show the `$donation_stats` that would be written to the database.
+* Correcting examples in documentation for `wp dm archive`.
 
 = 3.9.0 =
 * Adding "Fee-Based" option on Step 4 allowing donors to choose whether or not we send their donation to fee-based providers.
