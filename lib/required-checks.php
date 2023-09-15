@@ -16,6 +16,7 @@ function donman_is_active_plugin( $plugin ){
 $donman_required_constants = [ 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET', 'DM_GOOGLE_MAPS_API_KEY' ];
 foreach( $donman_required_constants as $constant ){
   if( ! defined( $constant ) ){
+    define( $constant, null );
     add_action( 'admin_notices', function() use ( $constant ){
       $message = __( 'Missing required constant: <code>' . $constant . '</code>. Please add <code>define( \'' . $constant . '\', ... )</code> to your <code>wp-config.php</code>.' );
       printf( '<div class="notice notice-error" style="padding: 10px;">%1$s</div>', $message );
