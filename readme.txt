@@ -4,7 +4,7 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.2
 Requires PHP: 8.0
-Stable tag: 3.9.1.1
+Stable tag: 3.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ A complete donation intake system for WordPress.
 Long description goes here...
 
 == Changelog ==
+
+= 3.9.2 =
+* Adding "Fails" column to "College Hunks API Stats" widget.
+* Adding "Note" to the bottom of the "College Hunks API Stats" widget explaining "Fails".
 
 = 3.9.1.1 =
 * BUGFIX: Setting required constants to `null` when not set to avoid fatal error upon setup.
