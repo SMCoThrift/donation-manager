@@ -331,6 +331,8 @@ class DMReports {
             $PickupDate2 = ( ! empty( $custom_fields['pickup_times_1_pick_up_time'][0] ) )? $custom_fields['pickup_times_1_pick_up_time'][0] : '';
             $PickupDate3 = ( ! empty( $custom_fields['pickup_times_2_pick_up_time'][0] ) )? $custom_fields['pickup_times_2_pick_up_time'][0] : '';
             $org_name = ( is_numeric( $organization ) )? get_the_title( $organization ) : '--';
+            $PriorityPickup = ( ! empty( $custom_fields['fee_based'] ) )? $custom_fields['fee_based'][0] : 'NO' ;
+            $PriorityPickup = ( '1' == $PriorityPickup )? 'YES' : 'NO' ;
             $Referer = ( ! empty( $custom_fields['referer'][0] ) )? esc_url( $custom_fields['referer'][0] ) : '';
 
     		$donation_row = array(
@@ -352,6 +354,7 @@ class DMReports {
     			'PickupDate2' => $PickupDate2,
     			'PickupDate3' => $PickupDate3,
     			'Organization' => html_entity_decode( $org_name ),
+    			'PriorityPickup' => $PriorityPickup,
     			'Referer' => $Referer,
 			);
 

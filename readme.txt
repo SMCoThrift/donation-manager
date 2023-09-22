@@ -2,7 +2,7 @@
 Contributors: TheWebist
 Tags: donations, CPT
 Requires at least: 6.0.0
-Tested up to: 6.2
+Tested up to: 6.3.1
 Requires PHP: 8.0
 Stable tag: 3.9.2
 License: GPLv2 or later
@@ -10,11 +10,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
-== Description ==
-
-Long description goes here...
-
 == Changelog ==
+
+= 3.9.3 =
+* Adding "PriorityPickup" column to CSV export in "My Donations > Donation Reports > Combined Donations" report.
 
 = 3.9.2 =
 * Adding "Fails" column to "College Hunks API Stats" widget.
