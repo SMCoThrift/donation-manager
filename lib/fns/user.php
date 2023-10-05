@@ -45,7 +45,7 @@ function register_user( $record, $handler ){
     ]);
 
     $user = new \WP_User( $user_id );
-    
+
      // Add user meta data
     add_user_meta( $user_id, 'organization', $organization_id, true );
     add_user_meta( $user_id, 'phone', $fields['phone'], true );
@@ -62,35 +62,35 @@ function register_user( $record, $handler ){
 add_action( 'elementor_pro/forms/new_record', __NAMESPACE__ . '\\register_user', 10, 2 );
 
 
-//STATUS ADMIN ROLE USERS DISPLAY COLUMN
-function custom_user_columns( $columns ) {
-   $columns['user_status'] = 'Status';
-   return $columns;
-}
-
-add_filter( 'manage_users_columns', __NAMESPACE__ . '\\custom_user_columns' );
-
-//STATUS ADMIN ROLE USERS
-
-function custom_user_column_content( $value, $column_name, $user_id ) {
-   if ( 'user_status' === $column_name ) {
-      $status = get_user_meta( $user_id, 'user_status', true );
-      $user = get_userdata( $user_id );
-      $user_roles = $user->roles;
-      //need to fix this.
-     //error_log(print_r($user_roles[0]));
-    if ( empty( $user_roles ) ) {
-         $value = '<span style="color:orange;font-weight:bold;">Pending</span>';
-      }elseif($user_roles[0] === 'rejected' ) {
-        $value = '<span style="color:red;font-weight:bold;">Rejected</span>';
-      }else{
-        $value = '<span style="color:green;font-weight:bold;">Approved</span>';
-      }
-   }
-   return $value;
-}
-
-add_filter( 'manage_users_custom_column', __NAMESPACE__ . '\\custom_user_column_content', 10, 3 );
+////STATUS ADMIN ROLE USERS DISPLAY COLUMN
+//function custom_user_columns( $columns ) {
+//   $columns['user_status'] = 'Status';
+//   return $columns;
+//}
+//
+//add_filter( 'manage_users_columns', __NAMESPACE__ . '\\custom_user_columns' );
+//
+////STATUS ADMIN ROLE USERS
+//
+//function custom_user_column_content( $value, $column_name, $user_id ) {
+//   if ( 'user_status' === $column_name ) {
+//      $status = get_user_meta( $user_id, 'user_status', true );
+//      $user = get_userdata( $user_id );
+//      $user_roles = $user->roles;
+//      //need to fix this.
+//     //error_log(print_r($user_roles[0]));
+//    if ( empty( $user_roles ) ) {
+//         $value = '<span style="color:orange;font-weight:bold;">Pending</span>';
+//      }elseif($user_roles[0] === 'rejected' ) {
+//        $value = '<span style="color:red;font-weight:bold;">Rejected</span>';
+//      }else{
+//        $value = '<span style="color:green;font-weight:bold;">Approved</span>';
+//      }
+//   }
+//   return $value;
+//}
+//
+//add_filter( 'manage_users_custom_column', __NAMESPACE__ . '\\custom_user_column_content', 10, 3 );
 
 
 
@@ -142,7 +142,7 @@ function send_role_change_email( $user_id, $old_user_data ) {
           $url = site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . urlencode($login).'&wp_lang=en_US' );
 
           // Define the email message
-          $message = 'Hello ' . $new_user_data->display_name . ', your account has been approved. Please click the generated link to set your password : <a href="'.  $url .'">generate your password</a>'; 
+          $message = 'Hello ' . $new_user_data->display_name . ', your account has been approved. Please click the generated link to set your password : <a href="'.  $url .'">generate your password</a>';
 
           $headers = array(
             'Content-Type: text/html; charset=UTF-8',
@@ -154,3 +154,33 @@ function send_role_change_email( $user_id, $old_user_data ) {
 }
 
 add_action( 'profile_update', __NAMESPACE__ . '\\send_role_change_email', 10, 2 );
+
+function org_to_user_account($org_id)
+{
+	$user_id = FALSE;
+	$org = get_post($org_id);
+	$org_name = $org->post_title;
+	$org_slug = $org->post_name;
+	$org_email = trim(explode(',', get_field('monthly_report_emails', $org_id))[0]);
+
+	if (!email_exists($org_email)) {
+		$user_data = array(
+			'user_login' => $org_slug,
+			'user_pass' => wp_generate_password(12),
+			'user_email' => $org_email,
+			'first_name' => $org_name,
+			'role' => 'org-inactive',
+		);
+
+		$user_id = wp_insert_user($user_data);
+
+		if (is_wp_error($user_id)) {
+			error_log('Error creating user: ' . $user_id->get_error_message());
+		}else{
+			$user = new \WP_User( $user_id );
+			add_user_meta( $user_id, 'organization', $org_id, true );
+		}
+		return $user_id;
+	}
+
+}
