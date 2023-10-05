@@ -66,20 +66,21 @@ function enqueue_scripts(){
       } // switch( $_SESSION['donor']['form'] )
   } // if( isset( $_SESSION['donor']['form'] ) )
 
-  if(is_user_logged_in()) { 
+  if(is_user_logged_in()) {
      wp_enqueue_style( 'user-dashboard', DONMAN_PLUGIN_URL . 'lib/css/user-dashboard.css' );
      wp_enqueue_style( 'tom-select', DONMAN_PLUGIN_URL . 'lib/css/tom-select.css' );
      wp_enqueue_script( 'tom-select.complete.min', DONMAN_PLUGIN_URL . 'lib/js/tom-select.complete.min.js');
      wp_enqueue_script( 'pickupcodes', DONMAN_PLUGIN_URL . 'lib/js/pickupcodes.js');
-     
+
      wp_localize_script('pickupcodes', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
          wp_enqueue_script( 'jquery' );
   }
 
   if( ! wp_script_is( 'jquery', 'done' ) )
   wp_enqueue_script( 'jquery' );
-  
-  wp_register_script( 'googlemaps', 'https://maps.googleapis.com/maps/api/js?key=' . DM_GOOGLE_MAPS_API_KEY, null, '1.0', true ); // &callback=initMap
+ if(defined('DM_GOOGLE_MAPS_API_KEY')){
+  	wp_register_script( 'googlemaps', 'https://maps.googleapis.com/maps/api/js?key=' . DM_GOOGLE_MAPS_API_KEY, null, '1.0', true ); // &callback=initMap
+ }
   wp_register_script( 'donors-by-zipcode', DONMAN_PLUGIN_URL . 'lib/js/donors-by-zipcode.js', ['googlemaps'], filemtime( DONMAN_PLUGIN_PATH . 'lib/js/donors-by-zipcode.js' ), true );
 
   $zipCodeMapsUrl = ( stristr( $_SERVER['HTTP_HOST'], '.local' ) )? 'https://pickupmydonation.com/wp-content/plugins/donation-manager/lib/kml/zipcodes/' : DONMAN_PLUGIN_URL . 'lib/kml/zipcodes/' ;

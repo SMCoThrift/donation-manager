@@ -38,9 +38,9 @@ function show_acf_transdept_form(){
        // error_log( print_r( $organization_id, true ));
 
     if( $organization_id ){
-      $trans_depts = get_org_transdepts( $organization_id );
+      $trans_depts = get_org_transdepts( $organization_id , true);
           //error_log( print_r( get_org_transdepts($organization_id), true ));
-        
+
       $post_id = 'new_post';
       $field_values = array();
 
@@ -58,8 +58,13 @@ function show_acf_transdept_form(){
         }
       } else {
           // Retrieve the saved field values if the form hasn't been submitted
-          if( 1 === count( $trans_depts ) ) {
-            $trans_dept_id = $trans_depts[0];
+          if( 1 === count( $trans_depts ) || isset($_GET['did'])) {
+
+            	$trans_dept_id = $trans_depts[0]->ID;
+			  if(isset($_GET['did']) && in_array($_GET['did'], wp_list_pluck($trans_depts, 'ID'))){
+				  $trans_dept_id = $_GET['did'];
+			  }
+
             if( $trans_dept_id ):
               $field_values['organization'] = get_field( 'organization', $trans_dept_id );
               $field_values['contact_title'] = get_field( 'contact_title', $trans_dept_id );
@@ -89,10 +94,17 @@ function show_acf_transdept_form(){
             return ob_get_clean();
 
           } else if( 1 < count( $trans_depts ) ) {
-            return get_alert([
-              'title' => 'Multiple Transportation Departments',
-              'description' => 'There are multiple transportation departments assigned to your organization.',
-            ]);
+			  ob_start();
+				  echo "<h3>Your Transportation Departments</h3>
+				  <p>Click transportation department name to edit</p>";
+			  foreach ($trans_depts as $trans_dept) {
+				  ?>
+					<ul>
+						<li><a href="?did=<?php echo( $trans_dept->ID ); ?>"><?php echo esc_html($trans_dept->post_title) ?></a></li>
+					</ul>
+				  <?php
+			  }
+			  return ob_get_clean();
           }
       }
 
@@ -176,7 +188,7 @@ add_filter('acf/validate_value/key=field_64241976176e9', __NAMESPACE__ . '\\vali
 function auto_populate_select_organization( $value, $post_id, $field ) {
     // Get the current user ID
     $user_id = get_current_user_id();
-    
+
     // Get all posts of the 'organization' post type for the current user
     $args = array(
         'post_type' => 'organization',
@@ -184,18 +196,18 @@ function auto_populate_select_organization( $value, $post_id, $field ) {
         'posts_per_page' => -1
     );
     $posts = get_posts( $args );
-    
+
     // Create an array of post IDs
     $post_ids = array();
     foreach ( $posts as $post ) {
         $post_ids[] = $post->ID;
     }
-    
+
     // If the value is empty and the current user has organizations, set the value to the first organization ID
     if ( empty( $value ) && ! empty( $post_ids ) ) {
         $value = $post_ids[0];
     }
-    
+
     // Return the value
     return $value;
 }

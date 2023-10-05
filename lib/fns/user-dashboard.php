@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace DonationManager\users;
 use function DonationManager\utilities\{get_alert};
 use function DonationManager\organizations\{get_org_transdepts};
@@ -27,7 +27,7 @@ function current_user_info_shortcode() {
                   echo '</div>';
 
     } else {
-        return 'Please log in to view your user information.';
+        return 'Please <a href="/wp-login.php">log in</a> to view your user information.';
     }
 }
 add_shortcode( 'current_user_info', __NAMESPACE__ . '\\current_user_info_shortcode' );
@@ -96,7 +96,7 @@ function is_pickup_code_available_callback() {
     }
   }
   if (!empty($available_codes)) {
-  
+
     echo 'The following pickup codes are available: ' . implode(', ', $available_codes);
   } else {
     echo implode(', ', $codes);
@@ -133,10 +133,10 @@ add_shortcode('pickup_form', __NAMESPACE__ . '\\pickup_form_shortcode');
 function add_pickup_code() {
     $pickupcode = $_POST['pickupcode'];
     $term_exists = term_exists($pickupcode, 'pickup_code');
-  
+
     $current_user_id = get_current_user_id();
     $organization_id = get_user_meta( $current_user_id, 'organization', true );
-     if( $organization_id ){ 
+     if( $organization_id ){
 
         error_log(print_r('exist choi'));
           $trans_depts = get_org_transdepts( $organization_id );
@@ -178,7 +178,7 @@ function user_pickup_codes() {
   $output = '';
   $current_user_id = get_current_user_id();
   $organization_id = get_user_meta( $current_user_id, 'organization', true );
-  if( $organization_id ){  
+  if( $organization_id ){
     $trans_depts = get_org_transdepts( $organization_id );
     if(!empty($trans_depts)) {
         $terms = wp_get_post_terms($trans_depts[0], 'pickup_code', ['fields' => 'slugs']);
@@ -196,7 +196,7 @@ function user_pickup_codes() {
   return $output;
 }
 //[your_pickup_codes]
-add_shortcode('your_pickup_codes', __NAMESPACE__ . '\\user_pickup_codes'); 
+add_shortcode('your_pickup_codes', __NAMESPACE__ . '\\user_pickup_codes');
 
 function remove_pickup_code() {
   $value = $_POST['value'];
@@ -220,4 +220,19 @@ function remove_pickup_code() {
 }
 add_action('wp_ajax_remove_pickup_code', __NAMESPACE__ . '\\remove_pickup_code');
 add_action('wp_ajax_nopriv_remove_pickup_code', __NAMESPACE__ . '\\remove_pickup_code');
-?>
+
+add_filter( 'show_admin_bar' ,  __NAMESPACE__ . '\\disable_admin_bar_for_orgs');
+function disable_admin_bar_for_orgs($show_admin_bar) {
+	return ( current_user_can( 'administrator' ) ) ? $show_admin_bar : false;
+}
+
+add_shortcode( 'pmd_loginform', function (){
+	$args = array(
+		'echo'            => true,
+		'redirect'        => site_url( '/dashboard/organization/' ),
+		'remember'        => true,
+		'value_remember'  => true,
+	);
+	return wp_login_form( $args );
+} );
+

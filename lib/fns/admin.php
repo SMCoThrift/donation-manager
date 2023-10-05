@@ -1,6 +1,7 @@
 <?php
 
 namespace DonationManager\donations;
+use function DonationManager\users\org_to_user_account;
 use function DonationManager\organizations\{is_orphaned_donation,get_default_organization};
 use function DonationManager\donations\{get_orphaned_donation_notifications};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
@@ -368,3 +369,31 @@ function custom_sortable_columns( $sortables ){
 add_filter( 'manage_edit-donation_sortable_columns', __NAMESPACE__ . '\\custom_sortable_columns' );
 add_filter( 'manage_edit-store_sortable_columns', __NAMESPACE__ . '\\custom_sortable_columns' );
 add_filter( 'manage_edit-trans_dept_sortable_columns', __NAMESPACE__ . '\\custom_sortable_columns' );
+
+add_filter('bulk_actions-edit-organization', function($bulk_actions) {
+	$bulk_actions['add-account'] = 'Add Account';
+	return $bulk_actions;
+});
+
+
+
+
+add_filter('handle_bulk_actions-edit-organization', function($redirect_url, $action, $post_ids) {
+	if ($action == 'add-account') {
+		$users = [];
+		foreach ($post_ids as $post_id) {
+			if($uid = org_to_user_account($post_id)){
+				$users[] = $uid;
+			}
+		}
+		$redirect_url = add_query_arg('orgs-added', count($users), $redirect_url);
+	}
+	return $redirect_url;
+}, 10, 3);
+
+add_action('admin_notices', function() {
+	if (!empty($_REQUEST['orgs-added'])) {
+		$orgs = (int) $_REQUEST['orgs-added'];
+		echo "<div class=\"notice notice-success is-dismissible\"><p>${orgs} organization accounts has been created!</p></div>";
+	}
+});

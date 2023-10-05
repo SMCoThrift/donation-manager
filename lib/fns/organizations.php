@@ -448,7 +448,7 @@ function get_screening_questions( $org_id = null ) {
  *
  * @return     array  An array of transportation deparment IDs.
  */
-function get_org_transdepts( $org_id ){
+function get_org_transdepts( $org_id , $full = false ){
 
   $trans_depts = [];
 
@@ -459,6 +459,11 @@ function get_org_transdepts( $org_id ){
     'numberposts' => -1,
   ];
   $posts = get_posts( $args );
+
+  if($full){
+	  return $posts;
+  }
+
   if( $posts ):
     foreach ( $posts as $trans_dept ) {
       $trans_depts[] = $trans_dept->ID;
