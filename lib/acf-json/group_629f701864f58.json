@@ -26,7 +26,8 @@
             "ui": 1,
             "save_custom": 0,
             "save_post_type": "",
-            "save_post_status": ""
+            "save_post_status": "",
+            "bidirectional_target": []
         },
         {
             "key": "field_629f704fabec8",
@@ -52,7 +53,8 @@
             "ui": 1,
             "save_custom": 0,
             "save_post_type": "",
-            "save_post_status": ""
+            "save_post_status": "",
+            "bidirectional_target": []
         },
         {
             "key": "field_629f706dabec9",
@@ -489,6 +491,27 @@
                     "append": ""
                 }
             ]
+        },
+        {
+            "key": "field_654c87878e073",
+            "label": "Visible in Organization Edit Interface",
+            "name": "visible_in_organization_edit_interface",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_save_meta": 0,
+            "message": "Shows this value in organization edit interaface",
+            "default_value": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
         }
     ],
     "location": [

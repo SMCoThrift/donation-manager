@@ -19,7 +19,7 @@ function show_acf_organization_form(){
       [
         'post_id' => $organization_id,
         'post_title' => false,
-        'fields' => ['monthly_report_emails', 'website', 'pickup_settings' ],
+        'fields' => ['monthly_report_emails', 'website', 'pickup_settings','field_654d6f4619b6c' ],
         'submit_value' => 'Save',
         'updated_message' => get_alert( ['description' => 'Your information has been saved.', 'type' => 'info'] ),
       ]
@@ -258,3 +258,65 @@ function enqueue_acf_form_head(){
 
 }
 add_action( 'wp', __NAMESPACE__ . '\\enqueue_acf_form_head', 15 );
+
+//Filter the query to show only custom taxonomies that should be visible in the organization edit interface
+add_filter('acfe/fields/taxonomy_terms/query/key=field_654d672cfa7c9', __NAMESPACE__ . '\\pickup_times_acfe_query', 10, 3);
+function pickup_times_acfe_query( $args, $field, $post_id ) {
+
+	$args = [
+		'meta_query' => [
+			[
+				'key' => 'visible_in_organization_edit_interface',
+				'value' => 1,
+			]
+		]
+	];
+
+	return $args;
+}
+add_filter('acfe/fields/taxonomy_terms/query/key=field_654d710919b6d', __NAMESPACE__ . '\\pickup_locations_acfe_query', 10, 3);
+function pickup_locations_acfe_query( $args, $field, $post_id ) {
+
+	$args = [
+		'meta_query' => [
+			[
+				'key' => 'visible_in_organization_edit_interface',
+				'value' => 1,
+			]
+		]
+	];
+
+	return $args;
+}
+
+add_filter('acfe/fields/taxonomy_terms/query/key=field_654d755a31ed4', __NAMESPACE__ . '\\donation_options_acfe_query', 10, 3);
+function donation_options_acfe_query( $args, $field, $post_id ) {
+
+	$args = [
+		'meta_query' => [
+			[
+				'key' => 'visible_in_organization_edit_interface',
+				'value' => 1,
+			]
+		]
+	];
+
+	return $args;
+}
+add_filter('acfe/fields/taxonomy_terms/query/key=field_654d759931ed6', __NAMESPACE__ . '\\screening_questions_acfe_query', 10, 3);
+function screening_questions_acfe_query( $args, $field, $post_id ) {
+
+	$args = [
+		'meta_query' => [
+			[
+				'key' => 'visible_in_organization_edit_interface',
+				'value' => 1,
+			]
+		]
+	];
+
+	return $args;
+}
+
+
+

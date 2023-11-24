@@ -1,11 +1,11 @@
 {
-    "key": "group_626161f31a93e",
-    "title": "Donation Option Options",
+    "key": "group_654c8d667e74d",
+    "title": "Editable Organizations Options",
     "fields": [
         {
-            "key": "field_6261622c8b8d6",
-            "label": "Pickup?",
-            "name": "pickup",
+            "key": "field_654c8d67a4e3b",
+            "label": "Visible in Organization Edit Interface",
+            "name": "visible_in_organization_edit_interface",
             "aria-label": "",
             "type": "true_false",
             "instructions": "",
@@ -16,27 +16,8 @@
                 "class": "",
                 "id": ""
             },
-            "message": "Organizations will go out to pick up this item?",
-            "default_value": 1,
-            "ui": 0,
-            "ui_on_text": "",
-            "ui_off_text": ""
-        },
-        {
-            "key": "field_626162538b8d7",
-            "label": "Skip questions?",
-            "name": "skip_questions",
-            "aria-label": "",
-            "type": "true_false",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "message": "Skip the second page of questions for this item?",
+            "acfe_save_meta": 0,
+            "message": "Use this value in organization edit interaface",
             "default_value": 0,
             "ui": 0,
             "ui_on_text": "",
@@ -48,14 +29,35 @@
             {
                 "param": "taxonomy",
                 "operator": "==",
+                "value": "pickup_location"
+            }
+        ],
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
                 "value": "donation_option"
+            }
+        ],
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "pickup_time"
+            }
+        ],
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "screening_question"
             }
         ]
     ],
     "menu_order": 0,
     "position": "normal",
     "style": "default",
-    "label_placement": "top",
+    "label_placement": "left",
     "instruction_placement": "label",
     "hide_on_screen": "",
     "active": true,
@@ -68,5 +70,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1699516925
+    "modified": 1699516873
 }
