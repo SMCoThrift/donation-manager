@@ -153,22 +153,28 @@ function send_role_change_email( $user_id, $old_user_data ) {
     }
 }
 
-add_action( 'profile_update', __NAMESPACE__ . '\\send_role_change_email', 10, 2 );
 
-function org_to_user_account($org_id)
+add_action( 'set_user_role', __NAMESPACE__ . '\\send_role_change_email', 10, 3 );
+
+function org_to_user_account($id_org){
+
+}
+
+function dept_to_user_account($id_dept)
 {
 	$user_id = FALSE;
-	$org = get_post($org_id);
-	$org_name = $org->post_title;
-	$org_slug = $org->post_name;
-	$org_email = trim(explode(',', get_field('monthly_report_emails', $org_id))[0]);
+	$dept = get_post($id_dept);
+	$dept_name = $dept->post_title;
+	$dept_slug = $dept->post_name;
+	$dept_email = trim(explode(',', get_field('contact_email', $id_dept))[0]);
+	$id_org = get_post_meta($id_dept, 'organization', true);
 
-	if (!email_exists($org_email)) {
+	if (!email_exists($dept_email)) {
 		$user_data = array(
-			'user_login' => $org_slug,
+			'user_login' => $dept_email,
 			'user_pass' => wp_generate_password(12),
-			'user_email' => $org_email,
-			'first_name' => $org_name,
+			'user_email' => $dept_email,
+			'first_name' => $dept_name,
 			'role' => 'org-inactive',
 		);
 
@@ -178,7 +184,8 @@ function org_to_user_account($org_id)
 			error_log('Error creating user: ' . $user_id->get_error_message());
 		}else{
 			$user = new \WP_User( $user_id );
-			add_user_meta( $user_id, 'organization', $org_id, true );
+			add_user_meta( $user_id, 'department', $id_dept, true );
+			add_user_meta( $user_id, 'organization', $id_org, true );
 		}
 		return $user_id;
 	}
