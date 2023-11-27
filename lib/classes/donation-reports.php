@@ -178,7 +178,8 @@ class DMReports {
 	/**
 	 * Initiates a file download for $wp_query->query_vars['zipcode'] and $wp_query->query_vars['radius']
 	 *
-	 * Matches example.com/download/orgid/YYYY-MM
+	 * Matches {$site_url}/download/{$org_id}/YYYY-MM
+	 * OR {$site_url}/download/all/donations
 	 *
 	 * @see add_rewrite_rule()
 	 * @global object $wp_query WordPress global query object.
@@ -207,7 +208,7 @@ class DMReports {
 	    	if( ! $org )
 	    		return;
 
-	    	$filename = $org->post_name . '.' . $month . '.csv';
+	    	$filename = $org->post_name . '_' . $month . '.csv';
     	}
 
     	$donations = $this->get_donations( $orgID, $month );
@@ -218,6 +219,7 @@ class DMReports {
     		$csv = 'No donations found for ' . $org->post_name . ' in ' . $month;
     	}
 
+		//uber_log('🔔💥👉 $filename = ' . $filename );
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
 		header("Content-type: text/csv");
