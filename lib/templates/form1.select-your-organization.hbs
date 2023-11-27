@@ -8,7 +8,7 @@
   </style>
   {{#each rows}}
   <div class="row organization{{css_classes}}">
-      <h3>{{name}}</h3>
+      <h3>{{#if priority}}Fee-Based Donation Pick Up{{else}}{{name}}{{/if}}</h3>
       {{#if pause_pickups}}
         <div class="description">{{{desc}}}</div>
       {{else}}
@@ -20,7 +20,14 @@
           </span>
         </a>
       </div>
-      <div class="description">{{{desc}}}</div>
+      <div class="description">
+        {{#if priority}}
+          <p><strong>Fee-Based Donation Pickup Service:</strong> Experience the convenience of our donation pickup service, now with a unique fee-based approach. We offer the ease of removing items directly from any location within your property. These items are then delivered to local non-profit organizations. While some items may not be suitable for donation, our service also includes junk removal, ensuring a comprehensive solution for all your unwanted items. Moreover, all eligible items are donated to non-profits which means your donation is tax-deductible. Simplify your donation process while supporting local charities and responsibly disposing of items that cannot be donated with our efficient, fee-based pickup service.</p>
+          <p><strong>*Fee-Based Pick Ups are performed more quickly than Free Pick Ups.</strong></p>
+        {{else}}
+          {{{desc}}}
+        {{/if}}
+      </div>
       {{/if}}
       {{#if edit_url}}
       <div class="edit-this"><a href="{{edit_url}}" target="_blank">Edit</a></div>

@@ -2,15 +2,18 @@
 **Contributors:** [thewebist](https://profiles.wordpress.org/thewebist/)  
 **Tags:** donations, CPT  
 **Requires at least:** 6.0.0  
-**Tested up to:** 6.3.1  
+**Tested up to:** 6.4.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 3.9.4  
+**Stable tag:** 4.0.0  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.0.0 ###
+* Updating "Fee-Based" option to utilize generic verbiage during the "Select Your Organization" step.
 
 ### 3.9.4 ###
 * Adding "Prices start as low as..." call out to Fee-Based note on Step 4.

@@ -98,6 +98,7 @@ foreach( $organizations as $org ) {
         'pause_pickups' => $org['pause_pickups'],
         'org_id'        => $org['id'],
         'edit_url'      => $org['edit_url'],
+        'priority'      => $org['priority_pickup'],
     ];
     if( isset( $org['providers'] ) && ! empty( $org['providers'] ) )
         $row['providers'] = $org['providers'];
