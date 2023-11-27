@@ -86,6 +86,7 @@ function custom_column_content( $column ){
           $text = ( 'publish' == $post_status )? 'NOT SET!' : 'not set';
           $org_name = '<code style="color: #' . $color . '; font-weight: bold;">' . $text . '</code>';
         }
+        /*
         $trans_dept = get_field( 'trans_dept', $post->ID );
         if( is_object( $trans_dept ) && is_orphaned_donation( $trans_dept->ID ) ){
           $notifications = get_orphaned_donation_notifications( $post->ID );
@@ -104,6 +105,8 @@ function custom_column_content( $column ){
         } else {
           echo $org_name;
         }
+        /**/
+        echo $org_name;
     break;
 
     case 'routing_method':
