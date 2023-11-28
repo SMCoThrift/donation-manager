@@ -4,13 +4,16 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.4.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 4.0.0  
+**Stable tag:** 4.1.0  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.1.0 ###
+* Removing "Fee-Based/Priority" option from the "Select Your Organization" screen.
 
 ### 4.0.0 ###
 * Updating "Fee-Based" option to utilize generic verbiage during the "Select Your Organization" step.
