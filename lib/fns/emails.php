@@ -345,10 +345,12 @@ function send_email( $type = '' ){
           }
 
           // HANDLEBARS TEMPLATE
+          // 03/06/2023 (10:40) - if TRUE == $orphaned_donation, the donation receipt will omit donor contact details in favor of using the "Click to Claim" link
+          // 12/07/2023 (10:28) - Removing "Click to Claim", originally 'donationreceipt' => get_donation_receipt( $donor, $orphaned_donation )
           $hbs_vars = [
             'donor_name' => $donor['address']['name']['first'] . ' ' .$donor['address']['name']['last'],
             'contact_info' => str_replace( '<a href', '<a style="color: #6f6f6f; text-decoration: none;" href', $contact_info ),
-            'donationreceipt' => get_donation_receipt( $donor, $orphaned_donation ), // 03/06/2023 (10:40) - if TRUE == $orphaned_donation, the donation receipt will omit donor contact details in favor of using the "Click to Claim" link
+            'donationreceipt' => get_donation_receipt( $donor, false ),
             'orphaned_donation_note' => $orphaned_donation_note,
             'organization_name' => $organization_name,
           ];
@@ -367,8 +369,12 @@ function send_email( $type = '' ){
 
           foreach ( $recipients as $contact_id => $email ) {
             $hbs_vars['email'] = $email;
-            if( array_key_exists( 'donation_hash', $_SESSION['donor'] ) )
-              $hbs_vars['click_to_claim'] = get_click_to_claim_link( $_SESSION['donor']['donation_hash'], $contact_id );
+            /**
+             * 12/07/2023 (10:29) - Disabling "Click to Claim"
+             */
+            //if( array_key_exists( 'donation_hash', $_SESSION['donor'] ) )
+              //$hbs_vars['click_to_claim'] = get_click_to_claim_link( $_SESSION['donor']['donation_hash'], $contact_id );
+            $hbs_vars['click_to_claim'] = false;
             $discrete_html_emails[$email] = render_template( 'email.trans-dept-notification', $hbs_vars );
           }
 

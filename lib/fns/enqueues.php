@@ -81,7 +81,7 @@ function enqueue_scripts(){
 
   wp_register_script( 'googlemaps', 'https://maps.googleapis.com/maps/api/js?key=' . DM_GOOGLE_MAPS_API_KEY, null, '1.0', true ); // &callback=initMap
   wp_register_script( 'donors-by-zipcode', DONMAN_PLUGIN_URL . 'lib/js/donors-by-zipcode.js', ['googlemaps'], filemtime( DONMAN_PLUGIN_PATH . 'lib/js/donors-by-zipcode.js' ), true );
-  $zipCodeMapsUrl = ( stristr( $_SERVER['HTTP_HOST'], '.local' ) )? 'https://pickupmydonation.com/wp-content/plugins/donation-manager/lib/kml/zipcodes/' : DONMAN_PLUGIN_URL . 'lib/kml/zipcodes/' ;
+  $zipCodeMapsUrl = 'https://zipcodes.pickupmydonation.com/zipcodes/' ;
   wp_localize_script( 'donors-by-zipcode', 'wpvars', [ 'zipCodeMapsUrl' => $zipCodeMapsUrl ]);
 
   $dmscripts = file_get_contents( DONMAN_PLUGIN_PATH . 'lib/js/scripts.js' );
