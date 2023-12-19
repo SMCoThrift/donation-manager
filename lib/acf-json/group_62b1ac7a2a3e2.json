@@ -23,7 +23,11 @@
             "allow_null": 0,
             "multiple": 0,
             "return_format": "object",
-            "ui": 1
+            "ui": 1,
+            "save_custom": 0,
+            "save_post_type": "",
+            "save_post_status": "",
+            "bidirectional_target": []
         },
         {
             "key": "field_62b1acc608c3f",
@@ -46,7 +50,11 @@
             "allow_null": 0,
             "multiple": 0,
             "return_format": "object",
-            "ui": 1
+            "ui": 1,
+            "save_custom": 0,
+            "save_post_type": "",
+            "save_post_status": "",
+            "bidirectional_target": []
         },
         {
             "key": "field_63246666b9f75",
@@ -166,7 +174,12 @@
                     "append": "",
                     "maxlength": ""
                 }
-            ]
+            ],
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
         },
         {
             "key": "field_62f4f77dfc665",
@@ -205,7 +218,8 @@
                     "load_terms": 0,
                     "return_format": "object",
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 },
                 {
                     "key": "field_62f4f80ffc668",
@@ -228,7 +242,8 @@
                     "load_terms": 0,
                     "return_format": "object",
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 },
                 {
                     "key": "field_62f4f7e8fc667",
@@ -251,7 +266,8 @@
                     "load_terms": 0,
                     "return_format": "object",
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 },
                 {
                     "key": "field_62f4f83afc669",
@@ -274,9 +290,15 @@
                     "load_terms": 0,
                     "return_format": "object",
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 }
-            ]
+            ],
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
         },
         {
             "key": "field_62f4f85bfc66a",
@@ -304,7 +326,7 @@
             "name": "no_damaged_items_message",
             "aria-label": "",
             "type": "wysiwyg",
-            "instructions": "Message that displays when donor answers \"Yes\" to a screening question. (Use {organization} as a placeholder for the organization's name.)",
+            "instructions": "Message that displays when donor answers \"Yes\" to a screening question.\r\n\r\nAvailable tokens:\r\n<ul>\r\n<li><code>{organization}<\/code> - the organization's name<\/li>\r\n<li><code>{priority_pickup_option}<\/code> - priority pickup options<\/li>\r\n<li><code>{store_signature}<\/code> - contact information for the store<\/li>\r\n<\/ul>",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -337,5 +359,12 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1666791318
+    "acfe_display_title": "",
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1703005129
 }
