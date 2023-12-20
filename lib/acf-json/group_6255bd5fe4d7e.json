@@ -40,113 +40,6 @@
             "placeholder": ""
         },
         {
-            "key": "field_64ac2cb6657c8",
-            "label": "Default Transportation Department Contact",
-            "name": "default_trans_dept_contact",
-            "aria-label": "",
-            "type": "group",
-            "instructions": "These fields are helpful when you have one Organization with multiple Transportation Departments (i.e. franchisees). You can enter the default contact info here, and this info gets added to our Donor Confirmation emails as the contact information for the organization.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "acfe_save_meta": 0,
-            "layout": "block",
-            "acfe_seamless_style": 0,
-            "acfe_group_modal": 0,
-            "acfe_group_modal_close": 0,
-            "acfe_group_modal_button": "",
-            "acfe_group_modal_size": "large",
-            "sub_fields": [
-                {
-                    "key": "field_64ac2cfa657c9",
-                    "label": "Title",
-                    "name": "contact_title",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "25",
-                        "class": "",
-                        "id": ""
-                    },
-                    "acfe_save_meta": 0,
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                },
-                {
-                    "key": "field_64ac2d1f657ca",
-                    "label": "Name",
-                    "name": "contact_name",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "25",
-                        "class": "",
-                        "id": ""
-                    },
-                    "acfe_save_meta": 0,
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                },
-                {
-                    "key": "field_64ac2d2d657cb",
-                    "label": "Email",
-                    "name": "contact_email",
-                    "aria-label": "",
-                    "type": "email",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "25",
-                        "class": "",
-                        "id": ""
-                    },
-                    "acfe_save_meta": 0,
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                },
-                {
-                    "key": "field_64ac2d3e657cc",
-                    "label": "Phone",
-                    "name": "phone",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "25",
-                        "class": "",
-                        "id": ""
-                    },
-                    "acfe_save_meta": 0,
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                }
-            ]
-        },
-        {
             "key": "field_6255be3bb3b79",
             "label": "Pickup Settings",
             "name": "pickup_settings",
@@ -161,11 +54,6 @@
                 "id": ""
             },
             "layout": "block",
-            "acfe_seamless_style": 0,
-            "acfe_group_modal": 0,
-            "acfe_group_modal_close": 0,
-            "acfe_group_modal_button": "",
-            "acfe_group_modal_size": "large",
             "sub_fields": [
                 {
                     "key": "field_6255be63b3b7a",
@@ -237,8 +125,7 @@
                     "layout": "vertical",
                     "toggle": 0,
                     "return_format": "value",
-                    "save_custom": 0,
-                    "custom_choice_button_text": "Add new choice"
+                    "save_custom": 0
                 },
                 {
                     "key": "field_62615e2a3f2af",
@@ -246,7 +133,7 @@
                     "name": "pickup_dates",
                     "aria-label": "",
                     "type": "checkbox",
-                    "instructions": "Select the days of the week this organization schedules donation pickups. (DEFAULT: Mon - Sat)",
+                    "instructions": "Select the days of the week this organization schedules donation pickups.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -254,23 +141,21 @@
                         "class": "",
                         "id": ""
                     },
-                    "acfe_save_meta": 0,
-                    "choices": [
-                        "Sunday",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday",
-                        "Saturday"
-                    ],
-                    "default_value": [],
-                    "return_format": "value",
+                    "choices": {
+                        "Sunday": "Sunday",
+                        "Monday": "Monday",
+                        "Tuesday": "Tuesday",
+                        "Wednesday": "Wednesday",
+                        "Thursday": "Thursday",
+                        "Friday": "Friday",
+                        "Saturday": "Saturday"
+                    },
                     "allow_custom": 0,
+                    "default_value": [],
                     "layout": "vertical",
                     "toggle": 0,
-                    "save_custom": 0,
-                    "custom_choice_button_text": "Add new choice"
+                    "return_format": "value",
+                    "save_custom": 0
                 },
                 {
                     "key": "field_62615e713f2b0",
@@ -506,7 +391,12 @@
                     "media_upload": 0,
                     "delay": 0
                 }
-            ]
+            ],
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
         },
         {
             "key": "field_62ed43d16b5df",
@@ -552,8 +442,7 @@
                     "return_format": "id",
                     "multiple": 0,
                     "allow_null": 0,
-                    "parent_repeater": "field_62ed43d16b5df",
-                    "bidirectional_target": []
+                    "parent_repeater": "field_62ed43d16b5df"
                 },
                 {
                     "key": "field_62ed44036b5e1",
@@ -604,5 +493,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1699570932
+    "modified": 1680009484
 }

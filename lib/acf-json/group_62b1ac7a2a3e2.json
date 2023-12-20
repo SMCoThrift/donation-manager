@@ -23,7 +23,11 @@
             "allow_null": 0,
             "multiple": 0,
             "return_format": "object",
-            "ui": 1
+            "ui": 1,
+            "save_custom": 0,
+            "save_post_type": "",
+            "save_post_status": "",
+            "bidirectional_target": []
         },
         {
             "key": "field_62b1acc608c3f",
@@ -46,7 +50,11 @@
             "allow_null": 0,
             "multiple": 0,
             "return_format": "object",
-            "ui": 1
+            "ui": 1,
+            "save_custom": 0,
+            "save_post_type": "",
+            "save_post_status": "",
+            "bidirectional_target": []
         },
         {
             "key": "field_63246666b9f75",
@@ -166,7 +174,12 @@
                     "append": "",
                     "maxlength": ""
                 }
-            ]
+            ],
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
         },
         {
             "key": "field_62f4f77dfc665",
@@ -198,14 +211,20 @@
                         "class": "",
                         "id": ""
                     },
+                    "acfe_save_meta": 0,
                     "taxonomy": "donation_option",
-                    "field_type": "checkbox",
                     "add_term": 0,
-                    "save_terms": 0,
-                    "load_terms": 0,
+                    "save_terms": 1,
+                    "load_terms": 1,
                     "return_format": "object",
+                    "field_type": "checkbox",
+                    "acfe_bidirectional": {
+                        "acfe_bidirectional_enabled": "0"
+                    },
+                    "bidirectional": 0,
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 },
                 {
                     "key": "field_62f4f80ffc668",
@@ -221,14 +240,20 @@
                         "class": "",
                         "id": ""
                     },
+                    "acfe_save_meta": 0,
                     "taxonomy": "pickup_time",
-                    "field_type": "checkbox",
                     "add_term": 0,
-                    "save_terms": 0,
-                    "load_terms": 0,
+                    "save_terms": 1,
+                    "load_terms": 1,
                     "return_format": "object",
+                    "field_type": "checkbox",
+                    "acfe_bidirectional": {
+                        "acfe_bidirectional_enabled": "0"
+                    },
+                    "bidirectional": 0,
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 },
                 {
                     "key": "field_62f4f7e8fc667",
@@ -244,14 +269,20 @@
                         "class": "",
                         "id": ""
                     },
+                    "acfe_save_meta": 0,
                     "taxonomy": "screening_question",
-                    "field_type": "checkbox",
                     "add_term": 0,
-                    "save_terms": 0,
-                    "load_terms": 0,
+                    "save_terms": 1,
+                    "load_terms": 1,
                     "return_format": "object",
+                    "field_type": "checkbox",
+                    "acfe_bidirectional": {
+                        "acfe_bidirectional_enabled": "0"
+                    },
+                    "bidirectional": 0,
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 },
                 {
                     "key": "field_62f4f83afc669",
@@ -267,16 +298,27 @@
                         "class": "",
                         "id": ""
                     },
+                    "acfe_save_meta": 0,
                     "taxonomy": "pickup_location",
-                    "field_type": "checkbox",
                     "add_term": 0,
-                    "save_terms": 0,
-                    "load_terms": 0,
+                    "save_terms": 1,
+                    "load_terms": 1,
                     "return_format": "object",
+                    "field_type": "checkbox",
+                    "acfe_bidirectional": {
+                        "acfe_bidirectional_enabled": "0"
+                    },
+                    "bidirectional": 0,
                     "multiple": 0,
-                    "allow_null": 0
+                    "allow_null": 0,
+                    "bidirectional_target": []
                 }
-            ]
+            ],
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
         },
         {
             "key": "field_62f4f85bfc66a",
@@ -337,5 +379,12 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1666791318
+    "acfe_display_title": "",
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1703073637
 }
