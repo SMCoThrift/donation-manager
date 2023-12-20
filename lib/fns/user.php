@@ -184,7 +184,7 @@ function dept_to_user_account($id_dept)
 			error_log('Error creating user: ' . $user_id->get_error_message());
 		}else{
 			$user = new \WP_User( $user_id );
-			add_user_meta( $user_id, 'department', $id_dept, true );
+			add_user_meta( $user_id, 'department', $id_dept, false );
 			add_user_meta( $user_id, 'organization', $id_org, true );
 		}
 		return $user_id;

@@ -3,6 +3,7 @@
 namespace DonationManager\shortcodes;
 use function DonationManager\utilities\{get_alert};
 use function DonationManager\organizations\{get_org_transdepts};
+use function DonationManager\users\{get_default_options_terms_ids, get_post_meta_fields_ids};
 
 /**
  * Shows the ACF organization form.
@@ -19,7 +20,7 @@ function show_acf_organization_form(){
       [
         'post_id' => $organization_id,
         'post_title' => false,
-        'fields' => ['monthly_report_emails', 'website', 'pickup_settings','field_654d6f4619b6c' ],
+        'fields' => ['monthly_report_emails', 'website', 'pickup_settings','field_62f4f77dfc665','field_654d6f4619b6c' ],
         'submit_value' => 'Save',
         'updated_message' => get_alert( ['description' => 'Your information has been saved.', 'type' => 'info'] ),
       ]
@@ -259,64 +260,53 @@ function enqueue_acf_form_head(){
 }
 add_action( 'wp', __NAMESPACE__ . '\\enqueue_acf_form_head', 15 );
 
-//Filter the query to show only custom taxonomies that should be visible in the organization edit interface
-add_filter('acfe/fields/taxonomy_terms/query/key=field_654d672cfa7c9', __NAMESPACE__ . '\\pickup_times_acfe_query', 10, 3);
-function pickup_times_acfe_query( $args, $field, $post_id ) {
-
-	$args = [
-		'meta_query' => [
-			[
-				'key' => 'visible_in_organization_edit_interface',
-				'value' => 1,
-			]
-		]
-	];
-
+//Filter the query to show only taxonomies that should be visible in the organization edit interface
+function pickup_times_acf_query( $args, $field ) {
+	if( ! is_admin() ){
+		$args['orderby'] = 'count';
+		$args['order'] = 'DESC';
+		$args['include'] = array_merge( get_default_options_terms_ids('pickup_times'), get_post_meta_fields_ids(get_user_meta( wp_get_current_user()->ID, 'organization', true ),'pickup_time') );
+		$args['hide_empty'] = 0;
+	}
 	return $args;
 }
-add_filter('acfe/fields/taxonomy_terms/query/key=field_654d710919b6d', __NAMESPACE__ . '\\pickup_locations_acfe_query', 10, 3);
-function pickup_locations_acfe_query( $args, $field, $post_id ) {
+add_filter('acf/fields/taxonomy/wp_list_categories/key=field_62f4f80ffc668', __NAMESPACE__ . '\\pickup_times_acf_query', 10, 2);
 
-	$args = [
-		'meta_query' => [
-			[
-				'key' => 'visible_in_organization_edit_interface',
-				'value' => 1,
-			]
-		]
-	];
-
+//Filter the query to show only taxonomies that should be visible in the organization edit interface
+function donation_options_acf_query( $args, $field ) {
+	if( ! is_admin() ){
+		$args['orderby'] = 'count';
+		$args['order'] = 'DESC';
+		$args['include'] = array_merge( get_default_options_terms_ids('donation_options'), get_post_meta_fields_ids(get_user_meta( wp_get_current_user()->ID, 'organization', true ),'donation_option') );
+		$args['hide_empty'] = 0;
+	}
 	return $args;
 }
-
-add_filter('acfe/fields/taxonomy_terms/query/key=field_654d755a31ed4', __NAMESPACE__ . '\\donation_options_acfe_query', 10, 3);
-function donation_options_acfe_query( $args, $field, $post_id ) {
-
-	$args = [
-		'meta_query' => [
-			[
-				'key' => 'visible_in_organization_edit_interface',
-				'value' => 1,
-			]
-		]
-	];
-
+add_filter('acf/fields/taxonomy/wp_list_categories/key=field_62f4f7aefc666', __NAMESPACE__ . '\\donation_options_acf_query', 10, 2);
+//Filter the query to show only taxonomies that should be visible in the organization edit interface
+function screening_questions_acf_query( $args, $field ) {
+	if( ! is_admin() ){
+		$args['orderby'] = 'count';
+		$args['order'] = 'DESC';
+		$args['include'] = array_merge( get_default_options_terms_ids('screening_questions'), get_post_meta_fields_ids(get_user_meta( wp_get_current_user()->ID, 'organization', true ),'screening_question') );
+		$args['hide_empty'] = 0;
+	}
 	return $args;
 }
-add_filter('acfe/fields/taxonomy_terms/query/key=field_654d759931ed6', __NAMESPACE__ . '\\screening_questions_acfe_query', 10, 3);
-function screening_questions_acfe_query( $args, $field, $post_id ) {
+add_filter('acf/fields/taxonomy/wp_list_categories/key=field_62f4f7e8fc667', __NAMESPACE__ . '\\screening_questions_acf_query', 10, 2);
 
-	$args = [
-		'meta_query' => [
-			[
-				'key' => 'visible_in_organization_edit_interface',
-				'value' => 1,
-			]
-		]
-	];
-
+//Filter the query to show only taxonomies that should be visible in the organization edit interface
+function pickup_locations_acf_query( $args, $field ) {
+	if( ! is_admin() ){
+		$args['orderby'] = 'count';
+		$args['order'] = 'DESC';
+		$args['include'] = array_merge( get_default_options_terms_ids('pickup_locations'), get_post_meta_fields_ids(get_user_meta( wp_get_current_user()->ID, 'organization', true ),'pickup_location') );
+		$args['hide_empty'] = 0;
+	}
 	return $args;
 }
+add_filter('acf/fields/taxonomy/wp_list_categories/key=field_62f4f83afc669', __NAMESPACE__ . '\\pickup_locations_acf_query', 10, 2);
+
 
 
 

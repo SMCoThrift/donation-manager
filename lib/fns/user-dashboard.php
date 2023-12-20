@@ -382,3 +382,53 @@ function pmd_user_password_reset_email_message($message, $key, $user_login, $use
 
 add_filter('retrieve_password_message', __NAMESPACE__ . '\\pmd_user_password_reset_email_message', 10, 4);
 
+//get post meta fields IDS
+function get_post_meta_fields_ids($post_id, $field_name) {
+	$ids = [];
+	$terms = wp_get_post_terms( $post_id, $field_name );
+	foreach ($terms as $term) {
+		$ids[] = $term->term_id;
+	}
+	return $ids;
+}
+
+//get default options terms IDs
+function get_default_options_terms_ids($field_name) {
+	$default_terms = get_field( "default_options_default_${field_name}", 'option' );
+	$ids = [];
+	foreach ($default_terms as $term) {
+		$ids[] = $term->term_id;
+	}
+	return $ids;
+}
+
+
+function show_account_owner_stats()
+{
+	ob_start();
+	$current_user = wp_get_current_user();
+	$organization_id = get_user_meta( $current_user->ID, 'organization', true );
+	$organization = get_post( $organization_id );
+
+	?>
+	<table>
+		<tr>
+			<td>Account Owner</td>
+			<td><?php echo $current_user->user_email; ?></td>
+		</tr>
+		<tr>
+			<td>Organization</td>
+			<td><?php echo esc_html($organization->post_title); ?></td>
+		</tr>
+		<tr>
+			<td>Transportation Department Zip Codes</td>
+			<td></td>
+		</tr>
+	</table>
+
+	<?php
+
+
+	return ob_get_clean();
+}
+add_shortcode( 'pumd_stats', __NAMESPACE__ . '\\show_account_owner_stats' );
