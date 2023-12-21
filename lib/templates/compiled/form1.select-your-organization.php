@@ -50,7 +50,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
         </a>
       </div>
       <div class="description">
-'.((LR::ifvar($cx, (($inary && isset($in['priority'])) ? $in['priority'] : null), false)) ? '          <p><strong>Fee-Based Donation Pickup Service:</strong> Experience the convenience of our donation pickup service, now with a unique fee-based approach. We offer the ease of removing items directly from any location within your property. These items are then delivered to local non-profit organizations. While some items may not be suitable for donation, our service also includes junk removal, ensuring a comprehensive solution for all your unwanted items. Moreover, all eligible items are donated to non-profits which means your donation is tax-deductible. Simplify your donation process while supporting local charities and responsibly disposing of items that cannot be donated with our efficient, fee-based pickup service.</p>
+'.((LR::ifvar($cx, (($inary && isset($in['priority'])) ? $in['priority'] : null), false)) ? '          <p><strong>Fee-Based Pickup Service:</strong> Experience the convenience of our donation pickup service, now with a unique fee-based approach. We offer the ease of removing items directly from any location within your property. When possible, these items are delivered to local non-profit organizations. Note that all may not be suitable for donation, but rest assured your unwanted items will be disposed of responsibly with our full-service junk removal partners.</p>
           <p><strong>*Fee-Based Pick Ups are performed more quickly than Free Pick Ups.</strong></p>
 ' : '          '.(($inary && isset($in['desc'])) ? $in['desc'] : null).'
 ').'      </div>
