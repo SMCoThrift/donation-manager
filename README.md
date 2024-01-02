@@ -4,13 +4,16 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.4.1  
 **Requires PHP:** 8.0  
-**Stable tag:** 4.2.2  
+**Stable tag:** 4.2.3  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.2.3 ###
+* Updating for Composer install compatiblity.
 
 ### 4.2.2 ###
 * Minor edit to "Fee-Based Pickup Service" note on "Select Your Organization" view.
