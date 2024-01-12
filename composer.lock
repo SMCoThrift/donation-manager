@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "618cd8b905de06c978d22573d265637b",
+    "content-hash": "2872bd3c65c36eab282f1243580e0603",
     "packages": [
         {
             "name": "a5hleyrich/wp-background-processing",
@@ -149,17 +149,17 @@
             "time": "2020-12-31T17:12:37+00:00"
         },
         {
-            "name": "rlanvin/php-form",
-            "version": "v2.0.1",
+            "name": "mwender/php-form",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/rlanvin/php-form.git",
-                "reference": "d68c4fe9cc2e9191175169409d718a59ea1bff55"
+                "url": "https://github.com/mwender/php-form.git",
+                "reference": "6da451c955936710f86e2e962c123a5787f31b52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rlanvin/php-form/zipball/d68c4fe9cc2e9191175169409d718a59ea1bff55",
-                "reference": "d68c4fe9cc2e9191175169409d718a59ea1bff55",
+                "url": "https://api.github.com/repos/mwender/php-form/zipball/6da451c955936710f86e2e962c123a5787f31b52",
+                "reference": "6da451c955936710f86e2e962c123a5787f31b52",
                 "shasum": ""
             },
             "require": {
@@ -169,27 +169,26 @@
             "suggest": {
                 "ext-intl": "Intl extension is useful for validating formatted numbers"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Form\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "description": "Lightweight form validation library for PHP",
-            "homepage": "https://github.com/rlanvin/php-form",
+            "description": "Lightweight form validation library for PHP [forked from rlanvin/php-form for PHP8 compat]",
+            "homepage": "https://github.com/mwender/php-form",
             "keywords": [
                 "form",
                 "validation"
             ],
             "support": {
-                "issues": "https://github.com/rlanvin/php-form/issues",
-                "source": "https://github.com/rlanvin/php-form/tree/master"
+                "source": "https://github.com/mwender/php-form/tree/master"
             },
-            "time": "2016-04-11T09:58:23+00:00"
+            "time": "2024-01-12T15:05:14+00:00"
         },
         {
             "name": "zordius/lightncandy",
@@ -250,11 +249,15 @@
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "mwender/php-form": 20
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=8.0"
+    },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }

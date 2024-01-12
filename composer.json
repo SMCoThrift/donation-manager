@@ -6,10 +6,10 @@
     "require": {
         "zordius/lightncandy": "^1.2",
         "collizo4sky/persist-admin-notices-dismissal": "^1.4",
-        "rlanvin/php-form": "^2.0",
         "a5hleyrich/wp-background-processing": "^1.0",
         "cloudinary/cloudinary_php": "^1.20.0",
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "mwender/php-form": "dev-master"
     },
     "license": "MIT",
     "authors": [
@@ -18,5 +18,13 @@
             "email": "mwender@wenmarkdigital.com",
             "homepage": "https://wenmarkdigital.com"
         }
-    ]
+    ],
+    "repositories": {
+        "mwender": {
+            "type": "vcs",
+            "url": "https://github.com/mwender/php-form"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
