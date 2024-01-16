@@ -7,9 +7,9 @@
         "zordius/lightncandy": "^1.2",
         "collizo4sky/persist-admin-notices-dismissal": "^1.4",
         "a5hleyrich/wp-background-processing": "^1.0",
-        "cloudinary/cloudinary_php": "^1.20.2",
         "php": ">=8.0",
-        "mwender/php-form": "dev-master"
+        "mwender/php-form": "dev-master",
+        "mwender/cloudinary_php": "dev-main"
     },
     "license": "MIT",
     "authors": [
@@ -20,9 +20,13 @@
         }
     ],
     "repositories": {
-        "mwender": {
+        "0": {
             "type": "vcs",
             "url": "https://github.com/mwender/php-form"
+        },
+        "1": {
+            "type": "vcs",
+            "url": "git@github.com:mwender/cloudinary_php.git"
         }
     },
     "minimum-stability": "dev",

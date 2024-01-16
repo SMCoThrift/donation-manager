@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4390cc7ebf25b222a3b1f0a3c421aa5d",
+    "content-hash": "e44aece208d1f527a17cf97ea7dce1a0",
     "packages": [
         {
             "name": "a5hleyrich/wp-background-processing",
@@ -57,63 +57,6 @@
             "time": "2023-07-18T10:22:06+00:00"
         },
         {
-            "name": "cloudinary/cloudinary_php",
-            "version": "1.20.2",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:cloudinary/cloudinary_php.git",
-                "reference": "c5d2eb500a92802ef958f8bb36d81af07fb3f6f7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/c5d2eb500a92802ef958f8bb36d81af07fb3f6f7",
-                "reference": "c5d2eb500a92802ef958f8bb36d81af07fb3f6f7",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "ext-zip": "*",
-                "phpunit/phpunit": "4.8.*"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Helpers.php"
-                ],
-                "classmap": [
-                    "src"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Cloudinary",
-                    "homepage": "https://github.com/cloudinary/cloudinary_php/graphs/contributors"
-                }
-            ],
-            "description": "Cloudinary PHP SDK",
-            "homepage": "https://github.com/cloudinary/cloudinary_php",
-            "keywords": [
-                "cdn",
-                "cloud",
-                "cloudinary",
-                "image management",
-                "sdk"
-            ],
-            "support": {
-                "email": "info@cloudinary.com",
-                "issues": "https://github.com/cloudinary/cloudinary_php/issues"
-            },
-            "time": "2023-02-09T18:55:50+00:00"
-        },
-        {
             "name": "collizo4sky/persist-admin-notices-dismissal",
             "version": "1.4.4",
             "source": {
@@ -153,6 +96,72 @@
                 "source": "https://github.com/w3guy/persist-admin-notices-dismissal"
             },
             "time": "2020-12-31T17:12:37+00:00"
+        },
+        {
+            "name": "mwender/cloudinary_php",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mwender/cloudinary_php.git",
+                "reference": "5428fb2e0858494322f3202833289ae74b5ed201"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mwender/cloudinary_php/zipball/5428fb2e0858494322f3202833289ae74b5ed201",
+                "reference": "5428fb2e0858494322f3202833289ae74b5ed201",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "ext-zip": "*",
+                "phpunit/phpunit": "4.8.*"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ],
+                "files": [
+                    "src/Helpers.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Cloudinary\\Test\\": "tests/"
+                },
+                "files": [
+                    "tests/TestHelper.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cloudinary",
+                    "homepage": "https://github.com/cloudinary/cloudinary_php/graphs/contributors"
+                }
+            ],
+            "description": "Cloudinary PHP SDK",
+            "homepage": "https://github.com/cloudinary/cloudinary_php",
+            "keywords": [
+                "cdn",
+                "cloud",
+                "cloudinary",
+                "image management",
+                "sdk"
+            ],
+            "support": {
+                "email": "info@cloudinary.com",
+                "issues": "https://github.com/cloudinary/cloudinary_php/issues",
+                "source": "https://github.com/mwender/cloudinary_php/tree/main"
+            },
+            "time": "2024-01-16T16:31:16+00:00"
         },
         {
             "name": "mwender/php-form",
@@ -257,7 +266,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "mwender/php-form": 20
+        "mwender/php-form": 20,
+        "mwender/cloudinary_php": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
