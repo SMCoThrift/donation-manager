@@ -22,6 +22,11 @@
             "taxonomy": "",
             "return_format": "id",
             "multiple": 0,
+            "save_custom": 0,
+            "save_post_status": "publish",
+            "acfe_bidirectional": {
+                "acfe_bidirectional_enabled": "0"
+            },
             "allow_null": 0,
             "ui": 1,
             "save_custom": 0,

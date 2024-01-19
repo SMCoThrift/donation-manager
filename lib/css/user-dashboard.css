@@ -1,0 +1,134 @@
+/*DASHBOARD USER CSS*/
+/*top menu*/
+.avatar img {
+    border-radius: 100%;
+    height: 42px;
+    width: 42px;
+    position: relative;
+}
+.nav-user {
+	display: none;
+    position: absolute;
+    background: #235776;
+    list-style: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    left: 40px;
+    padding-bottom: 20px;
+}
+.avatar span {
+    color: #fff;
+    font-size: 20px;
+    padding-left: 15px;
+    position: absolute;
+
+    top: 10px;
+}
+.nav-user a {
+    color: #fff;
+}
+ul.nav-user li {
+    padding-top: 10px;
+}
+.avatar:hover ul, li, a {
+	display: block;
+	 z-index: 99;
+}
+form#acf-form button {
+    background: transparent;
+}
+/*HIDE TEMPORARY*/
+.acf-field-629f7024abec7 {
+    display: none;
+}
+/*pickup codes css */
+input#pickup-code {
+    width: 45%;
+}#pickup-code-result li:first-child {
+    margin-left: 0px;
+}
+#pickup-code-result li {
+    display: inline;
+    margin-left: 10px;
+}
+#pickup-code-result {
+    padding-left: 0px;
+}
+li.invalid {
+    background: #b33838;
+    color: #fff;
+    padding: 7px 15px 7px 15px;
+    border-radius: 19px;
+    font-weight: 800;
+    position: relative;
+}
+a.valid {
+    background: #85c574;
+    color: #fff;
+    padding: 7px 15px 7px 15px;
+    border-radius: 19px;
+    font-weight: 800;
+}
+p.result-output {
+    padding-top: 10px;
+    font-size: 13px;
+        width: 100%;
+    display: flex;
+}
+a.valid {
+    display: inherit;
+    color: #fff;
+}
+.message-pickupcodes {
+    font-size: 12px;
+    color: #235776;
+    padding-top: 10px;
+    position: absolute;
+}
+#pickup-form label {
+    font-size: 30px;
+    font-weight: 700;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+ul.user-pickup-code li {
+    display: inline-block;
+    margin-left: 10px;
+    position: relative;
+}
+ul.user-pickup-code li:first-child {
+    margin-left: 0px;
+}
+ul.user-pickup-code {
+    padding-left: 0;
+}
+
+ul.user-pickup-code li a {
+    background: #c5c5c5;
+    display: inherit;
+    color: #fff;
+    padding: 7px 15px 7px 15px;
+    border-radius: 19px;
+    font-weight: 800;
+}a.highlight {
+    background: #e5a38e!important;
+}p#indicator {
+    font-size: 12px;
+    color: red;
+}
+
+/*OVERRIDE ON THE SELECT TOM CSS*/
+.ts-control {
+    padding: 11px 12px!important;
+    width: 50%!important;
+    float: left!important;
+    margin-right: 5px;
+}
+.ts-dropdown {
+    position: absolute;
+    top: 45px!important;
+    width: 50%!important;
+}
+.ts-dropdown-content {
+    margin-top: 10px!important;
+}

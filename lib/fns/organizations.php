@@ -482,6 +482,38 @@ function get_screening_questions( $org_id = null ) {
 }
 
 /**
+ * Retrieves any Transportation Departments assigned to an Organization
+ *
+ * @param      int  $org_id  The organization ID
+ *
+ * @return     array  An array of transportation deparment IDs.
+ */
+function get_org_transdepts( $org_id , $full = false ){
+
+  $trans_depts = [];
+
+  $args = [
+    'post_type'   => 'trans_dept',
+    'meta_key'    => 'organization',
+    'meta_value'  => $org_id,
+    'numberposts' => -1,
+  ];
+  $posts = get_posts( $args );
+
+  if($full){
+	  return $posts;
+  }
+
+  if( $posts ):
+    foreach ( $posts as $trans_dept ) {
+      $trans_depts[] = $trans_dept->ID;
+    }
+  endif;
+
+  return $trans_depts;
+}
+
+/**
  * Checks if a donation is `orphaned`.
  *
  * In order for this function to return `true`, orphaned
