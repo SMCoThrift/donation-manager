@@ -33,7 +33,8 @@ function init_rest_api(){
     // Donors by Zip Code
     register_rest_route( 'donations/v1', 'search/(?P<zipcode>([0-9]{5}))/(?P<radius>[0-9]{1,2})/(?P<days>[0-9]{1,2})', [
         'methods'   => 'GET',
-        'callback'  => __NAMESPACE__ . '\\get_donations_by_area'
+        'callback'  => __NAMESPACE__ . '\\get_donations_by_area',
+        'permission_callback' => '__return_true',
     ]);
 }
 add_action( 'rest_api_init', __NAMESPACE__ . '\\init_rest_api' );
