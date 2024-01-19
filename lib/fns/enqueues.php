@@ -27,8 +27,18 @@ function enqueue_scripts(){
               $scheduling_interval = 2;
 
               if( isset( $_SESSION['donor']['org_id'] ) && is_numeric( $_SESSION['donor']['org_id'] ) ) {
-                  $pickup_dow_array = get_post_meta( $_SESSION['donor']['org_id'], 'pickup_days', false );
+                  $pickup_dow_array = get_field( 'pickup_settings_pickup_dates', $_SESSION['donor']['org_id'] );
                   $pickup_dow_array = array_unique( $pickup_dow_array );
+
+                  /**
+                   * BUGFIX: Pickup Days of the Week were stored as strings in PMD 2.0.
+                   * In PMD 3.0, we store these values as numbers (0-6 for Sun-Sat).
+                   * However, we still have some old string values from importing PMD 2.0
+                   * orgs. The follow code accounts for this by discarding the values
+                   * saved for the Org and using the default values above.
+                   */
+                  if( isset( $pickup_dow_array ) && is_array( $pickup_dow_array ) && isset( $pickup_dow_array[0] ) && ! is_numeric( $pickup_dow_array[0] ) )
+                    unset( $pickup_dow_array );
 
                   if( isset( $pickup_dow_array[0] ) && is_array( $pickup_dow_array[0] ) && ( 0 == count( $pickup_dow_array[0] ) ) )
                       unset( $pickup_dow_array ); // No pickup days set for org, skip $pickup_dow_array processing b/c it is empty!
@@ -40,7 +50,7 @@ function enqueue_scripts(){
                       }
                   }
 
-                  $scheduling_interval = get_post_meta( $_SESSION['donor']['org_id'], 'minimum_scheduling_interval', true );
+                  $scheduling_interval = get_field( 'pickup_settings_minimum_scheduling_interval', $_SESSION['donor']['org_id'] );
               }
 
               if( empty( $scheduling_interval ) || ! is_numeric( $scheduling_interval ) )
@@ -83,7 +93,7 @@ function enqueue_scripts(){
  }
   wp_register_script( 'donors-by-zipcode', DONMAN_PLUGIN_URL . 'lib/js/donors-by-zipcode.js', ['googlemaps'], filemtime( DONMAN_PLUGIN_PATH . 'lib/js/donors-by-zipcode.js' ), true );
 
-  $zipCodeMapsUrl = ( stristr( $_SERVER['HTTP_HOST'], '.local' ) )? 'https://pickupmydonation.com/wp-content/plugins/donation-manager/lib/kml/zipcodes/' : DONMAN_PLUGIN_URL . 'lib/kml/zipcodes/' ;
+  $zipCodeMapsUrl = 'https://zipcodes.pickupmydonation.com/zipcodes/' ;
   wp_localize_script( 'donors-by-zipcode', 'wpvars', [ 'zipCodeMapsUrl' => $zipCodeMapsUrl ]);
 
   $dmscripts = file_get_contents( DONMAN_PLUGIN_PATH . 'lib/js/scripts.js' );

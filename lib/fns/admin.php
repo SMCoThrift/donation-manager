@@ -6,13 +6,14 @@ use function DonationManager\users\org_to_user_account;
 use function DonationManager\organizations\{is_orphaned_donation,get_default_organization};
 use function DonationManager\donations\{get_orphaned_donation_notifications};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
+use function DonationManager\organizations\{get_organizations};
 
 /**
  * Admin CSS
  */
 function admin_custom_css(){
   echo '<style>
-  .post-type-donation #taxonomy-pickup_code{width: 100px;}
+  .post-type-donation #taxonomy-pickup_code, .post-type-donation .column-fee-based{width: 100px;}
   .post-type-trans_dept #taxonomy-pickup_code{width: 60%;}
   .response-pill, .pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
   .response-pill.success{background-color: #09c500;}
@@ -35,17 +36,20 @@ add_action( 'admin_head', __NAMESPACE__ . '\\admin_custom_css' );
 function chhj_stats_dashboard_widget() {
   wp_add_dashboard_widget( 'chhj-stats', 'College Hunks API Stats', function(){
     $chhj_donations = get_option( 'chhj_donations' );
+    ksort( $chhj_donations );
     echo '<p>The following stats reflect the number of donations sent to College Hunks via their API:</p>';
-    echo '<table class="chhj-stats"><thead><tr><th>Date</th><th>Non-Priority</th><th>Priority</th><th>Total</th></tr></thead><tbody>';
+    echo '<table class="chhj-stats"><thead><tr><th>Date</th><th>Non-Priority</th><th>Priority</th><th>Fails</th><th>Total</th><th>Success Rate</th></tr></thead><tbody>';
     foreach( $chhj_donations as $month => $stats ){
       $date = date_create( $month );
       echo '<tr>';
       echo '<th>' . date_format( $date, 'M Y') . '</th>';
-      echo '<td>' . number_format( $stats['non-priority'] ) . '</td><td>' . number_format( $stats['priority'] ) . '</td>';
+      echo '<td>' . number_format( $stats['non-priority'] ) . '</td><td>' . number_format( $stats['priority'] ) . '</td><td>' . number_format( $stats['fails'] ) . '</td>';
       echo '<td>' . number_format( ( $stats['non-priority'] + $stats['priority'] ) ) . '</td>';
+      echo '<td>' . $stats['success_rate_percentage'] . '%</td>';
       echo '</tr>';
     }
     echo '</tbody></table>';
+    echo '<p>NOTE: "Fails" is the total number of Priority and Non-Priority donations we tried to send to the CHHJ API, and after attempting we received an error response which means the donation did not get entered into their system.</p>';
   }, null, null );
 }
 add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\chhj_stats_dashboard_widget' );
@@ -64,6 +68,12 @@ function custom_column_content( $column ){
       echo $html;
       break;
 
+    case 'fee-based':
+      $fee_based = get_post_meta( $post->ID, 'fee_based', true );
+      if( $fee_based )
+        echo '✅';
+      break;
+
     case 'org':
         $org_id = get_field( 'organization', $post->ID );
         if( is_object( $org_id ) )
@@ -78,6 +88,7 @@ function custom_column_content( $column ){
           $text = ( 'publish' == $post_status )? 'NOT SET!' : 'not set';
           $org_name = '<code style="color: #' . $color . '; font-weight: bold;">' . $text . '</code>';
         }
+        /*
         $trans_dept = get_field( 'trans_dept', $post->ID );
         if( is_object( $trans_dept ) && is_orphaned_donation( $trans_dept->ID ) ){
           $notifications = get_orphaned_donation_notifications( $post->ID );
@@ -96,6 +107,8 @@ function custom_column_content( $column ){
         } else {
           echo $org_name;
         }
+        /**/
+        echo $org_name;
     break;
 
     case 'routing_method':
@@ -130,6 +143,13 @@ function custom_column_api_response_content( $donation_id ){
   //$html[] = 'routing_method: ' . $routing_method . '<br>';
   $api_response = get_post_meta( $donation_id, 'api_response', true );
 
+  /**
+   * Starting with Donation #480325, we store two new
+   * custom field values:
+   *
+   * - api_response_code - the HTTP Response Code (e.g. 200) retrieved from $CHHJ_API['response']['code'].
+   * - api_response_message - this is the "Message" retrieved from $CHHJ_API['response']['message'].
+   */
   if( 480325 > $donation_id ){
     if( $org == $default_org['id'] || 'email' != $routing_method ){
 
@@ -190,9 +210,20 @@ function custom_column_api_response_content( $donation_id ){
           if( empty( $response_code ) && is_string( $api_response ) && stristr( strtolower( $api_response ), 'operation timed out' ) ){
             $html[] = '<div class="response-pill error2">Error</div>';
             $html[] = '<div class="response-msg">API Msg: ' . $api_response . '</div>';
-          } else {
+          } elseif( ! empty( $response_code ) ) {
             $html[] = '<div class="response-pill warning">Warning (Code: ' . $response_code . ')</div>';
             $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+          } elseif( ! metadata_exists( 'post', $donation_id, 'api_post' ) ) {
+            $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
+            $pickup_codes = wp_get_post_terms( $donation_id, 'pickup_code', [ 'fields' => 'names' ] );
+            $pickup_code = $pickup_codes[0];
+            $organizatons = get_organizations( $pickup_code );
+            $html[] = '<p style="margin-top: 4px;">Available orgs for ' . $pickup_code .':</p>';
+            $html[] = '<ul>';
+            foreach( $organizatons as $organizaton ){
+              $html[] = '<li>' . $organizaton['name'] . '</li>';
+            }
+            $html[] = '</ul>';
           }
       }
     } else {
@@ -243,6 +274,7 @@ function columns_for_donation( $defaults ){
         'taxonomy-donation_option' => 'Donation Options',
         'taxonomy-pickup_code' => 'Pickup Codes',
         'api-response'  => 'API Response',
+        'fee-based' => 'Fee Based',
         'date' => 'Date',
     );
     return $defaults;

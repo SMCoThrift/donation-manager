@@ -6,7 +6,7 @@ use function DonationManager\templates\{render_template,get_template_part};
 use function DonationManager\transdepts\{get_trans_dept_contact};
 use function DonationManager\apirouting\{send_api_post};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact,get_orphaned_donation_contacts};
-use function DonationManager\organizations\{is_orphaned_donation};
+use function DonationManager\organizations\{is_orphaned_donation,get_organizations};
 use function DonationManager\donations\{get_donation_routing_method,add_orphaned_donation,get_donation_receipt,get_click_to_claim_link};
 
 /**
@@ -175,8 +175,17 @@ function send_email( $type = '' ){
          * @context  Donor
          */
         case 'donor_confirmation':
+          $contact_name = ( empty( $tc['contact_name'] ) )? 'Scheduling Coordinator' :  $tc['contact_name'] ;
+          $contact_title = ( empty( $tc['contact_title'] ) )? 'Pick Up Scheduling' : $tc['contact_title'];
 
-          $trans_contact = $tc['contact_name'] . ' (<a href="mailto:' . $tc['contact_email'] . '">' . $tc['contact_email'] . '</a>)<br>' . $organization_name . ', ' . $tc['contact_title'] . '<br>' . $tc['phone'];
+          $trans_contact = $contact_name;
+          if( ! empty( $tc['contact_email'] ) )
+            $trans_contact.= ' (<a href="mailto:' . $tc['contact_email'] . '">' . $tc['contact_email'] . '</a>)';
+
+          $trans_contact.= '<br>' . $organization_name . ', ' . $contact_title;
+
+          if( ! empty( $tc['phone'] ) )
+            $trans_contact.= '<br>' . $tc['phone'];
 
           $orphaned_donation_note = '';
           if(
@@ -228,11 +237,48 @@ function send_email( $type = '' ){
             $donor['routing_method'] = get_donation_routing_method( $donor['org_id'] );
             if( 'email' != $donor['routing_method'] ){
               send_api_post( $donor );
+
+              /**
+               * 06/16/2023 (10:44) - NEW METHOD:
+               *
+               * *ALWAYS* return when `routing_method` != `email`
+               *
+               * Previously, the following code would send an email in addition
+               * to using the non-email routing method. However, so that the
+               * customer receipt will contain the full Transportation Department
+               * contact details, I am updating the code here so that we return
+               * after send_api_post().
+               */
+              return;
+
+              /* OLD METHOD: Only return if `contact_email` and `cc_emails` are empty:
               // If we have no trans dept email contacts, return from this function as we
               // we've already sent the trans dept notification.
               if( empty( $tc['contact_email'] ) && empty( $tc['cc_emails'] ) )
                 return;
+              /**/
             }
+          } else if ( $orphaned_donation && is_array( $donor ) && array_key_exists( 'pickup_code', $donor ) ){
+            /**
+             * SEND ORPHANED DONATION EMAILS TO PRIORITY PARTNERS
+             *
+             * Using `get_organizations()` we will return all orgs for a
+             * zip code. Then we'll retrieve any emails for PRIORITY
+             * Orgs and include them in the distribution.
+             */
+            $fee_based = ( array_key_exists( 'fee_based', $donor ) )? $donor['fee_based'] : true ;
+            if( $fee_based ){
+              $orgs = get_organizations( $donor['pickup_code'] );
+              $priority_recipients = [];
+              foreach ( $orgs as $org ) {
+                if( $org['priority_pickup'] && array_key_exists( 'trans_dept_emails', $org ) && 0 < count( $org['trans_dept_emails'] ) ){
+                  // Get the trans_dept email contact
+                  foreach( $org['trans_dept_emails'] as $priority_email ){
+                    $priority_recipients[] = $priority_email;
+                  }
+                }
+              } // foreach
+            } // if ( $fee_based )
           }
 
           $recipients = array( $tc['contact_email'] );
@@ -299,10 +345,12 @@ function send_email( $type = '' ){
           }
 
           // HANDLEBARS TEMPLATE
+          // 03/06/2023 (10:40) - if TRUE == $orphaned_donation, the donation receipt will omit donor contact details in favor of using the "Click to Claim" link
+          // 12/07/2023 (10:28) - Removing "Click to Claim", originally 'donationreceipt' => get_donation_receipt( $donor, $orphaned_donation )
           $hbs_vars = [
             'donor_name' => $donor['address']['name']['first'] . ' ' .$donor['address']['name']['last'],
             'contact_info' => str_replace( '<a href', '<a style="color: #6f6f6f; text-decoration: none;" href', $contact_info ),
-            'donationreceipt' => get_donation_receipt( $donor, $orphaned_donation ), // 03/06/2023 (10:40) - if TRUE == $orphaned_donation, the donation receipt will omit donor contact details in favor of using the "Click to Claim" link
+            'donationreceipt' => get_donation_receipt( $donor, false ),
             'orphaned_donation_note' => $orphaned_donation_note,
             'organization_name' => $organization_name,
           ];
@@ -318,14 +366,30 @@ function send_email( $type = '' ){
            */
           if( DMDEBUG_VERBOSE )
             uber_log('$recipients = ' . print_r( $recipients, true ) );
+
           foreach ( $recipients as $contact_id => $email ) {
             $hbs_vars['email'] = $email;
-            if( array_key_exists( 'donation_hash', $_SESSION['donor'] ) )
-              $hbs_vars['click_to_claim'] = get_click_to_claim_link( $_SESSION['donor']['donation_hash'], $contact_id );
-            //write_log( '🔔 $hbs_vars = ' . print_r( $hbs_vars, true ) );
+            /**
+             * 12/07/2023 (10:29) - Disabling "Click to Claim"
+             */
+            //if( array_key_exists( 'donation_hash', $_SESSION['donor'] ) )
+              //$hbs_vars['click_to_claim'] = get_click_to_claim_link( $_SESSION['donor']['donation_hash'], $contact_id );
+            $hbs_vars['click_to_claim'] = false;
             $discrete_html_emails[$email] = render_template( 'email.trans-dept-notification', $hbs_vars );
           }
-          /**/
+
+          /**
+           * Orphaned Donations with $priority_recipients will also include a full copy
+           * of the Donation Receipt to send to those Priority Partners:
+           */
+          if( $orphaned_donation && isset( $priority_recipients ) && 0 < count( $priority_recipients ) ){
+            $hbs_vars['donationreceipt'] = get_donation_receipt( $donor );
+            $hbs_vars['click_to_claim'] = false;
+            $hbs_vars['orphaned_donation_note'] = get_template_part( 'email.trans-dept.orphaned-donation-note-for-priority-partner' );
+            foreach( $priority_recipients as $priority_recipient_email ){
+              $discrete_html_emails[$priority_recipient_email] = render_template( 'email.trans-dept-notification', $hbs_vars );
+            }
+          }
 
           // Set Reply-To our donor
           $headers[] = 'Reply-To: ' . $donor['address']['name']['first'] . ' ' .$donor['address']['name']['last'] . ' <' . $donor['email'] . '>';
@@ -405,7 +469,8 @@ function send_email( $type = '' ){
       // Send API post to CHHJ-API, College Hunks Hauling receives
       // all orphans via this:
       $donor['routing_method'] = 'api-chhj';
-      send_api_post( $donor );
+      if( $donor['fee_based'] )
+        send_api_post( $donor );
     } else {
       if( 'trans_dept_notification' == $type ){
         foreach ($recipients as $email ) {

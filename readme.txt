@@ -2,19 +2,92 @@
 Contributors: TheWebist
 Tags: donations, CPT
 Requires at least: 6.0.0
-Tested up to: 6.2
+Tested up to: 6.4.1
 Requires PHP: 8.0
-Stable tag: 3.7.0.2
+Stable tag: 4.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
-== Description ==
-
-Long description goes here...
-
 == Changelog ==
+
+= 4.2.3 =
+* Updating for Composer install compatiblity.
+
+= 4.2.2 =
+* Minor edit to "Fee-Based Pickup Service" note on "Select Your Organization" view.
+
+= 4.2.1 =
+* Updating "No Damaged Items Message" by adding `{store_signature}` as an available token and documenting available tokens for the ACF field.
+
+= 4.2.0 =
+* Updating `[donors_in_your_area]` to pull KML from [https://zipcodes.pickupmydonation.com](https://zipcodes.pickupmydonation.com).
+* Deactivating "Click to Claim".
+
+= 4.1.0 =
+* Removing "Fee-Based/Priority" option from the "Select Your Organization" screen.
+
+= 4.0.0 =
+* Updating "Fee-Based" option to utilize generic verbiage during the "Select Your Organization" step.
+
+= 3.9.4 =
+* Adding "Prices start as low as..." call out to Fee-Based note on Step 4.
+
+= 3.9.3 =
+* Adding "PriorityPickup" column to CSV export in "My Donations > Donation Reports > Combined Donations" report.
+
+= 3.9.2 =
+* Adding "Fails" column to "College Hunks API Stats" widget.
+* Adding "Note" to the bottom of the "College Hunks API Stats" widget explaining "Fails".
+
+= 3.9.1.1 =
+* BUGFIX: Setting required constants to `null` when not set to avoid fatal error upon setup.
+
+= 3.9.1 =
+* Updating output for `wp dm archive` to correctly show the `$donation_stats` that would be written to the database.
+* Correcting examples in documentation for `wp dm archive`.
+
+= 3.9.0 =
+* Adding "Fee-Based" option on Step 4 allowing donors to choose whether or not we send their donation to fee-based providers.
+
+= 3.8.0.1 =
+* BUGFIX: Accounting for "Pick Up Days of the Week" values stored as "strings" from PMD 2.0 Org imports. Now we set the available pick up days to the default (Mon-Sat) when this happens.
+
+= 3.8.0 =
+* Now orphaned donations are sent to priority partners using the Email delivery method. Previously, orhpans would only get sent using the API method which meant that only College Hunks would receive orphaned donations.
+
+= 3.7.5 =
+* Using `usort()` to sort Pick Up Times returned by `get_pickuptimes()`.
+
+= 3.7.4 =
+* Adding "Store Relations" and "Org Page Options" to `lib/acf-json/`.
+* Correctly retrieving values for Pick Up Days of the Week and Min. Scheduling Interval.
+* Updating holiday/restricted pick up dates for the Step 4 screen.
+
+= 3.7.3 =
+* Adding option to use the Transportation Department's name when displaying to users in the "Select Your Organization" list. This allows us to use one parent Organization for multiple Transportation Departments.
+* `send_email()` now always returns before sending the `trans_dept_notification` if the `routing_method` is not `email`.
+* Setting defaults for Transportation Contact details in the `donor_confirmation` email.
+* Removing dependency on `get_submit_button()` WP helper function as this function can only be used in an admin context ( see [get_submit_button user contributed notes](https://developer.wordpress.org/reference/functions/get_submit_button/#comment-3641)). Was throwing an error when calling via the WP REST API.
+
+= 3.7.2.2 =
+* BUGFIX: Correcting variable name to `$is_chhj_pickupcode` in `send_api_post()`.
+
+= 3.7.2.1 =
+* Adding `wp dm test` for `is_valid_pickupcode()`.
+
+= 3.7.2 =
+* Updatin `send_api_post()` to only post to an external API if the pickup code is valid for the organization.
+* Adding `is_valid_pickupcode()` for determining if a pickup code is valid given a search string to compare against the returned organizations for the pickup code.
+* Updating "API Response" column to list available organizations for a given pickup code when no `api_post` meta field value exists.
+
+= 3.7.1 =
+* Adding `ksort()` to stats displayed by `chhj_stats_dashboard_widget()`.
+* Adding "Success Rate" column to `chhj_stats_dashboard_widget()`.
+
+= 3.7.0.3 =
+* BUGFIX: Adjusting switch statement in `lib/fns/apirouting.php` to route donations to the CHHJ API when `$routing_method` is also equal to `chhj_api`. This is in addition to accepting `api-chhj`. This fixes the issue where although the `trans_dept_notification` switch in `lib/fns/emails.php` was calling `send_api_post()` if `if( 'email' != $donor['routing_method'] )`, the actual `send_api_post()` function did not have a switch statement to handle the PMD 3.0 `$routing_method` value of `chhj_api` as defined in the ACF Field under each organization's "Pickup Settings".
 
 = 3.7.0.2 =
 * Allowing HTML in "Customer Description" field inside `email.donation-receipt.hbs`.

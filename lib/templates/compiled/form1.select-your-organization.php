@@ -39,7 +39,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
   .organization .description{margin-top: 1em;}
   </style>
 '.LR::sec($cx, (($inary && isset($in['rows'])) ? $in['rows'] : null), null, $in, true, function($cx, $in) {$inary=is_array($in);return '  <div class="row organization'.htmlspecialchars((string)(($inary && isset($in['css_classes'])) ? $in['css_classes'] : null), ENT_QUOTES, 'UTF-8').'">
-      <h3>'.htmlspecialchars((string)(($inary && isset($in['name'])) ? $in['name'] : null), ENT_QUOTES, 'UTF-8').'</h3>
+      <h3>'.((LR::ifvar($cx, (($inary && isset($in['priority'])) ? $in['priority'] : null), false)) ? 'Fee-Based Donation Pick Up' : ''.htmlspecialchars((string)(($inary && isset($in['name'])) ? $in['name'] : null), ENT_QUOTES, 'UTF-8').'').'</h3>
 '.((LR::ifvar($cx, (($inary && isset($in['pause_pickups'])) ? $in['pause_pickups'] : null), false)) ? '        <div class="description">'.(($inary && isset($in['desc'])) ? $in['desc'] : null).'</div>
 ' : '      <div class="elementor-align-justify">
         <a class="btn btn-primary button btn-lg btn-block elementor-button" href="'.htmlspecialchars((string)(($inary && isset($in['link'])) ? $in['link'] : null), ENT_QUOTES, 'UTF-8').'">
@@ -49,7 +49,11 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
           </span>
         </a>
       </div>
-      <div class="description">'.(($inary && isset($in['desc'])) ? $in['desc'] : null).'</div>
+      <div class="description">
+'.((LR::ifvar($cx, (($inary && isset($in['priority'])) ? $in['priority'] : null), false)) ? '          <p><strong>Fee-Based Pickup Service:</strong> Experience the convenience of our donation pickup service, now with a unique fee-based approach. We offer the ease of removing items directly from any location within your property. When possible, these items are delivered to local non-profit organizations. Note that all may not be suitable for donation, but rest assured your unwanted items will be disposed of responsibly with our full-service junk removal partners.</p>
+          <p><strong>*Fee-Based Pick Ups are performed more quickly than Free Pick Ups.</strong></p>
+' : '          '.(($inary && isset($in['desc'])) ? $in['desc'] : null).'
+').'      </div>
 ').''.((LR::ifvar($cx, (($inary && isset($in['edit_url'])) ? $in['edit_url'] : null), false)) ? '      <div class="edit-this"><a href="'.htmlspecialchars((string)(($inary && isset($in['edit_url'])) ? $in['edit_url'] : null), ENT_QUOTES, 'UTF-8').'" target="_blank">Edit</a></div>
 ' : '').'  </div>
 ';}).'</div>';

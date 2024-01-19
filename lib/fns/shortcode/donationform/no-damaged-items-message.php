@@ -16,9 +16,8 @@ $priority_html = (
   && array_key_exists( 'pickup_code', $_SESSION['donor'] )
 )? get_priority_pickup_links( $_SESSION['donor']['pickup_code'] ) : false ;
 
-$search = array( '{organization}', '{priority_pickup_option}' );
-$replace = array( $organization, $priority_html );
+$search = array( '{organization}', '{priority_pickup_option}', '{store_signature}' );
+$replace = array( $organization, $priority_html, get_stores_footer( $_SESSION['donor']['trans_dept_id'], false ) );
 $html = str_replace( $search, $replace, $no_damaged_items_message );
 
-$html.= get_stores_footer( $_SESSION['donor']['trans_dept_id'], false );
 add_html( $html );

@@ -32,8 +32,8 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *
      * ## EXAMPLES
      *
-     * wp donations archive 2012 --skip-themes
-     * wp donations archive 2015 --month=6 --skip-themes
+     * wp dm archive 2012 --skip-themes
+     * wp dm archive 2015 --month=6 --skip-themes
      */
     function archive( $args, $assoc_args ){
       require_once( DONMAN_PLUGIN_PATH . 'lib/fns/cli/donations.archive.php' );
@@ -100,9 +100,11 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *   - get_orphaned_donation_contacts
      *   - get_priority_organizations
      *   - get_screening_questions
+     *   - get_trans_dept_contact
      *   - get_trans_dept_ids
      *   - is_orphaned_donation
      *   - is_priority
+     *   - is_valid_pickupcode
      *   - save_donation
      * ---
      *
@@ -234,6 +236,14 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
           WP_CLI::line( '🔔 get_screening_questions() returns $screening_questions = ' . print_r( $screening_questions, true ) );
           break;
 
+        case 'get_trans_dept_contact':
+          if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'This test requires a numeric Trans Dept ID as the first postional argument.' );
+          $trans_dept_id = $args[0];
+          $trans_dept_contact = DonationManager\transdepts\get_trans_dept_contact( $trans_dept_id );
+          WP_CLI::line( '🔔 get_trans_dept_contact( ' . $trans_dept_id . ' ) returns ' . print_r( $trans_dept_contact, true ) );
+          break;
+
         case 'get_trans_dept_ids':
           if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
             WP_CLI::error( 'This test requires a numeric Org ID as the first postional argument.' );
@@ -251,6 +261,18 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
             WP_CLI::line( '👉 Donation IS orphaned.' );
           } else {
             WP_CLI::line( '👉 Donation is NOT orphaned.' );
+          }
+          break;
+
+        case 'is_valid_pickupcode':
+          if( ! isset( $args[0] ) || ! is_numeric( $args[0] ) )
+            WP_CLI::error( 'This test requires a numeric Pickup Code as the first postional argument.' );
+          $pickup_code = $args[0];
+          $is_valid_pickupcode = DonationManager\apirouting\is_valid_pickupcode( 'College Hunks', $pickup_code );
+          if( $is_valid_pickupcode ){
+            WP_CLI::line( '✅ `' . $pickup_code . '` is a valid "College Hunks" pickup code.' );
+          } else {
+            WP_CLI::line( '🚨 `' . $pickup_code . '` is NOT a valid "College Hunks" pickup code.' );
           }
           break;
 

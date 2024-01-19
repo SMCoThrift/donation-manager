@@ -1,19 +1,22 @@
 {
-    "name": "mwender/donation-manager",
+    "name": "smcothrift/donation-manager",
     "description": "WordPress plugin for handling donations",
-    "type": "project",
+    "homepage": "https://github.com/SMCoThrift/donation-manager",
+    "type": "wordpress-plugin",
     "require": {
         "zordius/lightncandy": "^1.2",
         "collizo4sky/persist-admin-notices-dismissal": "^1.4",
         "rlanvin/php-form": "^2.0",
         "a5hleyrich/wp-background-processing": "^1.0",
-        "cloudinary/cloudinary_php": "^1.20.0"
+        "cloudinary/cloudinary_php": "^1.20.0",
+        "php": ">=8.0"
     },
     "license": "MIT",
     "authors": [
         {
             "name": "Michael Wender",
-            "email": "michael@michaelwender.com"
+            "email": "mwender@wenmarkdigital.com",
+            "homepage": "https://wenmarkdigital.com"
         }
     ]
 }

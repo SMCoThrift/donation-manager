@@ -473,6 +473,7 @@ function save_donation( $donation = array() ){
     'referer' => 'referer',
     'image' => '',
     'reason' => '',
+    'fee_based' => 'fee_based',
   );
 
   // Get Donation ACF Field Group

@@ -37,16 +37,17 @@ label.pickup-date{font-size: 16px; font-weight: bold;}
 .date-column:first-child{margin-left: 0;}
 .date-column:last-child{margin-right: 0;}
 .date-column .available-times{margin-top: .25em;}
+label.pickup-date{font-size: 15px;}
 @media(min-width: 768px){
   .elementor-column.elementor-col-33.date-column{width: 32%;}
 }
 </style>
 <form action="" method="post">
-  <p class="lead">Please select three <em>POTENTIAL</em> pickup dates.</p>
+  <p class="lead">Please select three <em>POTENTIAL</em> pick up dates.</p>
   '.(($inary && isset($in['date_note'])) ? $in['date_note'] : null).'
   <div class="row elementor-form-fields-wrapper elementor-labels-above row-pickup-dates">
 '.LR::sec($cx, (($inary && isset($in['pickupdates'])) ? $in['pickupdates'] : null), null, $in, true, function($cx, $in) {$inary=is_array($in);return '    <div class="elementor-column elementor-col-33 date-column" style="display: block;">
-      <label class="pickup-date" for="donor[pickupdate'.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').']">Preferred Pickup Date '.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').'<span class="required">*</span>:</label><br />
+      <label class="pickup-date" for="donor[pickupdate'.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').']">Preferred Pick Up Date '.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').'<span class="required">*</span>:</label><br />
       <input type="text" name="donor[pickupdate'.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').']" id="pickupdate'.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').'" class="date" gldp-id="gldatepicker'.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').'" value="'.htmlspecialchars((string)(($inary && isset($in['value'])) ? $in['value'] : null), ENT_QUOTES, 'UTF-8').'" />
       <div style="position: relative;">
         <div gldp-el="gldatepicker'.htmlspecialchars((string)(isset($cx['sp_vars']['index']) ? $cx['sp_vars']['index'] : null), ENT_QUOTES, 'UTF-8').'" style="width: 400px; height: 300px;"></div>
@@ -74,7 +75,30 @@ label.pickup-date{font-size: 16px; font-weight: bold;}
       </div>
 ';}).'    </div>
   </div>
+  <br/>
+
+'.((LR::ifvar($cx, (($inary && isset($in['orphaned_donation'])) ? $in['orphaned_donation'] : null), false)) ? '  <div class="row">
+    <div class="col-md-12">
+      <div class="elementor-alert elementor-widget elementor-alert-warning">
+        <span class="elementor-alert-description">
+          <h2 style="font-size: 24px; margin-bottom: 4px;"><strong style="font-size: 16px; text-transform: uppercase; display: block; margin-bottom: 6px;">Important note regarding your donation:</strong>Free and Fee-Based Providers, Your choice!</h2>
+          <p>We do our best to connect you with a local organization that will pick up your items for free. Unfortunately, we are unable to guarantee a free pick up in your market. If a free pick up provider can\'t perform a free pick up, a fee-based organization may be able to take your item to a nonprofit in your area.</p>
+          <p><strong>Would you like for us to send your request to a fee-based pick up service for a competitive quote?</strong></p>
+          <div class="radio">
+            <label for="fee_based_true">
+              <input type="radio" name="donor[fee_based]" id="fee_based_true" value="1"'.htmlspecialchars((string)(($inary && isset($in['checked_fee_based_true'])) ? $in['checked_fee_based_true'] : null), ENT_QUOTES, 'UTF-8').'> Yes, please send this request to free <strong><em>and fee-based<sup>*</sup></em></strong> pick up services.
+              <div style="background-color: #d9edf7; padding: 10px; border-radius: 3px; color: #31708f; margin: 10px 0 20px;"><sup style="font-weight: bold;">*</sup>Prices start as low as $50 for a single item.</div>
+            </label>
+            <label for="fee_based_false">
+              <input type="radio" name="donor[fee_based]" id="fee_based_false" value="0"'.htmlspecialchars((string)(($inary && isset($in['checked_fee_based_false'])) ? $in['checked_fee_based_false'] : null), ENT_QUOTES, 'UTF-8').'> No, only send this request to free pick up services.
+            </label>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
   <br />
+' : '').'
   <div class="row">
     <div class="col-md-12 elementor-align-justify"><p><button type="submit" class="btn btn-block btn-primary" style="width: 100%;">Finish and Submit</button></p></div>
   </div>

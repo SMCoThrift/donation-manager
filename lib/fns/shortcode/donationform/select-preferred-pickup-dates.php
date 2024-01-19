@@ -1,5 +1,5 @@
 <?php
-use function DonationManager\organizations\{get_pickuptimes,get_pickuplocations,get_priority_pickup_links};
+use function DonationManager\organizations\{get_pickuptimes,get_pickuplocations,get_priority_pickup_links,is_orphaned_donation};
 use function DonationManager\utilities\{get_alert};
 use function DonationManager\templates\{render_template};
 use function DonationManager\realtors\{get_realtor_ads};
@@ -68,6 +68,25 @@ $hbs_vars['date_note'] = get_alert([
   'type' => 'warning',
   'description' => '<p><strong>Please note:</strong> <em>NONE</em> of the dates and times you select are confirmed until our schedulers are able to contact you directly.</p>'
 ]);
+
+// Setup HBS vars for Pick Up Provider Choice on Orphaned Donations
+if( is_orphaned_donation( $_SESSION['donor']['trans_dept_id'] ) ){
+  $hbs_vars['orphaned_donation'] = true;
+
+  $hbs_vars['checked_fee_based_true'] = '';
+  $hbs_vars['checked_fee_based_false'] = '';
+  if( isset( $_POST['donor']['fee_based'] ) ){
+    $hbs_vars['fee_based'] = $_POST['donor']['fee_based'];
+    if( $hbs_vars['fee_based'] ){
+      $hbs_vars['checked_fee_based_true'] = ' checked="checked"';
+    } else {
+      $hbs_vars['checked_fee_based_false'] = ' checked="checked"';
+    }
+  } else {
+    $hbs_vars['fee_based'] = ( isset( $_SESSION['donor']['fee_based'] ) )? $_SESSION['donor']['fee_based'] : true ;
+    $hbs_vars['checked_fee_based_true'] = ' checked="checked"';
+  }
+}
 
 if( empty( $template ) )
   $template = 'form5.pickup-dates';

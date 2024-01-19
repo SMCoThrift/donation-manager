@@ -14,23 +14,23 @@ use function DonationManager\orphanedproviders\{get_orphaned_donation_contacts};
  * @return     array|bool  The default organization.
  */
 function get_default_organization( $priority = false ) {
-  if( WP_CLI )
+  if( WP_CLI && DMDEBUG_VERBOSE )
       \WP_CLI::line( '🔔 running get_default_organization()... ');
 
   $default_organization = get_field( 'default_organization', 'option' );
-  if( WP_CLI )
+  if( WP_CLI && DMDEBUG_VERBOSE )
     \WP_CLI::line( '🔔 default_organization = ' . print_r( $default_organization, true ) );
   if( ! $default_organization ){
-    if( WP_CLI )
+    if( WP_CLI && DMDEBUG_VERBOSE )
       \WP_CLI::line( '🚨 No default organization set! Check the settings page for the plugin.' );
     return false;
   }
 
   $default_trans_dept = get_field( 'default_transportation_department', 'option' );
-  if( WP_CLI )
+  if( WP_CLI && DMDEBUG_VERBOSE )
     \WP_CLI::line( '🔔 default_trans_dept = ' . print_r( $default_trans_dept, true ) );
   if( ! $default_trans_dept ){
-    if( WP_CLI )
+    if( WP_CLI && DMDEBUG_VERBOSE )
       \WP_CLI::line( '🚨 No default transportation department set! Check the settings page for the plugin.' );
     return false;
   }
@@ -40,9 +40,6 @@ function get_default_organization( $priority = false ) {
 
   $organization = []; // initialize our return variable
   $organization['id'] = $default_organization->ID;
-  $organization['trans_dept_id'] = $default_trans_dept->ID;
-  $organization['pause_pickups'] = get_field( 'pickup_settings_pause_pickups', $default_organization->ID );
-  $organization['edit_url'] = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $default_organization->ID, 'link' ) : false ;
 
   if( $priority ){
     $organization['name'] = 'Expedited Pick Up Service';
@@ -51,15 +48,19 @@ function get_default_organization( $priority = false ) {
       'description'   => 'Choosing <strong>PRIORITY</strong> Pick Up will send your request to all of the <em>fee-based</em> pick up providers in our database. These providers will pick up "almost" <strong>ANYTHING</strong> you have for a fee, and their service provides <em>additional benefits</em> such as the removal of items from anywhere inside your property to be taken to a local non-profit, as well as the removal of junk and items local non-profits cannot accept.<br><br><em>In most cases your donation is still tax-deductible, and these organizations will respond in 24hrs or less. Check with whichever pick up provider you choose.</em>',
       'type'          => 'info',
     ]);
-    $organization['button_text'] = $button_texts['priority'];
-    $organization['priority_pickup'] = true;
-    $organization['alternate_donate_now_url'] = site_url( '/step-one/?oid=' . $default_organization->ID . '&tid=' . $default_trans_dept->ID . '&priority=1' );
   } else {
     $organization['name'] = $default_organization->post_title;
     $organization['desc'] = $default_organization->post_content;
-    $organization['button_text'] = $button_texts['non_profit'];
-    $organization['priority_pickup'] = false;
+  }
 
+  $organization['trans_dept_id'] = $default_trans_dept->ID;
+  $organization['trans_dept_emails'] = null; // Adding this `null` value to match array returned in get_organizations()
+
+  if( $priority ){
+    $organization['alternate_donate_now_url'] = site_url( '/step-one/?oid=' . $default_organization->ID . '&tid=' . $default_trans_dept->ID . '&priority=1' );
+    $organization['button_text'] = $button_texts['priority'];
+    $organization['priority_pickup'] = true;
+  } else {
     /**
      * 07/05/2022 (11:09) - I found 11 instances of an `alternate_donate_now_url`
      * meta key stored in the PMD production DB, but in each case, this meta row
@@ -68,8 +69,13 @@ function get_default_organization( $priority = false ) {
      * code probably needs to be removed:
      */
     //$alternate_donate_now_url = get_post_meta( $default_organization->ID, 'alternate_donate_now_url', true );
-    $organization['alternate_donate_now_url'] = '';
+    $organization['alternate_donate_now_url'] = null;
+    $organization['button_text'] = $button_texts['non_profit'];
+    $organization['priority_pickup'] = false;
   }
+
+  $organization['pause_pickups'] = get_field( 'pickup_settings_pause_pickups', $default_organization->ID );
+  $organization['edit_url'] = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $default_organization->ID, 'link' ) : false ;
 
   return $organization;
 }
@@ -111,6 +117,7 @@ function get_organizations( $pickup_code ) {
      * or using our orphaned routing process.
      */
     $priority_pickup = false;
+    $button_texts = get_field( 'donation_button_text', 'option' );
 
     foreach( $trans_depts as $trans_dept ){
 
@@ -128,15 +135,45 @@ function get_organizations( $pickup_code ) {
           $pause_pickups = $pickup_settings['pause_pickups'];
       }
 
+      // Contact Emails
+      $trans_dept_contact_emails = [];
+      $contact_email = get_field( 'contact_email', $trans_dept->ID );
+
+      // If no contact email for the Trans Dept, check the parent Organization:
+      if( empty( $contact_email ) && ! empty( $org_id ) && is_numeric( $org_id ) ){
+        $contact_email = get_field( 'default_trans_dept_contact_contact_email', $org_id );
+        if( ! empty( $contact_email ) )
+          $trans_dept_contact_emails[] = $contact_email;
+      } else if( ! empty( $contact_email ) && is_email( $contact_email ) ){
+        $trans_dept_contact_emails[] = $contact_email;
+      }
+
+      $cc_emails = get_field( 'cc_emails', $trans_dept->ID );
+      if( ! empty( $cc_emails ) ){
+        $cc_emails = ( stristr( $cc_emails, ',' ) )? explode( ',', $cc_emails ) : [ $cc_emails ];
+        if( 0 < count( $cc_emails ) )
+          $trans_dept_contact_emails = array_merge( $trans_dept_contact_emails, $cc_emails );
+      }
+
       $edit_url = ( current_user_can( 'edit_posts' ) && isset( $org ) )? get_edit_post_link( $org->ID, 'link' ) : false ;
+      $use_transportation_department_name = get_post_meta( $trans_dept->ID, 'use_transportation_department_name', true );
+      if( $use_transportation_department_name ){
+        $org_name = str_replace( [ 'Transportation Dept', 'Store' ], '', $trans_dept->post_title );
+      } else {
+        $org_name = $organization->post_title;
+      }
+
+      $button_text = ( $priority_pickup )? $button_texts['priority'] : $button_texts['non_profit'] ;
 
       if( $organization ){
         $organizations[] = [
           'id'                        => $organization->ID,
-          'name'                      => $organization->post_title,
+          'name'                      => $org_name,
           'desc'                      => $organization->post_content,
           'trans_dept_id'             => $trans_dept->ID,
+          'trans_dept_emails'         => $trans_dept_contact_emails,
           'alternate_donate_now_url'  => null,
+          'button_text'               => $button_text,
           'priority_pickup'           => $priority_pickup,
           'pause_pickups'             => $pause_pickups,
           'edit_url'                  => $edit_url,
@@ -267,6 +304,10 @@ function get_pickuptimes( $org_id ){
   if( 0 == count( $terms ) )
     $terms = get_field( 'default_options_default_pickup_times', 'option' );
 
+  usort( $terms, function( $a, $b ){
+    return $a->term_order <=> $b->term_order;
+  });
+
   $pickuptimes = [];
   if( 0 < count( $terms ) ){
     foreach( $terms as $term ){
@@ -276,7 +317,6 @@ function get_pickuptimes( $org_id ){
       ];
     }
   }
-  //uber_log( '🔔 $pickuptimes = ' . print_r( $pickuptimes, true ) );
 
   return $pickuptimes;
 }

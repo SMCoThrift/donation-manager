@@ -77,7 +77,7 @@ foreach( $organizations as $org ) {
 
     // Setup button text
     $donation_button_text = get_field( 'donation_button_text', 'option' );
-    if( isset( $org['button_text'] ) ){
+    if( isset( $org['button_text'] ) && ! empty( $org['button_text'] ) ){
         $button_text = $org['button_text'];
     } else if ( isset( $org['priority_pickup'] ) && $org['priority_pickup'] ){
         $button_text = $donation_button_text['priority'];
@@ -98,6 +98,7 @@ foreach( $organizations as $org ) {
         'pause_pickups' => $org['pause_pickups'],
         'org_id'        => $org['id'],
         'edit_url'      => $org['edit_url'],
+        'priority'      => $org['priority_pickup'],
     ];
     if( isset( $org['providers'] ) && ! empty( $org['providers'] ) )
         $row['providers'] = $org['providers'];

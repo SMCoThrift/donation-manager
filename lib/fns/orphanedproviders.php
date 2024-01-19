@@ -97,6 +97,8 @@ function get_orphaned_donation_contacts( $args ){
 
     // Get all email addresses for contacts in our group of zipcodes
     $sql = 'SELECT ID,' . $args['fields'] . ' FROM ' . $wpdb->prefix . 'donman_contacts WHERE receive_emails=1 AND priority=' . $args['priority'] . ' AND zipcode IN (' . $zipcodes . ')';
+    if( 1 === $args['priority'] )
+        $sql.= ' AND store_name!="PickUpMyDonation.com"';
 
     if( isset( $args['show_in_results'] ) && ! is_null( $args['show_in_results'] ) && in_array( $args['show_in_results'], [0,1] ) )
         $sql.= ' AND show_in_results=' . $args['show_in_results'];

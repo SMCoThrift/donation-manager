@@ -169,6 +169,23 @@ function get_trans_dept_contact( $trans_dept_id = '' ) {
       'phone'         => get_field( 'phone', $trans_dept_id ),
     ];
 
+    // Populate any empty fields with the Parent Org's Default Transportation Contact fields:
+    $org_id = null;
+    $org_default_trans_dept_contact = null;
+    $check_for_empty = [ 'contact_title', 'contact_name', 'contact_email', 'phone' ];
+    foreach( $check_for_empty as $array_key ){
+      if( empty( $trans_dept_contact[ $array_key ] ) ){
+        if( empty( $org_id ) )
+          $org_id = get_field( 'organization', $trans_dept_id );
+
+        if( empty( $org_default_trans_dept_contact ) )
+          $org_default_trans_dept_contact = get_field( 'default_trans_dept_contact', $org_id );
+
+        if( is_array( $org_default_trans_dept_contact ) && array_key_exists( $array_key, $org_default_trans_dept_contact ) )
+          $trans_dept_contact[ $array_key ] = $org_default_trans_dept_contact[ $array_key ];
+      }
+    }
+
     return $trans_dept_contact;
 }
 

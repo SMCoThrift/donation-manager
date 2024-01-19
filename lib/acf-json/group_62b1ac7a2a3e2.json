@@ -346,7 +346,7 @@
             "name": "no_damaged_items_message",
             "aria-label": "",
             "type": "wysiwyg",
-            "instructions": "Message that displays when donor answers \"Yes\" to a screening question. (Use {organization} as a placeholder for the organization's name.)",
+            "instructions": "Message that displays when donor answers \"Yes\" to a screening question.\r\n\r\nAvailable tokens:\r\n<ul>\r\n<li><code>{organization}<\/code> - the organization's name<\/li>\r\n<li><code>{priority_pickup_option}<\/code> - priority pickup options<\/li>\r\n<li><code>{store_signature}<\/code> - contact information for the store<\/li>\r\n<\/ul>",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
