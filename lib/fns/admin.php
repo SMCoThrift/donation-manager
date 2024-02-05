@@ -2,7 +2,6 @@
 
 namespace DonationManager\donations;
 use function DonationManager\users\dept_to_user_account;
-use function DonationManager\users\org_to_user_account;
 use function DonationManager\organizations\{is_orphaned_donation,get_default_organization};
 use function DonationManager\donations\{get_orphaned_donation_notifications};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};

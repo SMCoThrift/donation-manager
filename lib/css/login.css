@@ -1,0 +1,18 @@
+#login h1 a, .login h1 a {
+	background-image: url(https://www.pickupmydonation.com/wp-content/uploads/2023/02/pickupmydonation-logo.800x96.png);
+	height:48px;
+	width:400px;
+	background-size: 400px 48px;
+	background-repeat: no-repeat;
+}
+.wp-core-ui .button-primary
+{
+	background: #F48223;
+	border-color: #F48223;
+	color: #fff;
+}
+.login form {
+	border-radius: 5px;
+	border-color: #1981C5;
+	border-width: 2px;
+}
