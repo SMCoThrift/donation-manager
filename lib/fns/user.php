@@ -108,41 +108,45 @@ function add_rejected_role() {
 }
 add_action( 'init', __NAMESPACE__ . '\\add_rejected_role' );
 
+/**
+ * Assign Department to User, send notification about account approval
+ * @param $user_id
+ * @param $role
+ * @param $old_roles
+ * @return void
+ */
+function change_department_user_role($user_id, $role, $old_roles ) {
 
-function send_role_change_email( $user_id, $old_user_data ) {
-    $new_user_data = get_userdata( $user_id );
-    // $reset_key = get_password_reset_key( $new_user_data );
-    // error_log(print_r($reset_key));
+    $user = get_userdata( $user_id );
 
-    $new_role = ! empty( $new_user_data->roles ) ? $new_user_data->roles[0] : '';
+    $new_role = ! empty( $role );
 
-    if ( in_array( $new_role, array( 'subscriber', 'administrator' ) ) ) {
-        // Retrieve the organization ID from the user's metadata
-        $organization_id = get_user_meta( $user_id, 'organization', true );
-
+    if ( !empty($role) && $role == 'org' && in_array( 'org-inactive', $old_roles )) {
+        // Retrieve the department ID from the user's metadata
+        $department_ids = get_user_meta( $user_id, 'department' );
         // Retrieve the organization post object
-        $organization = get_post( $organization_id );
-
-        // Assign the user as the author of the organization post
-        wp_update_post( array(
-            'ID' => $organization_id,
-            'post_author' => $user_id
-        ) );
+		foreach ($department_ids as $department_id) {
+        	$department = get_post( $department_id );
+			if($department !== NULL){
+				wp_update_post( array(
+					'ID' => $department_id,
+					'post_author' => $user_id
+				) );
+			}
+        }
 
         // Send an email to the user to notify them that they have been approved
           // Define the recipient email address
-          $to = $new_user_data->user_email;
-
+          $to = $user->user_email;
           // Define the email subject
           $subject = 'Your Account Has Been Approved';
 
-
-          $key = wp_generate_password( 20, false );
-          $login = $new_user_data->user_email;
-          $url = site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . urlencode($login).'&wp_lang=en_US' );
+		  $key = get_password_reset_key( $user );
+          $login = $user->user_email;
+		  $url = network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user->user_login ), 'login' ) . "\r\n\r\n";
 
           // Define the email message
-          $message = 'Hello ' . $new_user_data->display_name . ', your account has been approved. Please click the generated link to set your password : <a href="'.  $url .'">generate your password</a>';
+          $message = 'Hello ' . $user->display_name . ', your account has been approved. Please click the generated link to set your password : <a href="'.  $url .'">generate your password</a>';
 
           $headers = array(
             'Content-Type: text/html; charset=UTF-8',
@@ -153,13 +157,13 @@ function send_role_change_email( $user_id, $old_user_data ) {
     }
 }
 
+add_action( 'set_user_role', __NAMESPACE__ . '\\change_department_user_role', 10, 3 );
 
-add_action( 'set_user_role', __NAMESPACE__ . '\\send_role_change_email', 10, 3 );
-
-function org_to_user_account($id_org){
-
-}
-
+/**
+ *  Create a user account for a department and set department as it's organization as user meta fields
+ * @param $id_dept int The department post id
+ * @return int|boolean The user id or FALSE if the user already exists
+ */
 function dept_to_user_account($id_dept)
 {
 	$user_id = FALSE;
@@ -188,6 +192,37 @@ function dept_to_user_account($id_dept)
 			add_user_meta( $user_id, 'organization', $id_org, true );
 		}
 		return $user_id;
+	}else{
+		return FALSE;
 	}
 
 }
+
+/**
+ * Modify default WP login page styles
+ * @return void
+ */
+function my_login_stylesheet() {
+	wp_enqueue_style( 'custom-login', DONMAN_PLUGIN_URL . '/lib/css/login.css' );
+}
+add_action( 'login_enqueue_scripts',  __NAMESPACE__ .'\\my_login_stylesheet' );
+
+/**
+ * Modify default WP login page logo url
+ * @return string
+ */
+function pumd_logo_url() {
+	return home_url();
+}
+add_filter( 'login_headerurl',  __NAMESPACE__ . '\\pumd_logo_url' );
+
+/**
+ * Modify default WP login page logo title
+ * @return string
+ */
+function pumd_logo_url_title() {
+	return 'Pickup My Donation - Login Page';
+}
+add_filter( 'login_headertext', __NAMESPACE__ . '\\pumd_logo_url_title' );
+
+

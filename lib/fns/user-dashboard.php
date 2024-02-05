@@ -226,147 +226,19 @@ function disable_admin_bar_for_orgs($show_admin_bar) {
 	return ( current_user_can( 'administrator' ) ) ? $show_admin_bar : false;
 }
 
-function resetpassform($rp_key,$user_login,$errors=[]){
-	$rp_url = add_query_arg('action', 'setpass');
-	$rp_ulogin = esc_attr($user_login);
-	$rp_ukey = esc_attr($rp_key);
-	if($errors){
-		$rform = '<div class="alert alert-danger" role="alert">';
-		foreach($errors as $error){
-			$rform .= '<p>'.$error.'</p>';
-		}
-		$rform .= '</div>';
-	}
-	$rform .= <<<EOD
-
-<form name="resetpassform" id="resetpassform" action="$rp_url" method="post" autocomplete="off">
-						<input type="hidden" id="user_login" name="rp_login" value="$rp_ulogin" autocomplete="off" />
-						<input type="hidden" name="rp_key" value="$rp_ukey" />
-
-						<p>
-							<label for="pass1">New password</label>
-							<input type="password" name="pass1" id="pass1" class="input" size="20" value="" autocomplete="off" />
-						</p>
-						<p>
-							<label for="pass2">Confirm new password</label>
-							<input type="password" name="pass2" id="pass2" class="input" size="20" value="" autocomplete="off" />
-						</p>
-
-						<p class="description">Hint: The password should be at least twelve characters long. To make it stronger, use upper and lower case letters, numbers, and symbols like ! " ? $ % ^ & ).</p>
-
-						<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="Reset Password" /></p>
-					</form>
-EOD;
-
-	return $rform;
-}
-
-add_shortcode( 'pmd_loginform', function (){
-
-	$passform_error ="";
-	if ( is_user_logged_in() ) {
-		echo 'You are already logged in.';
-	} else {
-		$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-		if ('POST' == $_SERVER['REQUEST_METHOD'] && $action === 'setpass') {
-			$rp_key = $_POST['rp_key'];
-			$rp_login = $_POST['rp_login'];
-
-			$user = check_password_reset_key($rp_key, $rp_login);
-
-			if (!is_wp_error($user)) {
-				// Check for a valid password
-				if (isset($_POST['pass1']) && !empty($_POST['pass1']) && $_POST['pass1'] == $_POST['pass2']) {
-					// Reset the user's password
-					reset_password($user, $_POST['pass1']);
-					echo "Password changed successfully. You can now <a href='/dashboard/login/'>login</a>.";
-				} else {
-					$passform_error = 'Passwords do not match or are empty.';
-					echo resetpassform($rp_key, $rp_login, $passform_error);
-				}
-			} else {
-				// Invalid key or user
-				$passform_error = 'Invalid key or user.';
-				echo resetpassform($rp_key, $rp_login, $passform_error);
-			}
-		}
-
-		if ($action === 'resetpass') {
-			// Display the password reset form
-			if (isset($_GET['key']) && isset($_GET['login'])) {
-				// Verify the key and login are valid
-				$user = check_password_reset_key($_GET['key'], $_GET['login']);
-				if (is_wp_error($user)) {
-					echo 'Invalid key or the reset time has expired. Please try resetting your password again if needed.';
-				} else {
-					echo resetpassform($_GET['key'], $user->user_login);
-				}
-			} else {
-				echo 'Invalid request.';
-			}
-		} else if ($action === 'forgot') {
-			if ( 'POST' == $_SERVER['REQUEST_METHOD']  ) {
-				$errors = retrieve_password();
-				if ( ! is_wp_error( $errors ) ) {
-					echo 'Check your email for a link to reset your password.';
-				}
-			}
-
-			if ( isset( $_GET['error'] ) ) {
-				if ( 'invalidkey' === $_GET['error'] ) {
-					$errors->add( 'invalidkey', __( '<strong>Error:</strong> Your password reset link appears to be invalid. Please request a new link below.' ) );
-				} elseif ( 'expiredkey' === $_GET['error'] ) {
-					$errors->add( 'expiredkey', __( '<strong>Error:</strong> Your password reset link has expired. Please request a new link below.' ) );
-				}
-			}
-
-			$user_login = '';
-
-			if ( isset( $_POST['user_login'] ) && is_string( $_POST['user_login'] ) ) {
-				$user_login = wp_unslash( $_POST['user_login'] );
-			}
-
-			?>
-			<form name="lostpasswordform" id="lostpasswordform" action="<?php echo esc_url( network_site_url( 'dashboard/login/?action=forgot', 'login_post' ) ); ?>" method="post">
-				<p>
-					<label for="user_login"><?php _e( 'Username or Email Address' ); ?></label>
-					<input type="text" name="user_login" id="user_login" class="input" value="<?php echo esc_attr( $user_login ); ?>" size="20" autocapitalize="off" autocomplete="username" required="required" />
-				</p>
-				<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
-				<p class="submit">
-					<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e( 'Get New Password' ); ?>" />
-				</p>
-			</form>
-<?php
-
-		} else {
-			$args = array(
-				'echo' => false,
-				'redirect_to' => site_url('/dashboard/organization/'),
-				'remember' => true,
-				'value_remember' => true,
-			);
-			$loginform = wp_login_form($args);
-
-			//custom wp login url with parameters
-			$wp_login_url = add_query_arg('action', 'forgot');
-			$reset_link = '<a href="' . esc_url($wp_login_url) . '">Lost your password?</a>';
-			$register_link = '<a href="' . site_url('dashboard/register/') . '">Register</a>';
-
-			$login_options = '<div class="login-options">' . $reset_link . ' | ' . $register_link . '</div>';
-			return $loginform . $login_options;
-		}
-	}
-
-
-} );
-
-
+/**
+ * Send custom reset password email message to Department Account owner
+ * @param $message
+ * @param $key
+ * @param $user_login
+ * @param $user
+ * @return mixed|string
+ */
 function pmd_user_password_reset_email_message($message, $key, $user_login, $user)
 {
 	if ($user->has_cap('org')) {
-		$reset_link = network_site_url('dashboard/login/?action=resetpass&key=' . $key . '&login=' . rawurlencode($user_login), 'login');
+//		$reset_link = network_site_url('dashboard/login/?action=resetpass&key=' . $key . '&login=' . rawurlencode($user_login), 'login');
+		$reset_link = network_site_url('wp-login.php?action=rp&key=' . $key . '&login=' . rawurlencode($user_login), 'login');
 
 		$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 		$message = __('Someone has requested a password reset for the following account:') . "\r\n\r\n";
@@ -402,7 +274,10 @@ function get_default_options_terms_ids($field_name) {
 	return $ids;
 }
 
-
+/**
+ * Display message on the user dashboard
+ * @return false|string
+ */
 function show_account_owner_stats()
 {
 	ob_start();
