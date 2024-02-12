@@ -132,3 +132,35 @@ ul.user-pickup-code li a {
 .ts-dropdown-content {
     margin-top: 10px!important;
 }
+
+.b-additional-options-form {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.b-default-options {
+	border: 1px solid #ccc;
+	margin: 20px 0;
+	padding: 10px;
+	display:block;
+}
+
+.b-default-options__item {
+	display: block;
+	margin-bottom: 20px;
+}
+
+.b-default-options__checkbox {
+	margin-right: 10px;
+}
+
+.b-default-options__label {
+	font-weight: bold;
+}
+
+.b-default-options__description {
+	color: #404040;
+	margin-top: 5px;
+}
+
+
