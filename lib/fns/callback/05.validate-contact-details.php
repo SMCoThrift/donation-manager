@@ -80,7 +80,7 @@ if( isset( $_POST['donor']['address'] ) ) {
 
     $_SESSION['donor']['email'] = $_POST['donor']['email'];
     $_SESSION['donor']['phone'] = $_POST['donor']['phone'];
-    $_SESSION['donor']['preferred_contact_method'] = $_POST['donor']['preferred_contact_method'];
+    $_SESSION['donor']['preferred_contact_method'] = 'Phone'; // 02/15/2024 (15:39) - Hardcoding Preferred Contact Method
     $_SESSION['donor']['preferred_code'] = $preferred_code;
     $_SESSION['donor']['reason'] = $_POST['donor']['reason'];
 
