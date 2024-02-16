@@ -557,3 +557,32 @@ function is_priority( $org_id ){
     $priority_pickup = $pickup_settings['priority_pickup'];
   return $priority_pickup;
 }
+
+/**
+ * Cheeck if oragnization settings were modified by user
+ * (only Additional Organization Options)
+ *
+ * @param int $organization_id
+ * @return bool
+ */
+function is_useredited($organization_id)
+{
+    $useredited = get_field('user_edited', $organization_id);
+    if (!empty($useredited)) {
+        return true;
+    }
+    return false;
+}
+
+
+/**
+ * Set user edited flag
+ * @param int $organization_id
+ * @return bool
+ */
+function set_useredited($organization_id)
+{
+    $result = update_field('user_edited', 1, $organization_id);
+    return $result;
+}
+
