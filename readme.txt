@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.4.1
 Requires PHP: 8.0
-Stable tag: 4.2.3
+Stable tag: 4.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.2.4 =
+* Hiding "Preferred Contact Method" field from donor form, setting Preferred Contact Method to always be "Phone".
 
 = 4.2.3 =
 * Updating for Composer install compatiblity.
