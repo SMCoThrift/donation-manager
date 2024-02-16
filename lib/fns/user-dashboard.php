@@ -1,7 +1,7 @@
 <?php
 namespace DonationManager\users;
 use function DonationManager\utilities\{get_alert};
-use function DonationManager\organizations\{get_org_transdepts};
+use function DonationManager\organizations\{get_org_transdepts, is_useredited, set_useredited};
 
 function current_user_info_shortcode() {
     if ( is_user_logged_in() ) {
@@ -277,11 +277,10 @@ function show_account_owner_stats()
 add_shortcode( 'pumd_stats', __NAMESPACE__ . '\\show_account_owner_stats' );
 
 /** Get default options for the organization
- * @param $user_id
  * @param $field_name | string | the field name | 'pickup_location' | 'screening_question' | 'pickup_time'| 'donation_option'
  * @return array
  */
-function get_organization_default_options($user_id, $field_name) {
+function get_organization_default_options($field_name) {
 	$default_terms = get_field( "default_options_default_${field_name}s", 'option' );
 
 	return $default_terms;
@@ -289,13 +288,11 @@ function get_organization_default_options($user_id, $field_name) {
 
 
 /** Get the organization options
- * @param $user_id
+ * @param $organization_id
  * @param $field_name 	| string | the field name | 'pickup_location' | 'screening_question' | 'pickup_time'| 'donation_option'
  * @return array|\WP_Error
  */
-function get_ogranization_options($user_id, $field_name) {
-	$organization_id = get_user_meta( $user_id, 'organization', true );
-	$organization = get_post( $organization_id );
+function get_ogranization_options($organization_id, $field_name) {
 
 	$terms = wp_get_post_terms( $organization_id, $field_name );
 
@@ -303,17 +300,17 @@ function get_ogranization_options($user_id, $field_name) {
 }
 
 /**
- * @param $user_id
+ * @param $organization_id
  * @param $field_name | string | the field name | 'pickup_location' | 'screening_question' | 'pickup_time'| 'donation_option'
  * @return array
  */
-function get_organization_additional_options($user_id, $field_name) {
-	$default_terms = get_organization_default_options($user_id, $field_name);
-	$terms = get_ogranization_options($user_id, $field_name);
+function get_organization_additional_options($organization_id, $field_name) {
+	$default_terms = get_organization_default_options($field_name);
+	$terms = get_ogranization_options($organization_id, $field_name);
 
 	$form_terms = [];
     $defaults_checked = false;
-    if(count($terms) === 0){
+    if(count($terms) === 0 && !is_useredited($organization_id)){
         $defaults_checked = true;
     }
 	foreach ($default_terms as $term) {
@@ -338,40 +335,47 @@ function get_organization_additional_options($user_id, $field_name) {
 /** Retrieve the form data for the additional options form
  * @return array
  */
-function get_additional_options_form_data(){
-
-	$current_user = wp_get_current_user();
+function get_additional_options_form_data($user_id = null){
 	$form_data = [];
-	$form_data['elements'] = [
-		[
-			'type' => 'checkbox',
-			'name' => 'userportal_pickup_location',
-			'label' => 'Pickup Location',
-			'description' => 'Select the pickup location',
-			'options' => get_organization_additional_options($current_user->ID, 'pickup_location')
-		],
-		[
-			'type' => 'checkbox',
-			'name' => 'userportal_screening_question',
-			'label' => 'Screening Question',
-			'description' => 'Select the screening question',
-			'options' => get_organization_additional_options($current_user->ID, 'screening_question')
-		],
-		[
-			'type' => 'checkbox',
-			'name' => 'userportal_pickup_time',
-			'label' => 'Pickup Time',
-			'description' => 'Select the pickup time',
-			'options' => get_organization_additional_options($current_user->ID, 'pickup_time')
-		],
-		[
-			'type' => 'checkbox',
-			'name' => 'userportal_donation_option',
-			'label' => 'Donation Option',
-			'description' => 'Select the donation option',
-			'options' => get_organization_additional_options($current_user->ID, 'donation_option')
-		]
-	];
+
+    if($user_id === null) {
+        $current_user = wp_get_current_user();
+        $organization_id = get_user_meta($current_user->ID, 'organization', true);
+        $organization = get_post($organization_id);
+    }
+
+    if($organization){
+        $form_data['elements'] = [
+            [
+                'type' => 'checkbox',
+                'name' => 'userportal_pickup_location',
+                'label' => 'Pickup Location',
+                'description' => 'Select the pickup location',
+                'options' => get_organization_additional_options($organization->ID, 'pickup_location')
+            ],
+            [
+                'type' => 'checkbox',
+                'name' => 'userportal_screening_question',
+                'label' => 'Screening Question',
+                'description' => 'Select the screening question',
+                'options' => get_organization_additional_options($organization->ID, 'screening_question')
+            ],
+            [
+                'type' => 'checkbox',
+                'name' => 'userportal_pickup_time',
+                'label' => 'Pickup Time',
+                'description' => 'Select the pickup time',
+                'options' => get_organization_additional_options($organization->ID, 'pickup_time')
+            ],
+            [
+                'type' => 'checkbox',
+                'name' => 'userportal_donation_option',
+                'label' => 'Donation Option',
+                'description' => 'Select the donation option',
+                'options' => get_organization_additional_options($organization->ID, 'donation_option')
+            ]
+        ];
+    }
 
 
 	return $form_data;
@@ -383,61 +387,52 @@ function get_additional_options_form_data(){
  * @param $field_name
  * @return array
  */
-function get_valid_organization_terms_ids($field_name) {
+function get_valid_organization_terms_ids($organization_id,$field_name) {
 	$default_terms = get_field( "default_options_default_${field_name}s", 'option' );
-	$user_terms = get_ogranization_options(wp_get_current_user()->ID, $field_name);
+	$user_terms = get_ogranization_options($organization_id, $field_name);
 	$ids = wp_list_pluck($default_terms, 'term_id');
 	$uids = wp_list_pluck($user_terms, 'term_id');
 	$ids = array_merge($ids, $uids);
 	return $ids;
 }
 
-/**
- * Compare the default options with the user selected options and return true if there are differences
- * @param $options
- * @param $field_name
- * @return bool
- */
-function should_save_additional_options($options,$field_name){
-    $default_terms = get_field( "default_options_default_${field_name}s", 'option' );
-    $ids = wp_list_pluck($default_terms, 'term_id');
-    if(count(array_diff($ids, $options)) > 0){
-        return true;
-    }
-    return false;
-}
 
 /** Save user additional options
+ * @param null $organization_id || int | the organization id
  * @return void
  */
-function save_user_additional_options() {
-	$current_user = wp_get_current_user();
-    $saved = TRUE;
-	$organization_id = get_user_meta( $current_user->ID, 'organization', true );
+function save_user_additional_options($organization_id = null) {
+    $saved = FALSE;
+
+    if($organization_id === null) {
+        $current_user = wp_get_current_user();
+        $organization_id = get_user_meta( $current_user->ID, 'organization', true );
+    }
 
 	$field_names = ['pickup_location', 'screening_question', 'pickup_time', 'donation_option'];
 
-	foreach ($field_names as $field_name) {
-		if(isset($_POST['userportal_'.$field_name])){
-			$valid_ids = get_valid_organization_terms_ids($field_name);
-			$options = $_POST['userportal_'.$field_name];
-			$options = array_map('intval', $options);
-			$options = array_filter($options, function($option) use ($valid_ids){
-				return in_array($option, $valid_ids);
-			});
+    $organization = get_post($organization_id);
 
-//			if(!empty($options)
-//                && should_save_additional_options($options,$field_name)
-//            ){
-				$result = wp_set_object_terms($organization_id, $options, $field_name);
-//			}
-		}else{//user cleared all options for this field - remove all terms
-            $result = wp_set_object_terms($organization_id, [], $field_name);
-        }
+    if($organization) {
+        foreach ($field_names as $field_name) {
+            if (isset($_POST['userportal_' . $field_name])) {
+                $valid_ids = get_valid_organization_terms_ids($organization_id, $field_name);
+                $options = $_POST['userportal_' . $field_name];
+                $options = array_map('intval', $options);
+                $options = array_filter($options, function ($option) use ($valid_ids) {
+                    return in_array($option, $valid_ids);
+                });
 
-        if(is_wp_error($result)){
-            $saved = FALSE;
+                $result = wp_set_object_terms($organization_id, $options, $field_name);
+            } else {//user cleared all options for this field - remove all terms
+                $result = wp_set_object_terms($organization_id, [], $field_name);
+            }
+
+            if (!is_wp_error($result)) {
+                //mark organization options as user edited
+                set_useredited($organization_id);
+            }
         }
-	}
+    }
     return $saved;
 }

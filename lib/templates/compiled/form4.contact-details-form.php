@@ -126,7 +126,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
               <input size="1" type="tel" name="donor[phone]" value="'.htmlspecialchars((string)(($inary && isset($in['donor_phone'])) ? $in['donor_phone'] : null), ENT_QUOTES, 'UTF-8').'" id="donor_phone" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="(___) ___-____" required="required" aria-required="true" title="Only numbers and phone characters (#, -, *, etc) are accepted.">
             </div>
 
-            <div class="elementor-field-type-radio elementor-field-group elementor-column elementor-field-group-field_03140a8 elementor-col-100">
+            <!--<div class="elementor-field-type-radio elementor-field-group elementor-column elementor-field-group-field_03140a8 elementor-col-100">
               <label for="form-field-field_03140a8" class="elementor-field-label">Preferred method of contact:</label>
               <div class="elementor-field-subgroup  elementor-subgroup-inline">
                 <span class="elementor-field-option">
@@ -138,7 +138,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
                   <label for="form-field-field_03140a8-1">Phone</label>
                 </span>
               </div>
-            </div>
+            </div>-->
             <div class="elementor-field-type-select elementor-field-group elementor-column elementor-field-group-field_4393692 elementor-col-100">
               <label class="elementor-field-label">What led you to donate today?</label>
                 <div class="elementor-field elementor-select-wrapper ">
