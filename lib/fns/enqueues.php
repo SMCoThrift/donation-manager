@@ -81,6 +81,7 @@ function enqueue_scripts(){
 //     wp_enqueue_style( 'tom-select', DONMAN_PLUGIN_URL . 'lib/css/tom-select.css' );
 //     wp_enqueue_script( 'tom-select.complete.min', DONMAN_PLUGIN_URL . 'lib/js/tom-select.complete.min.js');
 //     wp_enqueue_script( 'pickupcodes', DONMAN_PLUGIN_URL . 'lib/js/pickupcodes.js');
+     wp_enqueue_script( 'userportal', DONMAN_PLUGIN_URL . 'lib/js/userportal.js');
 
 //     wp_localize_script('pickupcodes', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
 //         wp_enqueue_script( 'jquery' );

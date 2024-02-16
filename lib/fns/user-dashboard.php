@@ -429,10 +429,44 @@ function save_user_additional_options($organization_id = null) {
             }
 
             if (!is_wp_error($result)) {
-                //mark organization options as user edited
-                set_useredited($organization_id);
+                $saved = TRUE;
             }
         }
     }
+
+    if($saved) {
+        //mark organization options as user edited
+        set_useredited($organization_id);
+        set_userportal_notification('Organization options saved successfully', 'success', 'Options Saved');
+    }
+
     return $saved;
+}
+
+/**
+ * Set header content with userportal notification
+ * @param $message | string | the message of the notification
+ * @param null $type | string | the type of the notification | 'success' | 'error' | 'warning' | 'info'
+ * @param null $title | string | the title of the notification
+ * @return void
+ */
+function set_userportal_notification($message,$type=null ,$title = null) {
+    $notification_data = [
+        'message' => '',
+        'type' => '',
+        'title' => ''
+    ];
+    if($message !== null){
+        $notification_data['message'] = $message;
+    }
+    if($type !== null){
+        $notification_data['type'] = $type;
+    }
+    if($title !== null){
+        $notification_data['title'] = $title;
+    }
+
+    if(!empty($notification_data['message'])){
+        header( 'HX-Trigger-After-Settle: '.json_encode(['showUserportalNotification'=>$notification_data]));
+    }
 }
