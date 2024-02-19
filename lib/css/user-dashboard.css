@@ -133,7 +133,7 @@ ul.user-pickup-code li a {
     margin-top: 10px!important;
 }
 
-.b-additional-options-form {
+.b-additional-options-groups{
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 }
@@ -161,6 +161,11 @@ ul.user-pickup-code li a {
 .b-default-options__description {
 	color: #404040;
 	margin-top: 5px;
+}
+@media (max-width: 768px) {
+    .b-additional-options-groups{
+        grid-template-columns: 1fr;
+    }
 }
 
 
