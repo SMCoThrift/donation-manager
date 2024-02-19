@@ -309,16 +309,18 @@ function get_organization_additional_options($organization_id, $field_name) {
 	$terms = get_ogranization_options($organization_id, $field_name);
 
 	$form_terms = [];
-    $defaults_checked = false;
-    if(count($terms) === 0 && !is_useredited($organization_id)){
-        $defaults_checked = true;
+    if(!empty($default_terms)){
+        $defaults_checked = false;
+        if(count($terms) === 0 && !is_useredited($organization_id)){
+            $defaults_checked = true;
+        }
+        foreach ($default_terms as $term) {
+            $form_terms[$term->term_id] = [
+                'term' => $term,
+                'checked' => $defaults_checked
+            ];
+        }
     }
-	foreach ($default_terms as $term) {
-		$form_terms[$term->term_id] = [
-			'term' => $term,
-			'checked' => $defaults_checked
-		];
-	}
 
 	foreach ($terms as $term) {
 		$form_terms[$term->term_id] = [
@@ -326,8 +328,6 @@ function get_organization_additional_options($organization_id, $field_name) {
 			'checked' => true
 		];
 	}
-
-
 	return $form_terms;
 }
 

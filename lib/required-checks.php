@@ -32,15 +32,15 @@ if( defined( 'CLOUDINARY_CLOUD_NAME' ) && defined( 'CLOUDINARY_API_KEY' ) && def
  * Load Composer or display a notice if not loaded.
  */
 if( defined( 'BEDROCK_ENV' ) && true == BEDROCK_ENV ){
-  // nothing, Bedrock has already loaded our Composer Dependencies.
+    // nothing, Bedrock has already loaded our Composer Dependencies.
 } elseif( file_exists( DONMAN_PLUGIN_PATH . 'vendor/autoload.php' ) ){
-  require_once DONMAN_PLUGIN_PATH . 'vendor/autoload.php';
+    require_once DONMAN_PLUGIN_PATH . 'vendor/autoload.php';
 } else {
-  add_action( 'admin_notices', function(){
-    $class = 'notice notice-error';
-    $message = __( 'Missing required Composer libraries. Please run `composer install` from the root directory of this plugin.', 'donation-manager' );
-    printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-  } );
+    add_action( 'admin_notices', function(){
+        $class = 'notice notice-error';
+        $message = __( 'Missing required Composer libraries. Please run `composer install` from the root directory of this plugin.', 'donation-manager' );
+        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+    } );
 }
 
 /**
