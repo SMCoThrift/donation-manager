@@ -18,7 +18,7 @@ function current_user_info_shortcode() {
         <?php
         return ob_get_clean();
     } else {
-        return 'Please <a href="/wp-login.php">log in</a> to view your user information.';
+        return '<span class="b-userportal-not-loggedin-info">Please <a href="/wp-login.php">log in</a> to view your user information.</span>';
     }
 }
 add_shortcode( 'current_user_info', __NAMESPACE__ . '\\current_user_info_shortcode' );

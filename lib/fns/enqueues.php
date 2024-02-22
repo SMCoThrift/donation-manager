@@ -76,8 +76,9 @@ function enqueue_scripts(){
       } // switch( $_SESSION['donor']['form'] )
   } // if( isset( $_SESSION['donor']['form'] ) )
 
+  wp_enqueue_style( 'user-dashboard', DONMAN_PLUGIN_URL . 'lib/css/user-dashboard.css' );
+
   if(is_user_logged_in()) {
-     wp_enqueue_style( 'user-dashboard', DONMAN_PLUGIN_URL . 'lib/css/user-dashboard.css' );
 //     wp_enqueue_style( 'tom-select', DONMAN_PLUGIN_URL . 'lib/css/tom-select.css' );
 //     wp_enqueue_script( 'tom-select.complete.min', DONMAN_PLUGIN_URL . 'lib/js/tom-select.complete.min.js');
 //     wp_enqueue_script( 'pickupcodes', DONMAN_PLUGIN_URL . 'lib/js/pickupcodes.js');

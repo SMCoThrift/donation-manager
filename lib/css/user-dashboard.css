@@ -135,6 +135,18 @@ ul.user-pickup-code li a {
 .ts-dropdown-content {
     margin-top: 10px!important;
 }
+/* login forms */
+.dashboard_page-template-default .elementor-widget-login {
+    border: 2px solid #1981C5;
+    padding: 26px 24px 34px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+}
+.b-userportal-not-loggedin-info {
+    display: none;
+}
+
+/*additional options*/
 
 .b-additional-options-groups{
 	display: grid;
