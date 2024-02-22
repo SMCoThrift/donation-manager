@@ -6,28 +6,19 @@ use function DonationManager\organizations\{get_org_transdepts, is_useredited, s
 function current_user_info_shortcode() {
     if ( is_user_logged_in() ) {
         $current_user = wp_get_current_user();
-
-         $menu_name = 'dashboard-menu';
-                $menu = wp_get_nav_menu_object( $menu_name );
-                if ( $menu ) {
-                    // Menu exists, get the menu items
-                    $menu_items = wp_get_nav_menu_items( $menu->term_id );
-                    if ( $menu_items ) {
-                        // Loop through the menu items and output them
-                 echo '<div class = "avatar">'.get_avatar( $current_user->user_email ).'<span>'.esc_html($current_user->user_email).' </span>';
-                    echo '<ul class = "nav-user">';
-                        foreach ( $menu_items as $menu_item ) {
-                            // Output the menu item
-                            echo '<li><a href = "' . $menu_item->url . '">' .$menu_item->title. '</a></li>';
-                        }
-                    }
-                }
-                        echo '<li><a href = "'.wp_logout_url( home_url('/user-account/') ).'">Logout</a></li>';
-                     echo   '</ul>';
-                  echo '</div>';
-
+        ob_start();
+        ?>
+                <div class = "avatar"><?php echo get_avatar( $current_user->user_email ); ?>
+                    <span><?=esc_html($current_user->user_email) ?> </span>
+                    <ul class="nav-user">
+                        <li><a href = "<?=home_url('/dashboard/profile') ?>">Profile</a></li>
+                        <li><a href = "<?=wp_logout_url( home_url('/user-account/') ) ?>">Logout</a></li>
+                    </ul>
+                </div>
+        <?php
+        return ob_get_clean();
     } else {
-        return 'Please <a href="/wp-login.php">log in</a> to view your user information.';
+        return '<span class="b-userportal-not-loggedin-info">Please <a href="/wp-login.php">log in</a> to view your user information.</span>';
     }
 }
 add_shortcode( 'current_user_info', __NAMESPACE__ . '\\current_user_info_shortcode' );
@@ -470,3 +461,85 @@ function set_userportal_notification($message,$type=null ,$title = null) {
         header( 'HX-Trigger-After-Settle: '.json_encode(['showUserportalNotification'=>$notification_data]));
     }
 }
+
+/**
+ * Do not show the field in the dashboard for organization users
+ * @param $field
+ * @return false|mixed
+ */
+function exclude_form_field_from_dashboard( $field ) {
+    if ( is_user_logged_in() ) {
+        $current_user = wp_get_current_user();
+        if($current_user->has_cap('org')){
+            return false;
+        }
+    }
+    return $field;
+}
+
+// Apply to fields named "example_field".
+add_filter('acf/prepare_field/name=step_one_notice',  __NAMESPACE__ . '\\exclude_form_field_from_dashboard');
+
+/**
+ * Add a parameter to the login form redirect url to indicate that the user is resetting their password
+ * @param $redirect_to
+ * @return string
+ */
+function add_lost_pass_redirect_param($redirect_to)
+{
+    if(strpos($redirect_to, 'dashboard') !== false ){
+        $redirect_to = add_query_arg('urp', '1', $redirect_to);
+    }
+    return $redirect_to;
+}
+add_filter('lostpassword_redirect', __NAMESPACE__ . '\\add_lost_pass_redirect_param', 10, 1);
+
+/**
+ * Display a notification on the login page if the user is resetting their password
+ * @param $alerts
+ * @return mixed
+ */
+add_filter( 'pumd_userportal_notifications', function ($alerts){
+    if ( !is_user_logged_in() && isset($_GET['urp']) && $_GET['urp'] == 1) {
+        $alerts[] = [
+                'message' => 'Password change email has been sent to provided email address. Check your email and follow instructions to change your password.',
+                'type' => 'info',
+                'title' => 'Password Change'];
+    }
+    return $alerts;
+}, 10);
+
+/**
+ * Shortcode for displaying userportal notifications
+ * @param $alerts
+ * @return mixed
+ */
+function display_userportal_notification() {
+        $alerts = [];
+        $alerts = apply_filters( 'pumd_userportal_notifications', $alerts );
+
+        if(!empty($alerts)){
+        ob_start();
+        foreach ($alerts as $alert) {
+            $heading_widget = \Elementor\Plugin::instance()->elements_manager->create_element_instance(
+                [
+                    'elType' => 'widget',
+                    'widgetType' => 'alert',
+                    'id' => 'stubID',
+                    'settings' => [
+                        'alert_title' => $alert['title'],
+                        'alert_type' => $alert['type'],
+                        'alert_description' => $alert['message']
+                    ],
+                ],
+                []
+            );
+            $heading_widget->print_element();
+        }
+
+        return ob_get_clean();
+        }
+        ?>
+        <?php
+}
+add_shortcode( 'userportal_notifications', __NAMESPACE__ . '\\display_userportal_notification' );

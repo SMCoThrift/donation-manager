@@ -11,10 +11,8 @@
     position: absolute;
     background: #235776;
     list-style: none;
-    padding-left: 15px;
-    padding-right: 15px;
     left: 40px;
-    padding-bottom: 20px;
+    padding:0;
 }
 .avatar span {
     color: #fff;
@@ -26,9 +24,14 @@
 }
 .nav-user a {
     color: #fff;
+    padding:15px;
 }
 ul.nav-user li {
-    padding-top: 10px;
+    min-width: 160px;
+}
+ul.nav-user li:hover {
+    background: #F48223;
+    color: #fff;
 }
 .avatar:hover ul, li, a {
 	display: block;
@@ -132,17 +135,41 @@ ul.user-pickup-code li a {
 .ts-dropdown-content {
     margin-top: 10px!important;
 }
+/* login forms */
+.dashboard_page-template-default .elementor-widget-login {
+    border: 2px solid #1981C5;
+    padding: 26px 24px 34px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+}
+.b-userportal-not-loggedin-info {
+    display: none;
+}
+
+/*additional options*/
+.b-additional-options-form button {
+    margin-top: 20px;
+}
 
 .b-additional-options-groups{
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.b-default-options-wrapper {
+    display: flex;
+    flex-direction: column;
 }
 
 .b-default-options {
-	border: 1px solid #ccc;
-	margin: 20px 0;
+	border: 1px solid #ccd0d4;
+	margin: 0;
 	padding: 10px;
-	display:block;
+    flex-grow: 2;
+}
+.b-default-options__legend {
+    font-weight: 600;
 }
 
 .b-default-options__item {
