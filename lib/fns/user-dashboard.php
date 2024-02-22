@@ -461,3 +461,21 @@ function set_userportal_notification($message,$type=null ,$title = null) {
         header( 'HX-Trigger-After-Settle: '.json_encode(['showUserportalNotification'=>$notification_data]));
     }
 }
+
+/**
+ * Do not show the field in the dashboard for organization users
+ * @param $field
+ * @return false|mixed
+ */
+function exclude_form_field_from_dashboard( $field ) {
+    if ( is_user_logged_in() ) {
+        $current_user = wp_get_current_user();
+        if($current_user->has_cap('org')){
+            return false;
+        }
+    }
+    return $field;
+}
+
+// Apply to fields named "example_field".
+add_filter('acf/prepare_field/name=step_one_notice',  __NAMESPACE__ . '\\exclude_form_field_from_dashboard');
