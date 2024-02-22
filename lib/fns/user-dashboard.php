@@ -6,26 +6,17 @@ use function DonationManager\organizations\{get_org_transdepts, is_useredited, s
 function current_user_info_shortcode() {
     if ( is_user_logged_in() ) {
         $current_user = wp_get_current_user();
-
-         $menu_name = 'dashboard-menu';
-                $menu = wp_get_nav_menu_object( $menu_name );
-                if ( $menu ) {
-                    // Menu exists, get the menu items
-                    $menu_items = wp_get_nav_menu_items( $menu->term_id );
-                    if ( $menu_items ) {
-                        // Loop through the menu items and output them
-                 echo '<div class = "avatar">'.get_avatar( $current_user->user_email ).'<span>'.esc_html($current_user->user_email).' </span>';
-                    echo '<ul class = "nav-user">';
-                        foreach ( $menu_items as $menu_item ) {
-                            // Output the menu item
-                            echo '<li><a href = "' . $menu_item->url . '">' .$menu_item->title. '</a></li>';
-                        }
-                    }
-                }
-                        echo '<li><a href = "'.wp_logout_url( home_url('/user-account/') ).'">Logout</a></li>';
-                     echo   '</ul>';
-                  echo '</div>';
-
+        ob_start();
+        ?>
+                <div class = "avatar"><?php echo get_avatar( $current_user->user_email ); ?>
+                    <span><?=esc_html($current_user->user_email) ?> </span>
+                    <ul class="nav-user">
+                        <li><a href = "<?=home_url('/dashboard/profile') ?>">Profile</a></li>
+                        <li><a href = "<?=wp_logout_url( home_url('/user-account/') ) ?>">Logout</a></li>
+                    </ul>
+                </div>
+        <?php
+        return ob_get_clean();
     } else {
         return 'Please <a href="/wp-login.php">log in</a> to view your user information.';
     }
