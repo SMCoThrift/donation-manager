@@ -241,7 +241,7 @@
                     "name": "pickup_dates",
                     "aria-label": "",
                     "type": "checkbox",
-                    "instructions": "Select the days of the week this organization schedules donation pickups. (DEFAULT: Mon - Sat)",
+                    "instructions": "Select the days of the week this organization schedules donation pickups. (DEFAULT: Monday - Saturday).\r\n\r\n<p><strong>*If nothing is selected below, the \"Defaults\" will be shown for your Organization.<\/strong><\/p>",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -624,5 +624,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1708609527
+    "modified": 1708623839
 }
