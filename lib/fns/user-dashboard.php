@@ -479,3 +479,67 @@ function exclude_form_field_from_dashboard( $field ) {
 
 // Apply to fields named "example_field".
 add_filter('acf/prepare_field/name=step_one_notice',  __NAMESPACE__ . '\\exclude_form_field_from_dashboard');
+
+/**
+ * Add a parameter to the login form redirect url to indicate that the user is resetting their password
+ * @param $redirect_to
+ * @return string
+ */
+function add_lost_pass_redirect_param($redirect_to)
+{
+    if(strpos($redirect_to, 'dashboard') !== false ){
+        $redirect_to = add_query_arg('urp', '1', $redirect_to);
+    }
+    return $redirect_to;
+}
+add_filter('lostpassword_redirect', __NAMESPACE__ . '\\add_lost_pass_redirect_param', 10, 1);
+
+/**
+ * Display a notification on the login page if the user is resetting their password
+ * @param $alerts
+ * @return mixed
+ */
+add_filter( 'pumd_userportal_notifications', function ($alerts){
+    if ( !is_user_logged_in() && isset($_GET['urp']) && $_GET['urp'] == 1) {
+        $alerts[] = [
+                'message' => 'Password change email has been sent to provided email address. Check your email and follow instructions to change your password.',
+                'type' => 'info',
+                'title' => 'Password Change'];
+    }
+    return $alerts;
+}, 10);
+
+/**
+ * Shortcode for displaying userportal notifications
+ * @param $alerts
+ * @return mixed
+ */
+function display_userportal_notification() {
+        $alerts = [];
+        $alerts = apply_filters( 'pumd_userportal_notifications', $alerts );
+
+        if(!empty($alerts)){
+        ob_start();
+        foreach ($alerts as $alert) {
+            $heading_widget = \Elementor\Plugin::instance()->elements_manager->create_element_instance(
+                [
+                    'elType' => 'widget',
+                    'widgetType' => 'alert',
+                    'id' => 'stubID',
+                    'settings' => [
+                        'alert_title' => $alert['title'],
+                        'alert_type' => $alert['type'],
+                        'alert_description' => $alert['message']
+                    ],
+                ],
+                []
+            );
+            $heading_widget->print_element();
+        }
+
+        return ob_get_clean();
+        }
+        ?>
+        <?php
+}
+add_shortcode( 'userportal_notifications', __NAMESPACE__ . '\\display_userportal_notification' );
