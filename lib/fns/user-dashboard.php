@@ -341,28 +341,28 @@ function get_additional_options_form_data($user_id = null){
                 'type' => 'checkbox',
                 'name' => 'userportal_pickup_location',
                 'label' => 'Pickup Location',
-                'description' => 'Select the pickup location',
+                'description' => 'By selecting an option, you are indicating that you are able to pickup items in these locations',
                 'options' => get_organization_additional_options($organization->ID, 'pickup_location')
             ],
             [
                 'type' => 'checkbox',
                 'name' => 'userportal_screening_question',
                 'label' => 'Screening Question',
-                'description' => 'Select the screening question',
+                'description' => "Select the questions you would like to add to your organization's form. These questions will appear on Step 2 of the donation process. Donations that do not meet the criteria will be unable to proceed to step 3.",
                 'options' => get_organization_additional_options($organization->ID, 'screening_question')
             ],
             [
                 'type' => 'checkbox',
                 'name' => 'userportal_pickup_time',
                 'label' => 'Pickup Time',
-                'description' => 'Select the pickup time',
+                'description' => 'Select the time windows in which you perform donation pickups.  This is meant to give you an idea of what times would work mutually well for you and the donor.  Donation pickups are not scheduled on our platform',
                 'options' => get_organization_additional_options($organization->ID, 'pickup_time')
             ],
             [
                 'type' => 'checkbox',
                 'name' => 'userportal_donation_option',
                 'label' => 'Donation Option',
-                'description' => 'Select the donation option',
+                'description' => 'Select the categories that you would like to receive donation requests for.',
                 'options' => get_organization_additional_options($organization->ID, 'donation_option')
             ]
         ];
