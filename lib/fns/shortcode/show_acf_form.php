@@ -21,7 +21,7 @@ function show_acf_organization_form(){
         'post_title' => false,
         'fields' => ['monthly_report_emails', 'website', 'pickup_settings' ],
         'submit_value' => 'Save',
-        'updated_message' => get_alert( ['description' => 'Your information has been saved.', 'type' => 'info'] ),
+        'updated_message' => get_alert( ['description' => 'Your Organization information has been saved.', 'type' => 'success'] ),
       ]
     );
     return ob_get_clean();
