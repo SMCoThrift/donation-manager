@@ -1,0 +1,49 @@
+<div class="elementor-element elementor-element-8f9eed3 elementor-widget elementor-widget-heading" data-id="8f9eed3" data-element_type="widget" data-widget_type="heading.default">
+    <div class="elementor-widget-container">
+        <h2 class="elementor-heading-title elementor-size-default">Your Donation Quick Link</h2>
+    </div>
+</div>
+<div class="elementor-element elementor-element-5998029 elementor-widget elementor-widget-text-editor" data-id="5998029" data-element_type="widget" data-widget_type="text-editor.default">
+    <div class="elementor-widget-container">
+        <p>Use the following URL to provide your donors with a direct link into our system with your organization selected:</p>
+    </div>
+</div>
+<div class="elementor-element elementor-element-88f5be2 elementor-button-align-stretch elementor-widget elementor-widget-form">
+    <div class="elementor-widget-container">
+        <form class="elementor-form" method="post" name="New Form">
+            <div class="elementor-form-fields-wrapper elementor-labels-above">
+                <div class="elementor-field-type-text elementor-field-group elementor-column elementor-field-group-name elementor-col-100">
+                    <label for="form-field-name" class="elementor-field-label">
+                        Quick Link </label>
+                    <input size="1" type="text" name="form_fields[quick-link]" id="form-field-quick-link" class="elementor-field elementor-size-sm  elementor-field-textual" value="{{quick_link}}">
+                    <div id="quick-link-message"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    var inputField = document.getElementById('form-field-quick-link');
+
+    inputField.addEventListener('click', function() {
+        // Select the content of the input field
+        this.select();
+
+        // Copy the selected text to the clipboard using the Clipboard API
+        navigator.clipboard.writeText(this.value).then(function() {
+            console.log('Copying to clipboard was successful!');
+            // Update the #quick-link-message element with success message
+            var copiedMessageElement = document.getElementById('quick-link-message');
+            copiedMessageElement.textContent = 'Quick link copied!';
+
+            // Clear the message after 5 seconds
+            setTimeout(function() {
+                copiedMessageElement.textContent = '';
+            }, 5000);
+        }, function(err) {
+            console.error('Could not copy text: ', err);
+        });
+    });
+});  
+</script>
