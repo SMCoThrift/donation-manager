@@ -515,31 +515,16 @@ add_filter( 'pumd_userportal_notifications', function ($alerts){
  * @return mixed
  */
 function display_userportal_notification() {
-        $alerts = [];
-        $alerts = apply_filters( 'pumd_userportal_notifications', $alerts );
+  $alerts = [];
+  $alerts = apply_filters( 'pumd_userportal_notifications', $alerts );
 
-        if(!empty($alerts)){
-        ob_start();
-        foreach ($alerts as $alert) {
-            $heading_widget = \Elementor\Plugin::instance()->elements_manager->create_element_instance(
-                [
-                    'elType' => 'widget',
-                    'widgetType' => 'alert',
-                    'id' => 'stubID',
-                    'settings' => [
-                        'alert_title' => $alert['title'],
-                        'alert_type' => $alert['type'],
-                        'alert_description' => $alert['message']
-                    ],
-                ],
-                []
-            );
-            $heading_widget->print_element();
-        }
+  $alert_html = [];
+  if(!empty($alerts)){
+    foreach( $alerts as $alert ){
+      $alert_html[] = get_alert( ['title' => $alert['title'], 'description' => $alert['description'], 'type' => $alert['type'] ] );
+    }
+  }
 
-        return ob_get_clean();
-        }
-        ?>
-        <?php
+  return implode( '', $alert_html );
 }
 add_shortcode( 'userportal_notifications', __NAMESPACE__ . '\\display_userportal_notification' );
