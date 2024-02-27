@@ -47,6 +47,13 @@ foreach( $required_files as $file ){
 }
 
 /**
+ * Filter the path for our HTMX Templates
+ */
+add_filter( 'hxwp/get_template_file/templates_path', function( $template_path ){
+  return plugin_dir_path( __FILE__ ) . 'htmx-templates/';
+});
+
+/**
  * Load required libraries and check for required plugins.
  */
 require_once DONMAN_PLUGIN_PATH . 'lib/required-checks.php';
