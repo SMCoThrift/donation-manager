@@ -1,5 +1,9 @@
 /*DASHBOARD USER CSS*/
 /*top menu*/
+.avatar{
+    cursor: pointer;
+    text-align: right;
+}
 .avatar img {
     border-radius: 100%;
     height: 42px;
@@ -11,7 +15,7 @@
     position: absolute;
     background: #235776;
     list-style: none;
-    left: 40px;
+    right: 0;
     padding:0;
 }
 .avatar span {
@@ -27,13 +31,14 @@
     padding:15px;
 }
 ul.nav-user li {
+    text-align: left;
     min-width: 160px;
 }
 ul.nav-user li:hover {
     background: #F48223;
     color: #fff;
 }
-.avatar:hover ul, li, a {
+.avatar:hover ul, .avatar:hover ul li, .avatar:hover ul li a  {
 	display: block;
 	 z-index: 99;
 }

@@ -8,8 +8,8 @@ function current_user_info_shortcode() {
         $current_user = wp_get_current_user();
         ob_start();
         ?>
-                <div class = "avatar"><?php echo get_avatar( $current_user->user_email ); ?>
-                    <span><?=esc_html($current_user->user_email) ?> </span>
+                <div class="avatar"><?php echo get_avatar( $current_user->user_email ); ?>
+                    <!--<span><?=esc_html($current_user->user_email) ?> </span>-->
                     <ul class="nav-user">
                         <li><a href = "<?=home_url('/dashboard/profile') ?>">Profile</a></li>
                         <li><a href = "<?=wp_logout_url( home_url('/user-account/') ) ?>">Logout</a></li>
