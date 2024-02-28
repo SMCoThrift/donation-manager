@@ -154,7 +154,7 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
     );
     // Send the email
     $html = render_template( 'email.user-portal-notification', $hbs_vars );
-    wp_mail( $to, $subject, $message, $headers );
+    wp_mail( $to, $subject, $html, $headers );
   }
 }
 
