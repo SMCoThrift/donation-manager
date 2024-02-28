@@ -31,88 +31,85 @@ function show_acf_organization_form(){
 }
 add_shortcode( 'show_acf_organization_form', __NAMESPACE__ . '\\show_acf_organization_form' );
 
-
+/**
+ * Displays either the ACF Form for editing a Trans Dept or a list of available Trans Depts to edit.
+ *
+ * @return     string  HTML list of Trans Depts or form for editing a Trans Dept.
+ */
 function show_acf_transdept_form(){
-    $current_user = wp_get_current_user();
-    $organization_id = get_user_meta( $current_user->ID, 'organization', true );
-       // error_log( print_r( $organization_id, true ));
+  $current_user = wp_get_current_user();
+  $organization_id = get_user_meta( $current_user->ID, 'organization', true );
 
-    if( $organization_id ){
-      $trans_depts = get_org_transdepts( $organization_id , true);
-          //error_log( print_r( get_org_transdepts($organization_id), true ));
+  if( $organization_id ){
+    $trans_depts = get_org_transdepts( $organization_id , true);
 
-      $post_id = 'new_post';
-      $field_values = array();
+    $post_id = 'new_post';
+    $field_values = array();
 
-      // Check if the form has been submitted
-      if( isset( $_POST['acf'] ) && wp_verify_nonce( $_POST['acf']['_acf_nonce'], 'new_post' ) ) {
-        // If no Transportation Department exists for the current user,
-        // save our form data as a new Transportation Department.
+    // Check if the form has been submitted
+    if( isset( $_POST['acf'] ) && wp_verify_nonce( $_POST['acf']['_acf_nonce'], 'new_post' ) ) {
+      // If no Transportation Department exists for the current user,
+      // save our form data as a new Transportation Department.
 
-        // Save the form data
-        $post_id = acf_form_save_post( 'new_post' );
+      // Save the form data
+      $post_id = acf_form_save_post( 'new_post' );
 
-        // Automatically assign the organization of the user to the organization field
-        if( $post_id ) {
-          update_field( 'organization', $organization_id, $post_id );
-        }
-      } else {
-          // Retrieve the saved field values if the form hasn't been submitted
-          if( 1 === count( $trans_depts ) || isset($_GET['did'])) {
-
-            	$trans_dept_id = $trans_depts[0]->ID;
-			  if(isset($_GET['did']) && in_array($_GET['did'], wp_list_pluck($trans_depts, 'ID'))){
-				  $trans_dept_id = $_GET['did'];
-			  }
-
-            if( $trans_dept_id ):
-              $field_values['organization'] = get_field( 'organization', $trans_dept_id );
-              $field_values['contact_title'] = get_field( 'contact_title', $trans_dept_id );
-              $field_values['contact_name'] = get_field( 'contact_name', $trans_dept_id );
-              $field_values['contact_email'] = get_field( 'contact_email', $trans_dept_id );
-              $field_values['phone'] = get_field( 'phone', $trans_dept_id );
-
-              $pickup_codes = wp_get_post_terms( $trans_dept_id, 'pickup_code', [ 'fields' => 'names' ] );
-              uber_log('🔔 $pickup_codes = ' . print_r( $pickup_codes, true ) );
-
-              $field_values['pickup_codes'] = $pickup_codes;
-            endif;
-            ob_start();
-            acf_form( array(
-              'post_id' => $trans_dept_id, // Pass the post ID to the form
-              'post_title' => true,
-              'post_type' => 'trans_dept',
-              'new_post' => array(
-                  'post_type' => 'trans_dept',
-                  'post_status' => 'publish'
-              ),
-              'fields' => [ 'contact_title', 'contact_name', 'contact_email', 'phone' ],
-              'submit_value' => 'Update',
-              'field_values' => $field_values,
-              'updated_message' => get_alert([ 'description' => 'Your Transportation Department details have been updated.', 'type' => 'success' ]),
-            ) );
-            return ob_get_clean();
-
-          } else if( 1 < count( $trans_depts ) ) {
-			  ob_start();
-				  echo "<h3>Your Transportation Departments</h3>
-				  <p>Click transportation department name to edit</p>";
-			  foreach ($trans_depts as $trans_dept) {
-				  ?>
-					<ul>
-						<li><a href="?did=<?php echo( $trans_dept->ID ); ?>"><?php echo esc_html($trans_dept->post_title) ?></a></li>
-					</ul>
-				  <?php
-			  }
-			  return ob_get_clean();
-          }
+      // Automatically assign the organization of the user to the organization field
+      if( $post_id ) {
+        update_field( 'organization', $organization_id, $post_id );
       }
-
     } else {
-        return get_alert([ 'description' => 'Error: No Organization assigned to user.' ]);
-    }
-}
+      // Retrieve the saved field values if the form hasn't been submitted
+      if( 1 === count( $trans_depts ) || isset($_GET['did'])) {
 
+      	$trans_dept_id = $trans_depts[0]->ID;
+  		  if( isset( $_GET['did'] ) && in_array( $_GET['did'], wp_list_pluck( $trans_depts, 'ID' ) ) )
+  			  $trans_dept_id = $_GET['did'];
+
+        if( $trans_dept_id ):
+          $field_values['organization'] = get_field( 'organization', $trans_dept_id );
+          $field_values['contact_title'] = get_field( 'contact_title', $trans_dept_id );
+          $field_values['contact_name'] = get_field( 'contact_name', $trans_dept_id );
+          $field_values['contact_email'] = get_field( 'contact_email', $trans_dept_id );
+          $field_values['phone'] = get_field( 'phone', $trans_dept_id );
+
+          $pickup_codes = wp_get_post_terms( $trans_dept_id, 'pickup_code', [ 'fields' => 'names' ] );
+          uber_log('🔔 $pickup_codes = ' . print_r( $pickup_codes, true ) );
+
+          $field_values['pickup_codes'] = $pickup_codes;
+        endif;
+        ob_start();
+        acf_form( array(
+          'post_id' => $trans_dept_id, // Pass the post ID to the form
+          'post_title' => true,
+          'post_type' => 'trans_dept',
+          'new_post' => array(
+              'post_type' => 'trans_dept',
+              'post_status' => 'publish'
+          ),
+          'fields' => [ 'contact_title', 'contact_name', 'contact_email', 'phone' ],
+          'submit_value' => 'Update',
+          'field_values' => $field_values,
+          'updated_message' => get_alert([ 'description' => 'Your Transportation Department details have been updated.', 'type' => 'success' ]),
+        ) );
+        return ob_get_clean();
+
+      } else if( 1 < count( $trans_depts ) ) {
+        $html = [];
+        $html[] = '<h1>Your Transportation Departments</h1>';
+        $html[] = '<p>Select a transportation department below to edit:</p>';
+        $html[] = '<ul>';
+        foreach( $trans_depts as $trans_dept ){
+          $html[] = '<li><a href="?did=' .  $trans_dept->ID . '">' . esc_html( $trans_dept->post_title )  . '</a></li>';
+        }
+        $html[] = '</ul>';
+        return implode( "\n", $html );
+      }
+    }
+  } else {
+    return get_alert([ 'description' => 'Error: No Organization assigned to user.' ]);
+  }
+}
 add_shortcode( 'show_acf_transdept_form', __NAMESPACE__ . '\\show_acf_transdept_form' );
 
 function validate_and_save_zipcode( $valid, $value, $field, $input ){
