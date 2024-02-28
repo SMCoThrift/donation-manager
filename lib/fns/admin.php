@@ -422,9 +422,11 @@ add_filter('handle_bulk_actions-edit-trans_dept', function($redirect_url, $actio
 }, 10, 3);
 
 add_action('admin_notices', function() {
-	if (!empty($_REQUEST['depts-added'])) {
-		$orgs = (int) $_REQUEST['depts-added'];
-    $admin_user_url = site_url( 'users.php?role=org-inactive' );
-		echo "<div class=\"notice notice-success is-dismissible\"><p>${orgs} User Portal " . ngettext( 'account', 'accounts', $orgs ) . " has been created! <a href=\"${admin_user_url}\">Click here</a> to approve the new " . ngettext( 'user', 'users', $orgs ). ".</p></div>";
-	}
+  if ( ! empty( $_REQUEST['depts-added'] ) ) {
+    $orgs = (int) $_REQUEST['depts-added'];
+    $accounts_txt = ( 1 < $orgs )? 'accounts' : 'account';
+    $users_txt = ( 1 < $orgs )? 'users' : 'user';
+    $admin_user_url = site_url( 'wp-admin/users.php?role=org-inactive' );
+    echo "<div class=\"notice notice-success is-dismissible\"><p>${orgs} User Portal ${accounts_txt} has been created! <a href=\"${admin_user_url}\">Click here</a> to approve the new ${users_txt}.</p></div>";
+  }
 });
