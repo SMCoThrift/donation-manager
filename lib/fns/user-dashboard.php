@@ -12,7 +12,7 @@ function current_user_info_shortcode() {
                     <!--<span><?=esc_html($current_user->user_email) ?> </span>-->
                     <ul class="nav-user">
                         <li><a href = "<?=home_url('/dashboard/profile') ?>">Profile</a></li>
-                        <li><a href = "<?=wp_logout_url( home_url('/user-account/') ) ?>">Logout</a></li>
+                        <li><a href = "<?=wp_logout_url( home_url('/partner-benefits/') ) ?>">Logout</a></li>
                     </ul>
                 </div>
         <?php
