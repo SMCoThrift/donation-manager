@@ -7,7 +7,7 @@
     </mj-section>
     <mj-section background-color="#fff">
     	<mj-column>
-      	<mj-text font-family="Helvetica">
+      	<mj-text font-family="Helvetica" font-size="16px" line-height="20px">
         	{{{email_content}}}
         </mj-text>
       </mj-column>
