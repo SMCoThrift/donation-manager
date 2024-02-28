@@ -140,7 +140,7 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
     $site_title = get_bloginfo( 'title' );
     $hbs_vars = [ 'year' => date('Y'), 'header_logo' => DONMAN_PLUGIN_URL . 'lib/images/pickupmydonation-logo-inverted_1200x144.png' ];
     $to = $user->user_email;
-    $subject = 'Your Account Has Been Approved - ' . $site_title;
+    $subject = 'New Account (' . $site_title . ')';
 
 	  $key = get_password_reset_key( $user );
     $login = $user->user_email;
