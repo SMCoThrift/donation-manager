@@ -146,7 +146,7 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
 	  $url = network_site_url( "wp-login.php?action=rp&key=${key}&login=" . rawurlencode( $user->user_login ), 'login' );
 
     $site_title = get_bloginfo( 'title' );
-    $hbs_vars['email_content'] = "Hi " . $user->display_name . ",<br><br>Your User Portal account has been created at ${site_title}. You may now edit various details associated with your account.<br><br><a href=\"${url}\">Click here</a> to generate your password so you can login.<br><br>Best Regards,<br>The ${site_title} Team";
+    $hbs_vars['email_content'] = "Hi " . ucfirst( $user->display_name ) . ",<br><br>Your User Portal account has been created at ${site_title}. You may now edit various details associated with your account.<br><br><a href=\"${url}\">Click here</a> to generate your password so you can login.<br><br>Best Regards,<br>The ${site_title} Team";
 
     $headers = array(
       'Content-Type: text/html; charset=UTF-8',
