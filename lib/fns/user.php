@@ -204,10 +204,10 @@ function dept_to_user_account( $trans_dept_id ) {
  * @return void
  */
 function my_login_stylesheet() {
-	wp_enqueue_style( 'custom-login', DONMAN_PLUGIN_URL . '/lib/css/login.css' );
+	wp_enqueue_style( 'custom-login', DONMAN_PLUGIN_URL . 'lib/css/login.css' );
   ?>
   <style>
-    #login h1 a, .login h1 a{background-image: url(<?= DONMAN_PLUGIN_URL . '/lib/images/pickupmydonation-logo.800x96.png' ?>);}
+    #login h1 a, .login h1 a{background-image: url(<?= DONMAN_PLUGIN_URL . 'lib/images/pickupmydonation-logo.800x96.png' ?>);}
   </style>
   <?php
 }
