@@ -424,6 +424,7 @@ add_filter('handle_bulk_actions-edit-trans_dept', function($redirect_url, $actio
 add_action('admin_notices', function() {
 	if (!empty($_REQUEST['depts-added'])) {
 		$orgs = (int) $_REQUEST['depts-added'];
-		echo "<div class=\"notice notice-success is-dismissible\"><p>${orgs} User Portal " . ngettext( 'account', 'accounts', $orgs ) . " has been created!</p></div>";
+    $admin_user_url = site_url( 'users.php?role=org-inactive' );
+		echo "<div class=\"notice notice-success is-dismissible\"><p>${orgs} User Portal " . ngettext( 'account', 'accounts', $orgs ) . " has been created! <a href=\"${admin_user_url}\">Click here</a> to approve the new " . ngettext( 'user', 'users', $orgs ). ".</p></div>";
 	}
 });
