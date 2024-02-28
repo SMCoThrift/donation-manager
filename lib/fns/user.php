@@ -137,15 +137,15 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
     }
 
     // Notify the user via email:
+    $site_title = get_bloginfo( 'title' );
     $hbs_vars = [ 'year' => date('Y'), 'header_logo' => DONMAN_PLUGIN_URL . 'lib/images/pickupmydonation-logo-inverted_1200x144.png' ];
     $to = $user->user_email;
-    $subject = 'Your Account Has Been Approved';
+    $subject = 'Your Account Has Been Approved - ' . $site_title;
 
 	  $key = get_password_reset_key( $user );
     $login = $user->user_email;
 	  $url = network_site_url( "wp-login.php?action=rp&key=${key}&login=" . rawurlencode( $user->user_login ), 'login' );
 
-    $site_title = get_bloginfo( 'title' );
     $hbs_vars['email_content'] = "Hi " . ucfirst( $user->display_name ) . ",<br><br>Your User Portal account has been created at ${site_title}. You may now edit various details associated with your account.<br><br><a href=\"${url}\">Click here</a> to generate your password so you can login.<br><br>Best Regards,<br>The ${site_title} Team";
 
     $headers = array(
