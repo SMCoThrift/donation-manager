@@ -76,7 +76,7 @@ function enqueue_scripts(){
       } // switch( $_SESSION['donor']['form'] )
   } // if( isset( $_SESSION['donor']['form'] ) )
 
-  wp_enqueue_style( 'user-dashboard', DONMAN_PLUGIN_URL . 'lib/css/user-dashboard.css' );
+  wp_enqueue_style( 'user-dashboard', DONMAN_PLUGIN_URL . 'lib/css/user-dashboard.css', null, filemtime( DONMAN_PLUGIN_PATH . 'lib/css/user-dashboard.css' ) );
 
   if(is_user_logged_in()) {
 //     wp_enqueue_style( 'tom-select', DONMAN_PLUGIN_URL . 'lib/css/tom-select.css' );
