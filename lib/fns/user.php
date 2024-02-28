@@ -159,40 +159,42 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
 add_action( 'set_user_role', __NAMESPACE__ . '\\change_department_user_role', 10, 3 );
 
 /**
- *  Create a user account for a department and set department as it's organization as user meta fields
- * @param $id_dept int The department post id
- * @return int|boolean The user id or FALSE if the user already exists
+ * Create a WordPress User for a Transportation Department and set the user's `department` and `organization` meta fields.
+ *
+ * @param      int  $trans_dept_id  The Transportation Department ID.
+ *
+ * @return     mixed  The User ID upon success or FALSE;
  */
-function dept_to_user_account($id_dept)
-{
-	$user_id = FALSE;
-	$dept = get_post($id_dept);
-	$dept_name = $dept->post_title;
-	$dept_slug = $dept->post_name;
-	$dept_email = trim(explode(',', get_field('contact_email', $id_dept))[0]);
-	$id_org = get_post_meta($id_dept, 'organization', true);
+function dept_to_user_account( $trans_dept_id ) {
+	$user_id = false;
+	$trans_dept = get_post( $trans_dept_id );
+	$trans_dept_name = $trans_dept->post_title;
+	$trans_dept_slug = $trans_dept->post_name;
+	$trans_dept_email = trim( explode( ',', get_field( 'contact_email',  $trans_dept_id ) ) [0] );
+	$org_id = get_post_meta( $trans_dept_id , 'organization', true);
 
-	if (!email_exists($dept_email)) {
+	if ( ! email_exists( $trans_dept_email ) ) {
+    $email_parts = explode( '@', $trans_dept_email );
 		$user_data = array(
-			'user_login' => $dept_email,
+			'user_login' => $trans_dept_email,
 			'user_pass' => wp_generate_password(12),
-			'user_email' => $dept_email,
-			'first_name' => $dept_name,
+			'user_email' => $trans_dept_email,
+			'display_name' => $email_parts[0],
 			'role' => 'org-inactive',
 		);
 
-		$user_id = wp_insert_user($user_data);
+		$user_id = wp_insert_user( $user_data );
 
-		if (is_wp_error($user_id)) {
-			error_log('Error creating user: ' . $user_id->get_error_message());
+		if ( is_wp_error( $user_id ) ) {
+			error_log( 'Error creating user: ' . $user_id->get_error_message() );
 		}else{
 			$user = new \WP_User( $user_id );
-			add_user_meta( $user_id, 'department', $id_dept, false );
-			add_user_meta( $user_id, 'organization', $id_org, true );
+			add_user_meta( $user_id, 'department',  $trans_dept_id , false );
+			add_user_meta( $user_id, 'organization', $org_id, true );
 		}
 		return $user_id;
-	}else{
-		return FALSE;
+	} else {
+		return false;
 	}
 
 }
@@ -203,6 +205,11 @@ function dept_to_user_account($id_dept)
  */
 function my_login_stylesheet() {
 	wp_enqueue_style( 'custom-login', DONMAN_PLUGIN_URL . '/lib/css/login.css' );
+  ?>
+  <style>
+    #login h1 a, .login h1 a{background-image: url(<?= DONMAN_PLUGIN_URL . '/lib/images/pickupmydonation-logo.800x96.png' ?>);}
+  </style>
+  <?php
 }
 add_action( 'login_enqueue_scripts',  __NAMESPACE__ .'\\my_login_stylesheet' );
 
