@@ -137,6 +137,7 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
     }
 
     // Notify the user via email:
+    $hbs_vars = [ 'year' => date('Y'), 'header_logo' => DONMAN_PLUGIN_URL . 'lib/images/pickupmydonation-logo-inverted_1200x144.png' ];
     $to = $user->user_email;
     $subject = 'Your Account Has Been Approved';
 
@@ -145,13 +146,14 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
 	  $url = network_site_url( "wp-login.php?action=rp&key=${key}&login=" . rawurlencode( $user->user_login ), 'login' );
 
     $site_title = get_bloginfo( 'title' );
-    $message = "Hi " . $user->display_name . ",<br><br>Your User Portal account has been created at ${site_title}. You may now edit various details associated with your account.<br><br><a href=\"${url}\">Click here</a> to generate your password so you can login.<br><br>Best Regards,<br>The ${site_title} Team";
+    $hbs_vars['email_content'] = "Hi " . $user->display_name . ",<br><br>Your User Portal account has been created at ${site_title}. You may now edit various details associated with your account.<br><br><a href=\"${url}\">Click here</a> to generate your password so you can login.<br><br>Best Regards,<br>The ${site_title} Team";
 
     $headers = array(
       'Content-Type: text/html; charset=UTF-8',
       'From: ' . get_bloginfo( 'name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>',
     );
     // Send the email
+    $html = render_template( 'email.user-portal-notification', $hbs_vars );
     wp_mail( $to, $subject, $message, $headers );
   }
 }

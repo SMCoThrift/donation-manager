@@ -1,0 +1,23 @@
+<mjml>
+  <mj-body background-color="#eee">
+    <mj-section background-color="#fff" padding="0">
+      <mj-column background-color="#1081C4" padding="10px">
+        <mj-image src="{{header_logo}}" width="420px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#fff">
+    	<mj-column>
+      	<mj-text font-family="Helvetica">
+        	{{email_content}}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+    	<mj-column>
+      	<mj-text align="center">
+        	&copy 2012-{{year}} PickUpMyDonation.com. All rights reserved.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
