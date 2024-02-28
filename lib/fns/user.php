@@ -1,7 +1,7 @@
 <?php
 
 namespace DonationManager\users;
-
+use function DonationManager\templates\{render_template};
 
 /**
  * Registers a new user.
