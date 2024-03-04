@@ -64,6 +64,10 @@ function get_user_portal_org_page_html( $atts ){
   if( 'organization' != get_post_type( $args['org_id'] ) )
     return get_alert(['description' => 'No Organization found for ID ' . $args['org_id'] . '.', 'type' => 'danger']);
 
+  $show_org_page = get_field( 'org_page', $args['org_id'] );
+  if( ! $show_org_page )
+    return '<h2>Your Organization SEO Page</h2>' . get_alert(['description' => 'Your Organization SEO Page is not currently enabled. Please contact <a href="mailto:support@pickupmydonation.com?subject=Our%20Organization%20SEO%20Page">support@pickupmydonation.com</a> for details on how to get it activated.', 'type' => 'info']);
+
   $org_page_url = get_org_page_url( ['org_id' => $args['org_id'] ] );
 
   return render_template( 'user-portal-organization-page', ['org_page_url' => $org_page_url]);
