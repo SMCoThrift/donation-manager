@@ -11,8 +11,8 @@ function current_user_info_shortcode() {
                 <div class="avatar"><?php echo get_avatar( $current_user->user_email ); ?>
                     <!--<span><?=esc_html($current_user->user_email) ?> </span>-->
                     <ul class="nav-user">
-                        <li><a href = "<?=home_url('/dashboard/profile') ?>">Profile</a></li>
-                        <li><a href = "<?=wp_logout_url( home_url('/partner-benefits/') ) ?>">Logout</a></li>
+                        <li><a href="<?= home_url('/dashboard/profile') ?>">Profile</a></li>
+                        <li><a href="<?= wp_logout_url( home_url('/partner-benefits/') ) ?>">Logout</a></li>
                     </ul>
                 </div>
         <?php
@@ -177,7 +177,7 @@ function user_pickup_codes() {
         $output .= '<p>You are picking up donation for these pickup codes:</p>';
         $output .= '<ul class = "user-pickup-code">';
           foreach ($terms as $term) {
-            $output .='<li> <a class="removed-pickupcode" value="'.$term.'" href = "#"> '.$term.' <i class="fa fa-times" aria-hidden="true"></i></a></li>';
+            $output .='<li> <a class="removed-pickupcode" value="'.$term.'" href="#"> '.$term.' <i class="fa fa-times" aria-hidden="true"></i></a></li>';
           }
        $output .= '</ul>';
     }else {
