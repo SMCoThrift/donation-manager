@@ -97,7 +97,10 @@ function is_pickup_code_available_callback() {
 add_action('wp_ajax_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
 add_action('wp_ajax_nopriv_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
 
-
+function get_additional_options_form(){
+  return '<div hx-get="/wp-htmx/v1/userportal/additional-options" hx-trigger="load" hx-swap="outerHTML">Loading...</div>';
+}
+add_shortcode( 'get_additional_options_form', __NAMESPACE__ . '\\get_additional_options_form' );
 
 function pickup_form_shortcode() {
   ob_start();
