@@ -3,6 +3,11 @@ namespace DonationManager\users;
 use function DonationManager\utilities\{get_alert};
 use function DonationManager\organizations\{get_org_transdepts, is_useredited, set_useredited};
 
+/**
+ * Displays a dropdown including the current user's avatar with links to his/her profile and "Logout".
+ *
+ * @return     string  HTML for the Current User's avatar and dropdown.
+ */
 function current_user_info_shortcode() {
     if ( is_user_logged_in() ) {
         $current_user = wp_get_current_user();
@@ -23,39 +28,44 @@ function current_user_info_shortcode() {
 }
 add_shortcode( 'current_user_info', __NAMESPACE__ . '\\current_user_info_shortcode' );
 
-// CHANGE THE STATUS OF THE USER ORGANIZATION TO PUBLISH AFTER HE SAVED
-function my_publish_organization( $post_id ) {
-    // Check if this is an Organization post type
-    if ( get_post_type( $post_id ) !== 'organization' ) {
-        return;
-    }
+/**
+ * Publishes an organization when saving via an ACF Form.
+ *
+ * @param      int  $post_id  The post identifier
+ */
+function publish_org_on_save( $post_id ) {
+  // Check if this is an Organization post type
+  if ( get_post_type( $post_id ) !== 'organization' )
+    return;
 
-    // Check if the post is already published
-    if ( get_post_status( $post_id ) === 'publish' ) {
-        return;
-    }
+  // Check if the post is already published
+  if ( get_post_status( $post_id ) === 'publish' )
+    return;
 
-    // Set the post status to "publish"
-    $post = ['ID' => $post_id, 'post_status' => 'publish',];
-    wp_update_post( $post );
+  // Set the post status to "publish"
+  $post = [ 'ID' => $post_id, 'post_status' => 'publish' ];
+  wp_update_post( $post );
 }
-add_action( 'acf/save_post', __NAMESPACE__ . '\\my_publish_organization', 20 );
+add_action( 'acf/save_post', __NAMESPACE__ . '\\publish_org_on_save', 20 );
 
 
+/**
+ * Checks if a pickup code is available for assigning to a Transportation Department.
+ *
+ * Do this check for each pickup_code:
+ *
+ * 1. Is the "pickup_code" assigned to *any* trans_dept? If "no", "code is available".
+ * 2. If "yes", if the trans_dept the child of a priority org? If "yes", code is available.
+ * 3. If "no", code is not available.
+ *
+ * @return  string  A string indicating available pickup codes
+ */
 function is_pickup_code_available_callback() {
-  /**
-   * Do this check for each pickup_code:
-   *
-   * 1. Is the "pickup_code" assigned to *any* trans_dept? If "no", "code is available".
-   * 2. If "yes", if the trans_dept the child of a priority org? If "yes", code is available.
-   * 3. If "no", code is not available.
-   */
   $codes = explode(',', $_POST['codes']);
   $available_codes = array();
 
   // $organization_id = get_user_meta( $current_user->ID, 'organization', true );
   // $priority_settings_account = get_field('pickup_settings', $organization_id);
-
 
   foreach ($codes as $code) {
     $term = get_term_by('name', trim($code), 'pickup_code');
@@ -97,6 +107,11 @@ function is_pickup_code_available_callback() {
 add_action('wp_ajax_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
 add_action('wp_ajax_nopriv_check_pickup_code', __NAMESPACE__ . '\\is_pickup_code_available_callback');
 
+/**
+ * Gets the Additional Options form.
+ *
+ * @return     string  The additional options form.
+ */
 function get_additional_options_form(){
   return '<div hx-get="/wp-htmx/v1/userportal/additional-options" hx-trigger="load" hx-swap="outerHTML">Loading...</div>';
 }
@@ -270,8 +285,11 @@ function show_account_owner_stats()
 }
 add_shortcode( 'pumd_stats', __NAMESPACE__ . '\\show_account_owner_stats' );
 
-/** Get default options for the organization
+/**
+ * Get default options for the organization
+ *
  * @param $field_name | string | the field name | 'pickup_location' | 'screening_question' | 'pickup_time'| 'donation_option'
+ *
  * @return array
  */
 function get_organization_default_options($field_name) {
@@ -281,7 +299,9 @@ function get_organization_default_options($field_name) {
 }
 
 
-/** Get the organization options
+/**
+ * Get the organization options
+ *
  * @param $organization_id
  * @param $field_name 	| string | the field name | 'pickup_location' | 'screening_question' | 'pickup_time'| 'donation_option'
  * @return array|\WP_Error
@@ -326,7 +346,9 @@ function get_organization_additional_options($organization_id, $field_name) {
 }
 
 
-/** Retrieve the form data for the additional options form
+/**
+ * Retrieve the form data for the additional options form
+ *
  * @return array
  */
 function get_additional_options_form_data($user_id = null){
@@ -378,6 +400,7 @@ function get_additional_options_form_data($user_id = null){
 
 /**
  * Get list of ID's for default organization options and currently set organization specific options
+ *
  * @param $field_name
  * @return array
  */
@@ -391,7 +414,9 @@ function get_valid_organization_terms_ids($organization_id,$field_name) {
 }
 
 
-/** Save user additional options
+/**
+ * Save user additional options
+ *
  * @param null $organization_id || int | the organization id
  * @return void
  */
@@ -439,9 +464,11 @@ function save_user_additional_options($organization_id = null) {
 
 /**
  * Set header content with userportal notification
+ *
  * @param $message | string | the message of the notification
  * @param null $type | string | the type of the notification | 'success' | 'error' | 'warning' | 'info'
  * @param null $title | string | the title of the notification
+ *
  * @return void
  */
 function set_userportal_notification($message,$type=null ,$title = null) {
