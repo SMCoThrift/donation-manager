@@ -88,9 +88,9 @@ if( isset( $_POST['donor']['options'] ) ) {
     }
   } else {
     $errors = $form->getErrors();
-    if( true == $errors['options']['checked'] )
+    if( is_array( $errors ) && array_key_exists( 'options', $errors ) && true == $errors['options']['checked'] )
         $msg[] = 'Please select at least one donation item.';
-    if( true == $errors['description']['required'] )
+    if( is_array( $errors ) && array_key_exists( 'description', $errors ) && true == $errors['description']['required'] )
         $msg[] = 'Please enter a description of your item(s).';
     DonationManager\globals\add_html( get_alert([
       'type'        => 'danger',
