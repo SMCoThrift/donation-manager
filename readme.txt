@@ -4,13 +4,17 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.4.3
 Requires PHP: 8.0
-Stable tag: 4.3.1
+Stable tag: 4.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.4.0 =
+* Adding `org`, `org-inactive`, and `rejected` user roles.
+* Login/logout redirects for `org` users.
 
 = 4.3.1 =
 * Adding `[get_additional_options_form]` for loading Additional Organization Options form in the User Portal.
