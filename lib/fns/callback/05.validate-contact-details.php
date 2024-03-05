@@ -100,7 +100,7 @@ if( isset( $_POST['donor']['address'] ) ) {
     if( DMDEBUG_VERBOSE )
       uber_log('🔔 $skip_pickup_dates_array = ' . print_r( $skip_pickup_dates_array, true ) );
 
-    $skip_pickup_dates = ( array_key_exists( 0, $skip_pickup_dates_array ) )? $skip_pickup_dates_array[0] : false ;
+    $skip_pickup_dates = ( is_array( $skip_pickup_dates_array ) && array_key_exists( 0, $skip_pickup_dates_array ) )? $skip_pickup_dates_array[0] : false ;
     if( DMDEBUG_VERBOSE )
       uber_log( '🔔 $skip_pickup_dates = ' . $skip_pickup_dates );
     $_SESSION['donor']['form'] = ( 'yes' == $skip_pickup_dates )? 'location-of-items' : 'select-preferred-pickup-dates';

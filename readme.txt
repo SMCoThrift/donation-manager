@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.4.3
 Requires PHP: 8.0
-Stable tag: 4.4.0
+Stable tag: 4.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.4.1 =
+* BUGFIX: Checking if variable is an array before running `array_key_exists()` in `/lib/fns/callback/05.validate-contact-details.php`.
 
 = 4.4.0 =
 * Adding `org`, `org-inactive`, and `rejected` user roles.
