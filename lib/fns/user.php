@@ -66,6 +66,7 @@ add_action( 'elementor_pro/forms/new_record', __NAMESPACE__ . '\\register_user',
  *
  * - `org` with capability `view_dashboard`
  * - `org-inactive` with no capabilities.
+ * - `rejected` user role.
  */
 function custom_add_user_roles() {
   // Add 'org' role with 'view_dashboard' capability
@@ -73,6 +74,16 @@ function custom_add_user_roles() {
 
   // Add 'org-inactive' role with no capabilities
   add_role( 'org-inactive', 'Organization Non-Approved', array() );
+
+  add_role(
+    'rejected',
+    __( 'Rejected', 'pickupmydonation' ),
+    array(
+        'read'         => true,
+        'edit_posts'   => false,
+        'delete_posts' => false,
+    )
+  );
 }
 add_action( 'init', __NAMESPACE__ . '\\custom_add_user_roles' );
 
@@ -161,22 +172,6 @@ add_action( 'admin_init', __NAMESPACE__ . '\\redirect_org_users_from_admin' );
 //}
 //
 //add_filter( 'manage_users_custom_column', __NAMESPACE__ . '\\custom_user_column_content', 10, 3 );
-
-
-
-//ADD ROLE REJECTED
-function add_rejected_role() {
-    add_role(
-        'rejected',
-        __( 'Rejected', 'pickupmydonation' ),
-        array(
-            'read'         => true,
-            'edit_posts'   => false,
-            'delete_posts' => false,
-        )
-    );
-}
-add_action( 'init', __NAMESPACE__ . '\\add_rejected_role' );
 
 /**
  * Assign a Transportation Department to a user and send them a notification
