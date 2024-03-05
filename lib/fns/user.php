@@ -61,6 +61,76 @@ function register_user( $record, $handler ){
 }
 add_action( 'elementor_pro/forms/new_record', __NAMESPACE__ . '\\register_user', 10, 2 );
 
+/**
+ * Add custom user roles:
+ *
+ * - `org` with capability `view_dashboard`
+ * - `org-inactive` with no capabilities.
+ */
+function custom_add_user_roles() {
+  // Add 'org' role with 'view_dashboard' capability
+  add_role( 'org', 'Organization', array( 'view_dashboard' => true ) );
+
+  // Add 'org-inactive' role with no capabilities
+  add_role( 'org-inactive', 'Organization Non-Approved', array() );
+}
+add_action( 'init', __NAMESPACE__ . '\\custom_add_user_roles' );
+
+/**
+ * Redirect `org` users upon login.
+ *
+ * @param      string  $redirect_to  The redirect to URL
+ * @param      obj     $request      The request object
+ * @param      obj     $user         The user object
+ *
+ * @return     string  The Redirect URL
+ */
+function custom_login_redirect( $redirect_to, $request, $user ) {
+  // Is there a user to check?
+  if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+    // Check if the user has the 'org' role
+    if ( in_array( 'org', $user->roles ) ) {
+      // Redirect them to the 'dashboard/start/' page
+      return home_url( '/dashboard/start/' );
+    } else {
+      // Otherwise, return the default redirect_to location
+      return $redirect_to;
+    }
+  } else {
+    // If no user data is available, return default redirect_to location
+    return $redirect_to;
+  }
+}
+add_filter( 'login_redirect', __NAMESPACE__ . '\\custom_login_redirect', 10, 3 );
+
+/**
+ * Custom redirect for `org` users upon logout.
+ */
+function custom_logout_redirect() {
+  // Check if the current user has the 'org' role
+  $user = wp_get_current_user();
+  if ( in_array( 'org', (array) $user->roles ) ) {
+    // Redirect to '/partner-benefits/' page
+    wp_redirect( home_url( '/partner-benefits/' ) );
+    exit;
+  }
+}
+add_action( 'wp_logout', __NAMESPACE__ . '\\custom_logout_redirect' );
+
+/**
+ * Prevent 'org' users from accessing the WP Admin and redirect them
+ */
+function redirect_org_users_from_admin() {
+  $user = wp_get_current_user();
+
+  // Check if the user has the 'org' role
+  if ( in_array( 'org', (array) $user->roles ) && is_admin() && !defined( 'DOING_AJAX' ) ) {
+    // Redirect them to '/dashboard/start/'
+    wp_redirect( home_url( '/dashboard/start/' ) );
+    exit;
+  }
+}
+add_action( 'admin_init', __NAMESPACE__ . '\\redirect_org_users_from_admin' );
 
 ////STATUS ADMIN ROLE USERS DISPLAY COLUMN
 //function custom_user_columns( $columns ) {
