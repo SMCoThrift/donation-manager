@@ -4,13 +4,16 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.4.3  
 **Requires PHP:** 8.0  
-**Stable tag:** 4.4.4  
+**Stable tag:** 4.4.4.1  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.4.4.1 ###
+* BUGFIX: Additional image path corrections in email templates.
 
 ### 4.4.4 ###
 * BUGFIX: Correcting image paths in email templates.

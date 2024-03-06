@@ -26,7 +26,7 @@
     </mj-section>
     <mj-section padding="0">
       <mj-column>
-         <mj-image src="https://pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/smco-training-conference-2022.jpg" width="600px" padding="0" href="https://smcothrift.com/conference/"></mj-image>
+         <mj-image src="https://pickupmydonation.com/app/plugins/donation-manager/lib/images/smco-training-conference-2022.jpg" width="600px" padding="0" href="https://smcothrift.com/conference/"></mj-image>
       </mj-column>    	
     </mj-section>
     <mj-section background-color="#363636">
