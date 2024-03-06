@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.4.3
 Requires PHP: 8.0
-Stable tag: 4.4.2
+Stable tag: 4.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.4.3 =
+* BUGFIX: Hard-coding `from:support@pickupmydonation.com` for  Sender Authentication in New Account Email.
 
 = 4.4.2 =
 * BUGFIX: Checking for array and array key before checking variable.

@@ -215,7 +215,7 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
 
     $headers = array(
       'Content-Type: text/html; charset=UTF-8',
-      'From: ' . get_bloginfo( 'name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>',
+      'From: ' . get_bloginfo( 'name' ) . ' <support@pickupmydonation.com>',
     );
     // Send the email
     $html = render_template( 'email.user-portal-notification', $hbs_vars );
