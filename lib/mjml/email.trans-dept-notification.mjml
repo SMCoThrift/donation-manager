@@ -3,7 +3,7 @@
     <mj-column><mj-text align="left" padding="0px" font-size="24px" font-weight="600" color="#6f6f6f">
       Donation Notification<br><span style="font-size: 14px; line-height: 18px; font-weight: normal; color: #000;">From: {{donor_name}}, {{{contact_info}}}<br>To: {{organization_name}}</span></mj-text>
       </mj-column>
-      <mj-column><mj-image align="right" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/pickupmydonation.1200x143.png"></mj-image></mj-column>    
+      <mj-column><mj-image align="right" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/pickupmydonation.1200x143.png"></mj-image></mj-column>
   </mj-section>
   <mj-section background-color="#fff" padding="20px" padding-bottom="0px">
     <mj-column background-color="#fff">
@@ -35,9 +35,9 @@
   <mj-section background-color="#363636">
     <mj-column>
       <mj-social mode="horizontal" icon-size="30px">
-        <mj-social-element name="twitter-noshare" href="https://twitter.com/pickupdonations" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/twitter.png"></mj-social-element>
-        <mj-social-element name="facebook-noshare" href="https://www.facebook.com/PickUpMyDonationcom" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/facebook.png"></mj-social-element>
-        <mj-social-element name="instagram-noshare" href="https://www.instagram.com/pickupdonations/" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/instagram.png"></mj-social-element>
+        <mj-social-element name="twitter-noshare" href="https://twitter.com/pickupdonations" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/twitter.png"></mj-social-element>
+        <mj-social-element name="facebook-noshare" href="https://www.facebook.com/PickUpMyDonationcom" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/facebook.png"></mj-social-element>
+        <mj-social-element name="instagram-noshare" href="https://www.instagram.com/pickupdonations/" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/instagram.png"></mj-social-element>
       </mj-social>
       <mj-text align="center" color="#fff" line-height="20px">&copy; 2012 &ndash; 2023 PickUpMyDonation.com. All rights reserved.<br>
         <a href="https://www.pickupmydonation.com/email-preferences?email={{{email}}}" style="color: #f68428; text-decoration: none;">Unsubscribe from these emails.</a></mj-text>

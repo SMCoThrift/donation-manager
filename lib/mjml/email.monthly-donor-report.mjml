@@ -1,7 +1,7 @@
 <mj-body background-color="#eeebeb">
     <mj-section padding-bottom="10px">
         <mj-column width="100%">
-            <mj-image width="550" src="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/pickupmydonation.1200x143.png" />
+            <mj-image width="550" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/pickupmydonation.1200x143.png" />
         </mj-column>
     </mj-section>
     <mj-section background-color="#fff" padding="20px">
@@ -44,7 +44,7 @@
                 instagram-content=""
                 instagram-icon-color="transparent"
                 icon-size="30px"
-                base-url="https://www.pickupmydonation.com/wp-content/plugins/donation-manager/lib/images/"
+                base-url="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/"
             />
             <mj-text align="center" color="#fff">
                     &copy; 2012 &ndash; 2023 PickUpMyDonation.com. All rights reserved.
