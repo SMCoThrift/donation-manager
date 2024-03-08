@@ -33,7 +33,7 @@ foreach( $screening_questions as $question ) {
  */
 $pickup_settings = get_field( 'pickup_settings', $_SESSION['donor']['org_id'] );
 
-$provide_additional_details = $pickup_settings['provide_additional_details'] === 'true' ? true : false ;
+$provide_additional_details = $pickup_settings['provide_additional_details'];
 if( DMDEBUG_VERBOSE )
   uber_log( '🔔 $provide_additional_details = ' . $provide_additional_details );
 $additional_details = null;

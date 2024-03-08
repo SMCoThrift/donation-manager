@@ -4,13 +4,16 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.4.3  
 **Requires PHP:** 8.0  
-**Stable tag:** 4.4.4.3  
+**Stable tag:** 4.4.4.4  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.4.4.4 ###
+* BUGFIX: Updating `$provide_additional_details` to support ACF Field definition for `true/false` field in `lib/fns/shortcode/donationform/screening-questions.php`.
 
 ### 4.4.4.3 ###
 * BUGFIX: Updating `site_url()` to `home_url()` in instances where we're building URL refs from the site's Home URL.
