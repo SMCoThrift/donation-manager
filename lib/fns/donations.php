@@ -100,7 +100,7 @@ function claim_donation( $donation_id, $contact_id ){
  * @return     string  The "Click to Claim" link.
  */
 function get_click_to_claim_link( $dh, $contact_id ){
-  return site_url( 'click-to-claim/?dh=' . $dh . '&cid=' . $contact_id );
+  return home_url( 'click-to-claim/?dh=' . $dh . '&cid=' . $contact_id );
 }
 
 /**

@@ -80,7 +80,7 @@ class DMReports {
 
 		    	wp_enqueue_script( 'dm-reports-donors-js', plugins_url( '../js/reports.donors.js', __FILE__ ), array( 'jquery', 'datatables' ), filemtime( plugin_dir_path( __FILE__ ) . '../js/reports.donors.js' ) );
                 $debug = ( DONMAN_DEV_ENV )? true : false;
-                wp_localize_script( 'dm-reports-donors-js', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ), 'site_url' => site_url( '/download-donorsbyzip/'), 'debug' => $debug, 'permalink_url' => admin_url( 'options-permalink.php' ) ] );
+                wp_localize_script( 'dm-reports-donors-js', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ), 'site_url' => home_url( '/download-donorsbyzip/'), 'debug' => $debug, 'permalink_url' => admin_url( 'options-permalink.php' ) ] );
 
                 wp_enqueue_script( 'jquery-file-download', plugins_url( '../components/vendor/jquery-file-download/src/Scripts/jquery.fileDownload.js', __FILE__ ), array( 'jquery', 'jquery-ui-dialog', 'jquery-ui-progressbar' ) );
                 wp_enqueue_style( 'wp-jquery-ui-dialog' );
@@ -89,7 +89,7 @@ class DMReports {
     		default:
 		    	wp_register_script( 'dm-reports-orgs-js', plugins_url( '../js/reports.orgs.js', __FILE__ ), array( 'jquery' ), filemtime( plugin_dir_path( __FILE__ ) . '../js/reports.orgs.js' ) );
 		    	wp_enqueue_script( 'dm-reports-orgs-js' );
-		    	wp_localize_script( 'dm-reports-orgs-js', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ), 'restapi_url' => get_rest_url( null, 'donman/v2/donations/month'), 'site_url' => site_url( '/download/' ), 'permalink_url' => admin_url( 'options-permalink.php' ), 'nonce' => wp_create_nonce( 'wp_rest' ) ] );
+		    	wp_localize_script( 'dm-reports-orgs-js', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ), 'restapi_url' => get_rest_url( null, 'donman/v2/donations/month'), 'site_url' => home_url( '/download/' ), 'permalink_url' => admin_url( 'options-permalink.php' ), 'nonce' => wp_create_nonce( 'wp_rest' ) ] );
 		    	wp_enqueue_script( 'jquery-file-download', plugins_url( '../components/vendor/jquery-file-download/src/Scripts/jquery.fileDownload.js', __FILE__ ), array( 'jquery', 'jquery-ui-dialog', 'jquery-ui-progressbar' ) );
 		    	wp_enqueue_style( 'wp-jquery-ui-dialog' );
 			break;

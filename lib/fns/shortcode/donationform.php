@@ -40,7 +40,7 @@ function donationform( $atts ){
    *  turn allows for adding the various pages as steps in an
    *  analytics tracking funnel (e.g. Google Analytics).
    */
-  $nextpage = ( is_null( $args['nextpage'] ) || empty( $args['nextpage'] ) )? get_permalink() : site_url( $args['nextpage'] ) ;
+  $nextpage = ( is_null( $args['nextpage'] ) || empty( $args['nextpage'] ) )? get_permalink() : home_url( $args['nextpage'] ) ;
 
   /**
    *  RESET $_SESSION['donor'] ON HOME PAGE

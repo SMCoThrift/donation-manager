@@ -71,7 +71,7 @@ switch( $switch ){
 			$response->status = 'continue';
 		} else {
 			$response->status = 'end';
-			$response->fileurl = site_url( '/getattachment/' . $attach_id );
+			$response->fileurl = home_url( '/getattachment/' . $attach_id );
 		}
 	break;
 

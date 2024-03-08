@@ -54,7 +54,7 @@ function click_to_claim(){
       $alert_type = 'success';
     }
     $html.= get_alert(['type' => $alert_type, 'title' => $alert_title, 'description' => $alert_text, 'css_classes' => 'large-title' ]);
-    $html.= '<p><em>Do you want to be the only organization receiving these requests?</em> <a href="' . site_url( 'partner-benefits') . '" target="_blank">Sign up to be an Exclusive Partner</a> and start increasing the quality and quantity of donation requests you receive.</p><hr style="margin-bottom: 1em;">';
+    $html.= '<p><em>Do you want to be the only organization receiving these requests?</em> <a href="' . home_url( 'partner-benefits') . '" target="_blank">Sign up to be an Exclusive Partner</a> and start increasing the quality and quantity of donation requests you receive.</p><hr style="margin-bottom: 1em;">';
 
     $donation_receipt = $donation->post_content;
     $html.= $donation_receipt;

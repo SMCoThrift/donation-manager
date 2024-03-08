@@ -126,7 +126,7 @@ if( isset( $_POST['donor']['address'] ) ) {
 
       $pickup_zipcode = ( 'Yes' ==  $_POST['donor']['different_pickup_address'] )? $_POST['donor']['pickup_address']['zip'] : $_POST['donor']['address']['zip'] ;
       if( 'session_pickupcode' == $field ){
-        $error_msg[] = '<strong>Zip Code Mismatch:</strong><br />Your original Zip Code (<code>' . $_SESSION['donor']['pickup_code'] . '</code>) and your Pick Up Zip Code <code>' . $pickup_zipcode . '</code> do not match. To fix, you may:<br/><br/>1) Update your pickup address below with an address in the <code>' . $_SESSION['donor']['pickup_code'] . '</code> zip code, OR<br/><br/>2) <a href="'. site_url('select-your-organization/?pcode=' . $pickup_zipcode ) .'">Start over using <code>' . $pickup_zipcode . '</code></a> to start the donation process.';
+        $error_msg[] = '<strong>Zip Code Mismatch:</strong><br />Your original Zip Code (<code>' . $_SESSION['donor']['pickup_code'] . '</code>) and your Pick Up Zip Code <code>' . $pickup_zipcode . '</code> do not match. To fix, you may:<br/><br/>1) Update your pickup address below with an address in the <code>' . $_SESSION['donor']['pickup_code'] . '</code> zip code, OR<br/><br/>2) <a href="'. home_url('select-your-organization/?pcode=' . $pickup_zipcode ) .'">Start over using <code>' . $pickup_zipcode . '</code></a> to start the donation process.';
         notify_admin('zipcode_mismatch');
       }
     }

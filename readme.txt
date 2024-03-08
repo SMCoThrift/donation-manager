@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.4.3
 Requires PHP: 8.0
-Stable tag: 4.4.4.2
+Stable tag: 4.4.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.4.4.3 =
+* BUGFIX: Updating `site_url()` to `home_url()` in instances where we're building URL refs from the site's Home URL.
 
 = 4.4.4.2 =
 * Updating copyright year in email footers.

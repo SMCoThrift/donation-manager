@@ -57,7 +57,7 @@ function get_default_organization( $priority = false ) {
   $organization['trans_dept_emails'] = null; // Adding this `null` value to match array returned in get_organizations()
 
   if( $priority ){
-    $organization['alternate_donate_now_url'] = site_url( '/step-one/?oid=' . $default_organization->ID . '&tid=' . $default_trans_dept->ID . '&priority=1' );
+    $organization['alternate_donate_now_url'] = home_url( '/step-one/?oid=' . $default_organization->ID . '&tid=' . $default_trans_dept->ID . '&priority=1' );
     $organization['button_text'] = $button_texts['priority'];
     $organization['priority_pickup'] = true;
   } else {
