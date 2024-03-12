@@ -394,7 +394,7 @@ class DMReports {
     	$filename = get_attached_file( $attach_id );
     	$response->filename = $filename;
 
-    	require_once( trailingslashit( dirname( __FILE__ ) ) . '../../../../../wp-admin/includes/file.php' );
+    	require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		$access_type = get_filesystem_method();
 		$response->access_type = $access_type;
 
