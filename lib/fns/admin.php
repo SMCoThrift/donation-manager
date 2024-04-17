@@ -13,7 +13,7 @@ use function DonationManager\organizations\{get_organizations};
 function admin_custom_css(){
   echo '<style>
   .post-type-donation #taxonomy-pickup_code, .post-type-donation .column-fee-based{width: 100px;}
-  .post-type-trans_dept #taxonomy-pickup_code{width: 60%;}
+  .post-type-trans_dept #taxonomy-pickup_code, .post-type-trans_dept #pickup_codes{width: 60%;}
   .response-pill, .pill{font-size: 12px; padding: 0 4px; border-radius: 3px; background-color: #999; color: #fff; display: inline-block; text-transform: uppercase;}
   .response-pill.success{background-color: #09c500;}
   .response-pill.warning{background-color: #f68428;}
@@ -109,6 +109,20 @@ function custom_column_content( $column ){
         /**/
         echo $org_name;
     break;
+
+    case 'pickup_codes':
+      $terms = wp_get_post_terms( $post->ID, 'pickup_code' );
+      $total_pickup_codes = count( $terms );
+      if( 201 > $total_pickup_codes ){
+        $terms_array = array();
+        foreach( $terms as $term ){
+          $terms_array[] = $term->name;
+        }
+        echo implode( ', ', $terms_array );
+      } else if( 201 <= $total_pickup_codes ) {
+        echo '<strong>' . $total_pickup_codes . '</strong> pick up codes assigned.';
+      }
+      break;
 
     case 'routing_method':
       $routing_method = get_field( 'pickup_settings_donation_routing', $post->ID );
@@ -330,7 +344,7 @@ function columns_for_trans_dept( $defaults ){
         'cb' => '<input type="checkbox" />',
         'title' => 'Title',
         'org' => 'Organization',
-        'taxonomy-pickup_code' => 'Pickup Codes',
+        'pickup_codes' => 'Pickup Codes',
     );
     return $defaults;
 }
