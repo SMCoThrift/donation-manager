@@ -125,7 +125,7 @@ foreach( $organizations as $org ) {
         $rows[] = $row;
     }
 }
-if( ! is_array( $rows ) )
+if( ! isset( $rows ) || ! is_array( $rows ) )
     $rows = [];
 
 /**
