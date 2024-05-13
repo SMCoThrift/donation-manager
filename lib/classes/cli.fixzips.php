@@ -21,6 +21,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
     public $not_found = [];
     public $no_orgs = [];
     public $onlyerrors = false;
+    public $reset = false;
     public $same_orgs = [];
     public $skip_not_open = false;
     public $trace = [];
@@ -52,11 +53,17 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      * [--usonly]
      * : Only process US Zip Codes.
      *
+     * [--reset]
+     * : Prior to adding Pickup Codes from the CSV, remove all Pickup Codes
+     * from each Transportation Department mapped in the Franchisee Map.
+     * NOTE: Requires that `--fix` is also set.
+     *
      * [--skipnotopen]
      * : Skip franchisees with "NOT OPEN" in their name.
      *
      * [--trace=<value>]
-     * : Comma separated list of zip codes to follow/trace through the process. When trace is set, --verbose will be set to TRUE.
+     * : Comma separated list of zip codes to follow/trace through the
+     * process. When trace is set, --verbose will be set to TRUE.
      *
      * [--verbose]
      * : Show extended output for debugging purposes.
@@ -114,6 +121,12 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       if( isset( $assoc_args['usonly'] ) ){
         $this->us_only = true;
         WP_CLI::line('⚙️' . " " . ' --usonly - Only processing numeric zip codes (i.e. US Zip Codes).');
+      }
+
+      // Are we resetting the Pickup Codes for the Transportation Departments?
+      if( isset( $assoc_args['reset'] ) ){
+        $this->reset = true;
+        WP_CLI::line('⚙️' . " " . ' --reset - Resetting Transportation Department pickup codes by removing all before processing the CSV.');
       }
 
       if( isset( $assoc_args['skipnotopen'] ) ){
@@ -288,7 +301,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
         $this->import_csv();
 
       $total_rows = count( $this->zip_codes );
-      $progress = WP_CLI\Utils\make_progress_bar( 'Processing Zip Codes...', $total_rows );
+      $progress = WP_CLI\Utils\make_progress_bar( 'Processing ' . $total_rows . ' Zip Codes...', $total_rows );
       $zip_code_rows = [];
       foreach( $this->zip_codes as $zip_code => $franchisee ) {
         $args = [];
@@ -300,7 +313,12 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
           && array_key_exists( $franchisee, $this->franchisees_map )
         )? $this->franchisees_map[$franchisee] : null ;
 
-        $args['trans_dept_id'] = ( $this->trans_dept_exists( $id ) )? $id : null ;
+        $args['trans_dept_id'] = ( $this->trans_dept_exists( $id ) )? (int) $id : null ;
+
+        if( $this->fix_errors && $this->reset && is_integer( $args['trans_dept_id'] ) ){
+          $this->remove_zip_codes( $args['trans_dept_id'] );
+        }
+
         if( is_null( $args['trans_dept_id'] ) ){
           //WP_CLI::line('Unable to find trans_dept_id for `' . $franchisee . '`.');
           $this->unmapped_trans_depts[] = $franchisee;
@@ -738,6 +756,35 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       WP_CLI::line( "\n" . $divider );
       WP_CLI::line( $padding . $text . $padding );
       WP_CLI::line( $divider );
+    }
+
+    /**
+     * Removes all `pickup_code` terms from a Transportation Department.
+     *
+     * @param      int         $trans_dept_id  The transaction department ID.
+     *
+     * @return     WP_Error|bool  Returns TRUE if successful.
+     */
+    private function remove_zip_codes( $trans_dept_id ){
+      // Static variable to keep track of processed IDs
+      static $processed_ids = array();
+
+      // Check if the $trans_dept_id has already been processed
+      if ( in_array( $trans_dept_id, $processed_ids ) ) {
+        return new WP_Error('already-processed', __('This Transportation Department has already been processed.'));
+      } else {
+        $processed_ids[] = $trans_dept_id;
+      }
+
+      if( 'trans_dept' != get_post_type( $trans_dept_id ) )
+        return new WP_Error( 'not-a-trans-dept', __( 'The ID passed does not belong to a Transportation Department.' ) );
+
+      $removed = wp_set_object_terms( $trans_dept_id, array(), 'pickup_code' );
+
+      if( is_wp_error( $removed ) )
+        return $removed;
+
+      return true;
     }
 
     /**
