@@ -2,15 +2,18 @@
 Contributors: TheWebist
 Tags: donations, CPT
 Requires at least: 6.0.0
-Tested up to: 6.4.3
+Tested up to: 6.5.3
 Requires PHP: 8.0
-Stable tag: 4.4.4.6
+Stable tag: 4.4.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.4.5 =
+* Checking for `DONMAN_DEV_ENV` when sending Transportation Department notification. This allows for easy localhost testing. If "Development Environment", then we are sending the notification email even if the provider receives donations via their API.
 
 = 4.4.4.6 =
 * BUGFIX: Setting `permission_callback` for zip code search to `__return_true`.

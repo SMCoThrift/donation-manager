@@ -239,6 +239,10 @@ function send_email( $type = '' ){
               send_api_post( $donor );
 
               /**
+               * 05/13/2024 (15:59) - Checking for `DONMAN_DEV_ENV`. If TRUE,
+               * we DO NOT return so that we send an email in the local ENV
+               * for observation purposes.
+               *
                * 06/16/2023 (10:44) - NEW METHOD:
                *
                * *ALWAYS* return when `routing_method` != `email`
@@ -249,7 +253,8 @@ function send_email( $type = '' ){
                * contact details, I am updating the code here so that we return
                * after send_api_post().
                */
-              return;
+              if( ! DONMAN_DEV_ENV )
+                return;
 
               /* OLD METHOD: Only return if `contact_email` and `cc_emails` are empty:
               // If we have no trans dept email contacts, return from this function as we
