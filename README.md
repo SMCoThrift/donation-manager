@@ -13,6 +13,8 @@ A complete donation intake system for WordPress.
 ## Changelog ##
 
 ### 4.4.5 ###
+* Custom handling display of Pickup Codes in admin listing for Trans Depts. Now departments with greater than 201 pick up codes show a number indicating how many are mapped to the department rather than listing them all in the admin table listing.
+* Adding --reset switch for `wp cli fixzips`
 * Checking for `DONMAN_DEV_ENV` when sending Transportation Department notification. This allows for easy localhost testing. If "Development Environment", then we are sending the notification email even if the provider receives donations via their API.
 
 ### 4.4.4.6 ###
