@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.5.3
 Requires PHP: 8.0
-Stable tag: 4.4.5
+Stable tag: 4.4.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.4.5.1 =
+* BUGFIX: Newer versions of Bower require `name` to be lowercase with no spaces. Changed `"name": "Donation Manager WordPress Plugin"` to `"name": "donation-manager-wordpress-plugin"` in bower.json.
 
 = 4.4.5 =
 * Custom handling display of Pickup Codes in admin listing for Trans Depts. Now departments with greater than 201 pick up codes show a number indicating how many are mapped to the department rather than listing them all in the admin table listing.
