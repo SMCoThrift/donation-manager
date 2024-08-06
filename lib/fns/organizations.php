@@ -155,7 +155,7 @@ function get_organizations( $pickup_code ) {
           $trans_dept_contact_emails = array_merge( $trans_dept_contact_emails, $cc_emails );
       }
 
-      $edit_url = ( current_user_can( 'edit_posts' ) && isset( $org ) )? get_edit_post_link( $org->ID, 'link' ) : false ;
+      $edit_url = ( current_user_can( 'activate_plugins' ) && is_numeric( $org_id ) )? get_edit_post_link( $org_id, 'link' ) : false ;
       $use_transportation_department_name = get_post_meta( $trans_dept->ID, 'use_transportation_department_name', true );
       if( $use_transportation_department_name ){
         $org_name = str_replace( [ 'Transportation Dept', 'Store' ], '', $trans_dept->post_title );

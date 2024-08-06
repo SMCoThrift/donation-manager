@@ -4,13 +4,16 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.5.3  
 **Requires PHP:** 8.0  
-**Stable tag:** 4.4.5.1  
+**Stable tag:** 4.4.5.2  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.4.5.2 ###
+* BUGFIX: Updating check for building `$edit_url` in `get_organizations()` so that edit link for Priority Orgs will show for logged in admins.
 
 ### 4.4.5.1 ###
 * BUGFIX: Newer versions of Bower require `name` to be lowercase with no spaces. Changed `"name": "Donation Manager WordPress Plugin"` to `"name": "donation-manager-wordpress-plugin"` in bower.json.
