@@ -32,6 +32,8 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
     public $wrong_priority_org = [];
     public $wrong_trans_dept = [];
     public $zip_codes = [];
+    public $show_table = true;
+    public $show_mapped_franchisees = true;
 
     /**
      * Fixes zip code associations
@@ -68,6 +70,12 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      * [--verbose]
      * : Show extended output for debugging purposes.
      *
+     * [--hidetable]
+     * : Do not show the zip code table.
+     *
+     * [--hidefranchiseelist]
+     * : Do not show the list of mapped franchisees.
+     *
      * ## EXAMPLES
      *
      *  wp dmzipcodes fixzips zipcodes.csv franchisees.php --fix
@@ -86,8 +94,6 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *
      */
     public function __invoke( $args, $assoc_args ){
-      //public function fixzips( $args, $assoc_args ){
-
       list( $csv, $franchisees_map ) = $args;
 
       // Setup $this->csv
@@ -127,6 +133,17 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       if( isset( $assoc_args['reset'] ) ){
         $this->reset = true;
         WP_CLI::line('⚙️' . " " . ' --reset - Resetting Transportation Department pickup codes by removing all before processing the CSV.');
+      }
+
+      // If `--hidetable`, don't show the zip code table:
+      if( isset( $assoc_args['hidetable'] ) ){
+        $this->show_table = false;
+        WP_CLI::line('👉' . " " . ' --hidetable - Hiding the zip code results table.' );
+      }
+
+      if( isset( $assoc_args['hidefranchiseelist'] ) ){
+        $this->show_mapped_franchisees = false;
+        WP_CLI::line('👉' . " " . ' --hidefranchseelist - Not showing the list of mapped franchiees.' );
       }
 
       if( isset( $assoc_args['skipnotopen'] ) ){
@@ -278,7 +295,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       if( 0 < $this->fix_count )
         WP_CLI::success( $this->fix_count . ' fixes were performed.' );
 
-      if( 0 < count( $this->franchisees ) ){
+      if( 0 < count( $this->franchisees ) && $this->show_mapped_franchisees ){
         WP_CLI::line( 'Mapped Franchisees: ' );
         foreach ($this->franchisees as $franchisee ) {
           WP_CLI::line( '-- ' . $franchisee );
@@ -349,8 +366,13 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       }
       $progress->finish();
 
-      WP_CLI\Utils\format_items('table', $zip_code_rows, 'zipcode,trans_dept,notes,franchisee' );
-      WP_CLI::success('Table displayed with ' . count( $zip_code_rows ) . ' rows.');
+      if( $this->show_table ){
+        WP_CLI\Utils\format_items('table', $zip_code_rows, 'zipcode,trans_dept,notes,franchisee' );
+        WP_CLI::success('Table displayed with ' . count( $zip_code_rows ) . ' rows.');
+      } else {
+        WP_CLI::success('Table NOT displayed. ' . count( $zip_code_rows ) . ' rows processed.');
+      }
+
     }
 
     /**
@@ -447,7 +469,15 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
         $notes = [];
 
         if( $term !== 0 && $term !== null ){
+            /**
+             * We use get_objects_in_term() to retrieve all WP posts that have this
+             * pickup_code attached as a term. This returns `trans_dept` and
+             * `donation` CPTs.
+             *
+             * @var        callable
+             */
             $objects = get_objects_in_term( intval( $term['term_id'] ), 'pickup_code' );
+
             if( 0 < count( $objects ) ){
                 $trans_depts = [];
                 $trans_dept_ids = [];
@@ -509,6 +539,13 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
                             ];
                           }
                           /**/
+                        } else {
+                          /**
+                           * If the Organization != "priority", then we need to add the zip code
+                           * to the priority partner without affecting the "Exclusive/Non-Profit"
+                           * partner for this Zip Code.
+                           */
+                          wp_add_object_terms( $args['trans_dept_id'], intval( $term['term_id'] ), 'pickup_code' );
                         }
                       } else {
                         $org_name = '-no parent org-';
@@ -681,9 +718,23 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
           $franchisee = trim( $csv_data[0] );
           $zip_code = $csv_data[1];
 
+          /**
+           * 08/07/2024 (10:48) - No longer left padding imported zip
+           * codes because I have adjusted get_organizations() to
+           * strip left zeros from pickup codes it receives.
+           */
           // Zero pad LEFT zip codes less than 5 digits
-          if( 5 > strlen( $zip_code ) && is_numeric( $zip_code ) )
-            $zip_code = str_pad( $zip_code, 5, '0', STR_PAD_LEFT );
+          //if( 5 > strlen( $zip_code ) && is_numeric( $zip_code ) )
+            //$zip_code = str_pad( $zip_code, 5, '0', STR_PAD_LEFT );
+
+          /**
+           * REMOVE LEADING ZEROS
+           *
+           * In conjunction with removing the "Zero pad LEFT" code
+           * above, I'm removing leading zeros from any imported
+           * zip codes.
+           */
+          $zip_code = ltrim( $zip_code, '0' );
 
           if( true == $this->us_only && ! is_numeric( $zip_code ) )
             continue;

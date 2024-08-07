@@ -40,6 +40,54 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
     }
 
     /**
+     * Runs a script to process all CSVs found inside the Franchisee Map directory.
+     */
+    function fixallzips(){
+      $updates = [
+        [
+          'name'  => 'College Hunks Hauling Junk',
+          'map'   => 'franchisee_map_chhj.php',
+          'csv'   => '1_chhj.csv',
+        ],
+        [
+          'name'  => '1-800-Got-Junk',
+          'map'   => 'franchisee_map_1800.php',
+          'csv'   => '2_1800.csv',
+        ],
+        [
+          'name'  => 'LoopDeco',
+          'map'   => 'franchisee_map_loopdeco.php',
+          'csv'   => '3_loopdeco.csv',
+        ],
+      ];
+
+      foreach( $updates as $update ){
+        $map = $update['map'];
+        $csv = $update['csv'];
+        if( ! file_exists( '../franchisee-map/' . $map ) ){
+          WP_CLI::error( "🚨 {$map} not found!" );
+        } else {
+          WP_CLI::line( "✅ Found {$map}." );
+        }
+        if( ! file_exists( '../franchisee-map/' . $csv ) ){
+          WP_CLI::error( "🚨 {$csv} not found!" );
+        } else {
+          WP_CLI::line( "✅ Found {$csv}." );
+        }
+      }
+
+      foreach( $updates as $update ){
+        $name = $update['name'];
+        $map = $update['map'];
+        $csv = $update['csv'];
+        WP_CLI::line( "\n\n" . str_repeat('-', 80) );
+        WP_CLI::line( "🔔🔔🔔 PROCESSING: {$name} 🔔🔔🔔" );
+        WP_CLI::line( str_repeat('-', 80) . "\n" );
+        WP_CLI::runcommand( "dm fixzips ../franchisee-map/{$csv} ../franchisee-map/{$map} --skipnotopen --usonly --fix --reset --hidetable --hidefranchiseelist" );
+      }
+    }
+
+    /**
      * Generate Donation Manager reports.
      *
      * ## OPTIONS
