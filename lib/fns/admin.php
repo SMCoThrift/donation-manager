@@ -441,6 +441,6 @@ add_action('admin_notices', function() {
     $accounts_txt = ( 1 < $orgs )? 'accounts' : 'account';
     $users_txt = ( 1 < $orgs )? 'users' : 'user';
     $admin_user_url = site_url( 'wp-admin/users.php?role=org-inactive' );
-    echo "<div class=\"notice notice-success is-dismissible\"><p>${orgs} User Portal ${accounts_txt} has been created! <a href=\"${admin_user_url}\">Click here</a> to approve the new ${users_txt}.</p></div>";
+    echo "<div class=\"notice notice-success is-dismissible\"><p>{$orgs} User Portal {$accounts_txt} has been created! <a href=\"{$admin_user_url}\">Click here</a> to approve the new {$users_txt}.</p></div>";
   }
 });

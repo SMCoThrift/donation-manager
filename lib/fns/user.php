@@ -209,9 +209,9 @@ function change_department_user_role( $user_id, $role, $old_roles ) {
 
 	  $key = get_password_reset_key( $user );
     $login = $user->user_email;
-	  $url = network_site_url( "wp-login.php?action=rp&key=${key}&login=" . rawurlencode( $user->user_login ), 'login' );
+	  $url = network_site_url( "wp-login.php?action=rp&key={$key}&login=" . rawurlencode( $user->user_login ), 'login' );
 
-    $hbs_vars['email_content'] = "Hi " . ucfirst( $user->display_name ) . ",<br><br>Your User Portal account has been created at ${site_title}. You may now edit various details associated with your account.<br><br>Username: " . $user->user_login . "<br>Password: <a href=\"${url}\">Click here</a> to generate your password.<br><br>Best Regards,<br>The ${site_title} Team";
+    $hbs_vars['email_content'] = "Hi " . ucfirst( $user->display_name ) . ",<br><br>Your User Portal account has been created at {$site_title}. You may now edit various details associated with your account.<br><br>Username: " . $user->user_login . "<br>Password: <a href=\"{$url}\">Click here</a> to generate your password.<br><br>Best Regards,<br>The {$site_title} Team";
 
     $headers = array(
       'Content-Type: text/html; charset=UTF-8',

@@ -293,7 +293,7 @@ add_shortcode( 'pumd_stats', __NAMESPACE__ . '\\show_account_owner_stats' );
  * @return array
  */
 function get_organization_default_options($field_name) {
-	$default_terms = get_field( "default_options_default_${field_name}s", 'option' );
+	$default_terms = get_field( "default_options_default_{$field_name}s", 'option' );
 
 	return $default_terms;
 }
@@ -405,7 +405,7 @@ function get_additional_options_form_data($user_id = null){
  * @return array
  */
 function get_valid_organization_terms_ids($organization_id,$field_name) {
-	$default_terms = get_field( "default_options_default_${field_name}s", 'option' );
+	$default_terms = get_field( "default_options_default_{$field_name}s", 'option' );
 	$user_terms = get_ogranization_options($organization_id, $field_name);
 	$ids = wp_list_pluck($default_terms, 'term_id');
 	$uids = wp_list_pluck($user_terms, 'term_id');
