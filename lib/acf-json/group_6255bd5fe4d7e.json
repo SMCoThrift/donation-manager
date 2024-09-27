@@ -198,13 +198,14 @@
                     },
                     "choices": {
                         "email": "Email",
-                        "chhj_api": "CHHJ API"
+                        "chhj_api": "CHHJ API",
+                        "1800gj_api": "1-800-GOT-JUNK API"
                     },
                     "default_value": "email",
-                    "allow_null": 0,
-                    "multiple": 0,
-                    "ui": 0,
                     "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "ui": 0,
                     "ajax": 0,
                     "placeholder": "",
                     "allow_custom": 0,
@@ -241,7 +242,7 @@
                     "name": "pickup_dates",
                     "aria-label": "",
                     "type": "checkbox",
-                    "instructions": "Select the days of the week this organization schedules donation pickups. (DEFAULT: Monday - Saturday).\r\n\r\n<p><strong>*If nothing is selected below, the \"Defaults\" will be shown for your Organization.<\/strong><\/p>",
+                    "instructions": "Select the days of the week this organization schedules donation pickups. (DEFAULT: Mon - Sat)",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -375,15 +376,7 @@
                     "type": "true_false",
                     "instructions": "",
                     "required": 0,
-                    "conditional_logic": [
-                        [
-                            {
-                                "field": "field_62615f943f2b3",
-                                "operator": "==",
-                                "value": "1"
-                            }
-                        ]
-                    ],
+                    "conditional_logic": 0,
                     "wrapper": {
                         "width": "50",
                         "class": "",
@@ -577,26 +570,6 @@
                     "parent_repeater": "field_62ed43d16b5df"
                 }
             ]
-        },
-        {
-            "key": "field_65cf2f3b2386e",
-            "label": "User Edited",
-            "name": "user_edited",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
         }
     ],
     "location": [
@@ -624,5 +597,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1708623839
+    "modified": 1727465564
 }
