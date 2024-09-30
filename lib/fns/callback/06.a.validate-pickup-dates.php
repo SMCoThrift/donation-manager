@@ -47,7 +47,7 @@ if( isset( $_POST['donor']['pickupdate1'] ) ){
       $_SESSION['donor']['pickuptime' . $x ] = $_POST['donor']['pickuptime' . $x ];
     }
     $_SESSION['donor']['pickuplocation'] = $_POST['donor']['pickuplocation'];
-    $_SESSION['donor']['fee_based'] = $_POST['donor']['fee_based'];
+    $_SESSION['donor']['fee_based'] = ( array_key_exists( 'fee_based', $_POST['donor'] ) )? $_POST['donor']['fee_based'] : null ;
 
     // Notify admin if missing ORG or TRANS DEPT
     if( empty( $_SESSION['donor']['org_id'] ) || empty( $_SESSION['donor']['trans_dept_id'] ) )

@@ -238,23 +238,15 @@ function send_email( $type = '' ){
             if( 'email' != $donor['routing_method'] ){
               send_api_post( $donor );
 
-              /**
-               * 05/13/2024 (15:59) - Checking for `DONMAN_DEV_ENV`. If TRUE,
-               * we DO NOT return so that we send an email in the local ENV
-               * for observation purposes.
-               *
-               * 06/16/2023 (10:44) - NEW METHOD:
-               *
-               * *ALWAYS* return when `routing_method` != `email`
-               *
-               * Previously, the following code would send an email in addition
-               * to using the non-email routing method. However, so that the
-               * customer receipt will contain the full Transportation Department
-               * contact details, I am updating the code here so that we return
-               * after send_api_post().
-               */
-              if( ! DONMAN_DEV_ENV )
+              if( '1800gj_api' != $donor['routing_method'] ){
+                // nothing, send API post and email
+              } else if ( ! DONMAN_DEV_ENV ){
+                /**
+                 * For any API posts other than those above, we return after posting
+                 * to the API.
+                 */
                 return;
+              }
 
               /* OLD METHOD: Only return if `contact_email` and `cc_emails` are empty:
               // If we have no trans dept email contacts, return from this function as we

@@ -2,15 +2,18 @@
 Contributors: TheWebist
 Tags: donations, CPT
 Requires at least: 6.0.0
-Tested up to: 6.5.3
+Tested up to: 6.6.2
 Requires PHP: 8.0
-Stable tag: 4.4.6
+Stable tag: 4.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.5.0 =
+* Adding API Routing for 1-800-GOT-JUNK.
 
 = 4.4.6 =
 * Major update to `get_organizations()`: We are removing leading "zeros" from pickup codes. So, if a donor searches on `01420`, `get_organizations( "01420" )` will search for Transportation Departments which have "1420" as their assigned zip code.

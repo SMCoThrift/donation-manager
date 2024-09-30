@@ -12,10 +12,12 @@ use function DonationManager\organizations\{get_organizations};
  * @return void
  */
 function send_api_post( $donation ){
+  /*
   if( DONMAN_DEV_ENV ){
     uber_log('🔔 We are in Development Mode, not sending API Post.');
     return true;
   }
+  /**/
 
   switch( $donation['routing_method'] ){
     case 'chhj_api':
@@ -29,6 +31,16 @@ function send_api_post( $donation ){
         return true;
       }
     break;
+
+    case '1800gj_api':
+      $is_1800gj_pickupcode = is_valid_pickupcode( '1-800-GOT-JUNK?', $donation['pickup_code'] );
+      if( $is_1800gj_pickupcode ){
+        require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.php';
+        require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.1800gj.php';
+        $GotJunkDonationRouter = \GotJunkDonationRouter::get_instance();
+        $GotJunkDonationRouter->submit_donation( $donation );
+      }
+      break;
   }
 }
 

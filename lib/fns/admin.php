@@ -126,7 +126,19 @@ function custom_column_content( $column ){
 
     case 'routing_method':
       $routing_method = get_field( 'pickup_settings_donation_routing', $post->ID );
-      echo ( 'chhj_api' == $routing_method || 'api-chhj' == $routing_method )? '<div class="pill api">CHHJ API</div>' : '<div class="pill">' . ucfirst( $routing_method ) . '</div>' ;
+      switch( $routing_method ){
+        case 'chhj_api':
+        case 'api_chhj':
+        case '1800gj_api':
+          echo '<div class="pill api">' . $routing_method . '</div>';
+          break;
+
+        default:
+          if( empty( $routing_method ) )
+            $routing_method = 'EMPTY';
+          echo '<div class="pill">' . ucfirst( $routing_method ) . '</div>';
+          break;
+      }
       break;
 
     case 'trans_dept':
