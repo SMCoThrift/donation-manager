@@ -15,7 +15,9 @@ class GotJunkDonationRouter extends DonationRouter{
     }
 
     public function submit_donation( $donation ){
-      if( ! defined( 'GOTJUNK_CLIENT_TOKEN' ) )
+      if( ! defined( 'GOTJUNK_API_EP' ) || ! GOTJUNK_API_EP )
+        return new \WP_Error( 'no_gotjunk_api_ep', 'No 1-800-GOT-JUNK API End Point. Please define a valid `GOTJUNK_API_EP` in your .env.' );
+      if( ! defined( 'GOTJUNK_CLIENT_TOKEN' ) || ! GOTJUNK_CLIENT_TOKEN )
         return new \WP_Error( 'no_gotjunk_client_token', 'No 1-800-GOT-JUNK CLIENT TOKEN. Please define a valid `GOTJUNK_CLIENT_TOKEN` in your .env.' );
 
         $questions = array();
@@ -70,8 +72,9 @@ class GotJunkDonationRouter extends DonationRouter{
         }
         /**/
 
+        // Testing EP: https://o2ebrands.workflows.oktapreview.com/api/flo/225e48540ee79c7d2463d88dfdf3ff94/invoke
 
-        $response = wp_remote_post( 'https://o2ebrands.workflows.oktapreview.com/api/flo/225e48540ee79c7d2463d88dfdf3ff94/invoke?clientToken=' . GOTJUNK_CLIENT_TOKEN, $args );
+        $response = wp_remote_post( GOTJUNK_API_EP . '?clientToken=' . GOTJUNK_CLIENT_TOKEN, $args );
         //uber_log('🔔 1-800-GOT-JUNK API Response: ' . print_r( $response, true ) );
         $this->save_api_response( $donation['ID'], $response );
     }
