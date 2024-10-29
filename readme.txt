@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.6.2
 Requires PHP: 8.1
-Stable tag: 4.5.1
+Stable tag: 4.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.5.2 =
+* Adding additional data sanitization for GOTJUNK API posts.
 
 = 4.5.1 =
 * Checking for and using `GOTJUNK_API_EP` when sending an API post for 1-800-Got-Junk.
