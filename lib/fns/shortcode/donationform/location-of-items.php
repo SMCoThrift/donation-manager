@@ -22,6 +22,11 @@ $hbs_vars = [
     'pickuplocations' => $locations,
     'organization' => $organization,
 ];
+$hbs_vars['sms_consent_note'] = get_alert([
+  'type' => 'info',
+  'title' => 'Communications Consent',
+  'description' => 'By submitting this form, you consent to being contacted by our partners via SMS, phone call, or email.',
+]);
 
 if( empty( $template ) )
     $template = 'form5.location-of-items';

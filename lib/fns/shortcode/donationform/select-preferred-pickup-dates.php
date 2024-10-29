@@ -68,6 +68,11 @@ $hbs_vars['date_note'] = get_alert([
   'type' => 'warning',
   'description' => '<p><strong>Please note:</strong> <em>NONE</em> of the dates and times you select are confirmed until our schedulers are able to contact you directly.</p>'
 ]);
+$hbs_vars['sms_consent_note'] = get_alert([
+  'type' => 'info',
+  'title' => 'Communications Consent',
+  'description' => 'By submitting this form, you consent to being contacted by our partners via SMS, phone call, or email.',
+]);
 
 // Setup HBS vars for Pick Up Provider Choice on Orphaned Donations
 if( is_orphaned_donation( $_SESSION['donor']['trans_dept_id'] ) ){
