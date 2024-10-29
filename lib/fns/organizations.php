@@ -76,6 +76,7 @@ function get_default_organization( $priority = false ) {
 
   $organization['pause_pickups'] = get_field( 'pickup_settings_pause_pickups', $default_organization->ID );
   $organization['edit_url'] = ( current_user_can( 'edit_posts' ) )? get_edit_post_link( $default_organization->ID, 'link' ) : false ;
+  $organization['routing_method'] = 'email';
 
   return $organization;
 }
@@ -167,6 +168,8 @@ function get_organizations( $pickup_code ) {
 
       $button_text = ( $priority_pickup )? $button_texts['priority'] : $button_texts['non_profit'] ;
 
+      $routing_method = get_post_meta( $org_id, 'pickup_settings_donation_routing', true );
+
       if( $organization ){
         $organizations[] = [
           'id'                        => $organization->ID,
@@ -179,6 +182,7 @@ function get_organizations( $pickup_code ) {
           'priority_pickup'           => $priority_pickup,
           'pause_pickups'             => $pause_pickups,
           'edit_url'                  => $edit_url,
+          'routing_method'            => $routing_method,
         ];
       }
 
