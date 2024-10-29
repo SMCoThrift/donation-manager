@@ -45,6 +45,10 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
       </div>
 ';}).'    </div>
   </div>
+  <br/>
+  <div class="row">
+    <div class="col-md-12">'.(($inary && isset($in['sms_consent_note'])) ? $in['sms_consent_note'] : null).'</div>
+  </div>
 
   <br />
   <div class="row">

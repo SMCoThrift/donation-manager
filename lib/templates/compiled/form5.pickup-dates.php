@@ -76,6 +76,10 @@ label.pickup-date{font-size: 15px;}
 ';}).'    </div>
   </div>
   <br/>
+  <div class="row">
+    <div class="col-md-12">'.(($inary && isset($in['sms_consent_note'])) ? $in['sms_consent_note'] : null).'</div>
+  </div>
+  <br/>
 
 '.((LR::ifvar($cx, (($inary && isset($in['orphaned_donation'])) ? $in['orphaned_donation'] : null), false)) ? '  <div class="row">
     <div class="col-md-12">
