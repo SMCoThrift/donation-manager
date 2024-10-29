@@ -4,13 +4,17 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.6.2  
 **Requires PHP:** 8.1  
-**Stable tag:** 4.5.4  
+**Stable tag:** 4.5.5  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.5.5 ###
+* Fixing conditional statement so that emails are still sent when posting to 1800GJ API.
+* Addressing unset variables during "Skip Pick Up Dates" donation flow.
 
 ### 4.5.4 ###
 * Compiling HBS templates with `sms_consent_note`.
