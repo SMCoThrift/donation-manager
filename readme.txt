@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.6.2
 Requires PHP: 8.1
-Stable tag: 4.5.5
+Stable tag: 4.5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.5.6 =
+* Updating post timeout from 10 to 15s for 1800GJ API.
 
 = 4.5.5 =
 * Fixing conditional statement so that emails are still sent when posting to 1800GJ API.

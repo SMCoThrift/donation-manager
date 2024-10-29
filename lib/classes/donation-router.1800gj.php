@@ -71,7 +71,7 @@ class GotJunkDonationRouter extends DonationRouter{
           'notes'     => $sanitized_instructions,
           'source'    => 'PickUpMyDonation.com (PUMD)',
         ),
-        'timeout' => 10,
+        'timeout' => 15,
       );
 
       if( array_key_exists( 'company', $donation['address'] ) && ! empty( $donation['address']['company'] ) ){
