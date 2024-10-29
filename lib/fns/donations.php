@@ -524,7 +524,7 @@ function save_donation( $donation = array() ){
       case 'pickup_times':
         $sub_field_key = $field->sub_fields[0]->key;
         for ( $i = 1; $i < 4; $i++) {
-          $pickup_time = $donation[ 'pickupdate' . $i ] . ' ' . $donation[ 'pickuptime' . $i ];
+          $pickup_time = ( array_key_exists( 'pickupdate' . $i, $donation ) )? $donation[ 'pickupdate' . $i ] . ' ' . $donation[ 'pickuptime' . $i ] : '---';
           add_row( $field->key, [ $sub_field_key => $pickup_time ], $ID );
         }
         break;
