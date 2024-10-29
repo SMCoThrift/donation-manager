@@ -237,23 +237,21 @@ function send_email( $type = '' ){
             $donor['routing_method'] = get_donation_routing_method( $donor['org_id'] );
             if( 'email' != $donor['routing_method'] ){
               send_api_post( $donor );
+              uber_log('🔔 `trans_dept_notification` donor routing_method = ' . $donor['routing_method'] );
 
-              if( '1800gj_api' != $donor['routing_method'] ){
-                // nothing, send API post and email
-              } else if ( ! DONMAN_DEV_ENV ){
-                /**
-                 * For any API posts other than those above, we return after posting
-                 * to the API.
-                 */
-                return;
+              switch( $donor['routing_method'] ){
+                case '1800gj_api':
+                  // nothing, send API post and email
+                  break;
+
+                case 'chhj_api':
+                  // College Hunks prefers to only receive notifications via their API (no emails):
+                  return;
+
+                default:
+                  // nothing, send API post and email
+                  break;
               }
-
-              /* OLD METHOD: Only return if `contact_email` and `cc_emails` are empty:
-              // If we have no trans dept email contacts, return from this function as we
-              // we've already sent the trans dept notification.
-              if( empty( $tc['contact_email'] ) && empty( $tc['cc_emails'] ) )
-                return;
-              /**/
             }
           } else if ( $orphaned_donation && is_array( $donor ) && array_key_exists( 'pickup_code', $donor ) ){
             /**
