@@ -31,11 +31,20 @@ class CHHJDonationRouter extends DonationRouter{
         if( 'Yes' == $donation['different_pickup_address'] ){
             $pickup_address = "\n\n# PICK UP ADDRESS IS DIFFERENT FROM CUSTOMER ADDRESS:\n" . $donation['pickup_address']['address'] . "\n" . $donation['pickup_address']['city'] . ", " . $donation['pickup_address']['state'] . " " . $donation['pickup_address']['zip'] . "\n";
         }
-        $pickup_dates = array(
-            '- ' . $donation['pickupdate1'] . ', ' . $donation['pickuptime1'],
-            '- ' . $donation['pickupdate2'] . ', ' . $donation['pickuptime2'],
-            '- ' . $donation['pickupdate3'] . ', ' . $donation['pickuptime3']
-        );
+
+        if( array_key_exists( 'pickupdate1', $donation ) ){
+          $pickup_dates = array(
+              '- ' . $donation['pickupdate1'] . ', ' . $donation['pickuptime1'],
+              '- ' . $donation['pickupdate2'] . ', ' . $donation['pickuptime2'],
+              '- ' . $donation['pickupdate3'] . ', ' . $donation['pickuptime3']
+          );
+        } else {
+          $pickup_dates = array(
+            '---',
+            '---',
+            '---',
+          );
+        }
 
         // $special_instructions = pick updates and $donation['pickup_address']
         $special_instructions = "\n\n# PREFERRED PICK UP DATES\n" . implode( "\n", $pickup_dates ) . $pickup_address;
