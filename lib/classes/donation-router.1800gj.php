@@ -91,6 +91,7 @@ class GotJunkDonationRouter extends DonationRouter{
       }
       /**/
       $this->save_api_response( $donation['ID'], $response );
+      $this->save_api_method( $donation['ID'], '1800gj_api' );
     }
 }
 ?>

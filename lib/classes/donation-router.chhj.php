@@ -75,6 +75,7 @@ class CHHJDonationRouter extends DonationRouter{
 
         $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );
         $this->save_api_response( $donation['ID'], $response );
+        $this->save_api_method( $donation['ID'], 'chhj_api' );
     }
 }
 ?>

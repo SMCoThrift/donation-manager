@@ -15,6 +15,18 @@ class DonationRouter {
   }
 
   /**
+   * Saves the API method for a given donation.
+   *
+   * Updates the post meta for the specified donation with the provided API method.
+   *
+   * @param int    $donation_id ID of the donation post to update.
+   * @param string $method      API method to be saved in the post meta.
+   */
+  public function save_api_method( $donation_id, $method ){
+    update_post_meta( $donation_id, 'api_method', $method );
+  }
+
+  /**
    * Saving the data we are posting to an API.
    *
    * @param      int    $donation_id  The donation ID
