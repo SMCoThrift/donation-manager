@@ -41,6 +41,13 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
 
     /**
      * Runs a script to process all CSVs found inside the Franchisee Map directory.
+     *
+     * Setup your zip codes as follows:
+     *
+     * - 1_chhj.csv
+     * - 2_1800.csv
+     * - 3_loopdeco.csv
+     * - 4_thegoodtruck.csv
      */
     function fixallzips(){
       $updates = [
@@ -58,6 +65,11 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
           'name'  => 'LoopDeco',
           'map'   => 'franchisee_map_loopdeco.php',
           'csv'   => '3_loopdeco.csv',
+        ],
+        [
+          'name'  => 'The Good Truck',
+          'map'   => 'franchisee_map_thegoodtruck.php',
+          'csv'   => '4_thegoodtruck.csv',
         ],
       ];
 
