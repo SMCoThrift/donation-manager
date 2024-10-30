@@ -4,13 +4,16 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.6.2  
 **Requires PHP:** 8.1  
-**Stable tag:** 4.7.1  
+**Stable tag:** 4.7.2  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 4.7.2 ###
+* Adding 1800GJ API Stats widget.
 
 ### 4.7.1 ###
 * Adding "The Good Truck" to `wp dm fixallzips`.

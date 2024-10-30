@@ -32,7 +32,7 @@ function admin_custom_css(){
 }
 add_action( 'admin_head', __NAMESPACE__ . '\\admin_custom_css' );
 
-function chhj_stats_dashboard_widget() {
+function pmd_stats_dashboard_widget() {
   wp_add_dashboard_widget( 'chhj-stats', 'College Hunks API Stats', function(){
     $chhj_donations = get_option( 'chhj_donations' );
     ksort( $chhj_donations );
@@ -50,8 +50,25 @@ function chhj_stats_dashboard_widget() {
     echo '</tbody></table>';
     echo '<p>NOTE: "Fails" is the total number of Priority and Non-Priority donations we tried to send to the CHHJ API, and after attempting we received an error response which means the donation did not get entered into their system.</p>';
   }, null, null );
+  wp_add_dashboard_widget( '1800gj-stats', '1-800-GOT-JUNK API Stats', function(){
+    $gotjunk_donations = get_option( '1800gj_donations' );
+    ksort( $gotjunk_donations );
+    echo '<p>The following stats reflect the number of donations sent to 1-800-GOT-JUNK via their API:</p>';
+    echo '<table class="chhj-stats"><thead><tr><th>Date</th><th>Non-Priority</th><th>Priority</th><th>Fails</th><th>Total</th><th>Success Rate</th></tr></thead><tbody>';
+    foreach( $gotjunk_donations as $month => $stats ){
+      $date = date_create( $month );
+      echo '<tr>';
+      echo '<th>' . date_format( $date, 'M Y') . '</th>';
+      echo '<td>' . number_format( $stats['non-priority'] ) . '</td><td>' . number_format( $stats['priority'] ) . '</td><td>' . number_format( $stats['fails'] ) . '</td>';
+      echo '<td>' . number_format( ( $stats['non-priority'] + $stats['priority'] ) ) . '</td>';
+      echo '<td>' . $stats['success_rate_percentage'] . '%</td>';
+      echo '</tr>';
+    }
+    echo '</tbody></table>';
+    echo '<p>NOTE: "Fails" is the total number of Priority and Non-Priority donations we tried to send to the 1-800-GOT-JUNK API, and after attempting we received an error response which means the donation did not get entered into their system.</p>';
+  }, null, null );
 }
-add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\chhj_stats_dashboard_widget' );
+add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\pmd_stats_dashboard_widget' );
 
 /**
  * Supplies content for custom columns.
