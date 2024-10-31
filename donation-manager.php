@@ -7,7 +7,7 @@
  * Author URI:      https://mwender.com
  * Text Domain:     donation-manager
  * Domain Path:     /languages
- * Version:         4.7.3
+ * Version:         4.8.0
  *
  * @package         DonationManager
  */
@@ -60,6 +60,7 @@ require_once DONMAN_PLUGIN_PATH . 'lib/required-checks.php';
 
 // Include class files
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/cli.php';
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/cli.stats.php';
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/cli.fixzips.php';
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/network-member.php';
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/organization.php';
