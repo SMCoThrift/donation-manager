@@ -57,7 +57,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
 
       WP_CLI::line( '$year = ' . $year . "\n" . '$month = ' . $month );
 
-      WP_CLI::line("Running Priority Stats for {$org_key} in {$month}");
+      WP_CLI::line("Running Priority Stats for {$org_key} in {$year}-{$month}");
       $show = ( array_key_exists( 'show', $assoc_args ) && 'true' === strtolower( $assoc_args['show'] ) );
 
       $organizations = [
@@ -178,7 +178,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
 
       $stats = [];
       $stats[] = [
-        'Month'         => $month,
+        'Month'         => $date,
         'Total'         => $donation_counts['non-priority'] + $donation_counts['priority'],
         'Non-Priority'  => $donation_counts['non-priority'],
         'Priority'      => $donation_counts['priority'],
@@ -193,7 +193,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       if( ! is_array( $donation_stats_option ) )
         $donation_stats_option = [];
 
-      $donation_stats_option[ $month ] = [
+      $donation_stats_option[ $date ] = [
         'non-priority'  => $donation_counts['non-priority'],
         'priority'      => $donation_counts['priority'],
         'fails'         => $fails,
