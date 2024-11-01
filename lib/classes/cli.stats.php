@@ -169,7 +169,10 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
         }
       }
 
-      $failure_rate = ($fails/( $donation_counts['non-priority'] + $donation_counts['priority'] ) ) * 100;
+      $total_donations = $donation_counts['non-priority'] + $donation_counts['priority'];
+      $failure_rate = 0;
+      if( 0 < $total_donations )
+        $failure_rate = ($fails/( $total_donations ) ) * 100;
       $success_rate = 100 - $failure_rate;
       $success_rate_percentage = number_format( $success_rate, 2 );
 
