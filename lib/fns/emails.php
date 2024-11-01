@@ -474,6 +474,14 @@ function send_email( $type = '' ){
         }
       }
 
+      /**
+       * 11/01/2024 (11:58) - NOTE: I don't think this code is necessary
+       * anymore b/c of the code above which sends API posts for all
+       * Orphaned Donations with Fee Based checked. Furthermore, the
+       * below would only send requests for valid zip codes due to the
+       * zip code check [is_valid_pickupcode()] I have inside
+       * send_api_post().
+       */
       // Send API post to CHHJ-API, College Hunks Hauling receives
       // all orphans via this:
       $donor['routing_method'] = 'api-chhj';
