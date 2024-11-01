@@ -20,8 +20,8 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *   - chhj
      * ---
      *
-     * [<month>]
-     * : Month in YYYY-MM format for which we're gathering stats. Defaults to the current month.
+     * [<year_month>]
+     * : Year and Month in YYYY-MM format for which we're gathering stats. Defaults to the current month.
      * ---
      * default:
      * ---
@@ -41,34 +41,32 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *     wp dm stats priority chhj --show=true
      */
     function priority( $args, $assoc_args ){
-      list( $org_key, $month ) = $args;
-      if( empty( $month ) ){
+      list( $org_key, $year_month ) = $args;
+      if( empty( $year_month ) ){
         $timestamp = current_time( 'mysql' );
         $dateObj = date_create( $timestamp );
-        $date = date_format( $dateObj, 'Y-m');
+        $year_month = date_format( $dateObj, 'Y-m');
       }
-      WP_CLI::line( '👉 YYYY-MM = ' . $date );
-      if( ! stristr( $date, '-' ) || 7 != strlen( $date ) || empty( $date ) || '-' != substr( $date, 4, 1 ) )
-        WP_CLI::error( '🚨 Please provide a month in the format YYYY-MM as the first positional argument when calling this file.');
+      if( ! stristr( $year_month, '-' ) || 7 != strlen( $year_month ) || empty( $year_month ) || '-' != substr( $year_month, 4, 1 ) )
+        WP_CLI::error( '🚨 Please provide a year and month in the format YYYY-MM as the first positional argument when calling this file.');
 
-      $date_array = explode( '-', $date );
+      $date_array = explode( '-', $year_month );
       $year = $date_array[0];
       $month = $date_array[1];
-
-      WP_CLI::line( '$year = ' . $year . "\n" . '$month = ' . $month );
-
-      WP_CLI::line("Running Priority Stats for {$org_key} in {$year}-{$month}");
-      $show = ( array_key_exists( 'show', $assoc_args ) && 'true' === strtolower( $assoc_args['show'] ) );
 
       $organizations = [
         'chhj' => [ 'id' => 511971, 'name' => 'College Hunks Hauling Junk', 'api_method' => 'chhj_api' ],
         '1800gj' => [ 'id' => 521689, 'name' => '1-800-GOT-JUNK?', 'api_method' => '1800gj_api' ],
       ];
+
+      WP_CLI::line( "\n" . 'Running Priority Stats for ' . WP_CLI::colorize( "%G{$organizations[$org_key]['name']}%n") . ' in ' . WP_CLI::colorize( "%Y{$year}-{$month}%n:\n" ) );
+      $show = ( array_key_exists( 'show', $assoc_args ) && 'true' === strtolower( $assoc_args['show'] ) );
+
+
       if( $org_key ){
         $org_name =  $organizations[ $org_key ]['name'];
         $org_id =  $organizations[ $org_key ]['id'];
         $org_api_method =  $organizations[ $org_key ]['api_method'];
-        WP_CLI::line( '⚙️ Organization: ' . $org_name );
       } else {
         WP_CLI::error( 'Please specify your org key (chhj or 1800gj) with the 1st positional argument.' );
       }
@@ -96,7 +94,6 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       $donations = get_posts( $query_args );
       /////
       if( $show ){
-        WP_CLI::line( 'Building Table...' );
         $rows = [];
         $row = 1;
         foreach ( $donations as $donation ) {
@@ -178,7 +175,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
 
       $stats = [];
       $stats[] = [
-        'Month'         => $date,
+        'Month'         => $year_month,
         'Total'         => $donation_counts['non-priority'] + $donation_counts['priority'],
         'Non-Priority'  => $donation_counts['non-priority'],
         'Priority'      => $donation_counts['priority'],
@@ -187,13 +184,14 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       ];
       WP_CLI\Utils\format_items( 'table', $stats, 'Month,Total,Non-Priority,Priority,Fails,Success Rate' );
       WP_CLI::line( 'NOTE: Success Rate is calculated by dividing fails by the total number of Non-Priority and Priority donations and subtracting from 100%.' );
-      WP_CLI\Utils\format_items( 'table', $failed_rows, 'No.,ID,Date,Code,Message,Reason,Organization' );
+      if( 0 < count( $failed_rows ) )
+        WP_CLI\Utils\format_items( 'table', $failed_rows, 'No.,ID,Date,Code,Message,Reason,Organization' );
 
       $donation_stats_option = get_option( "{$org_key}_donations" );
       if( ! is_array( $donation_stats_option ) )
         $donation_stats_option = [];
 
-      $donation_stats_option[ $date ] = [
+      $donation_stats_option[ $year_month ] = [
         'non-priority'  => $donation_counts['non-priority'],
         'priority'      => $donation_counts['priority'],
         'fails'         => $fails,
