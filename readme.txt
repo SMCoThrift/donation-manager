@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.6.2
 Requires PHP: 8.1
-Stable tag: 4.8.3
+Stable tag: 4.8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 4.8.4 =
+* Update API Save Response Code to 408 when Response Message contains "cURL error 28: Operation timed out".
 
 = 4.8.3 =
 * BUGFIX: Preventing division by zero in `wp dm stats priority` when no donations have been recorded for an organization.

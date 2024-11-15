@@ -55,10 +55,18 @@ class DonationRouter {
     if( ! is_null( $donation_id ) ){
       update_post_meta( $donation_id, 'api_response', $message );
       if( is_array( $response ) && array_key_exists( 'response', $response ) && is_array( $response['response'] ) ){
+        if( array_key_exists( 'message', $response['response'] ) ){
+          update_post_meta( $donation_id, 'api_response_message', $response['response']['message'] );
+
+          // Handle Errors for Gateway Timeout
+          if( stristr( $response['response']['message'], 'cURL error 28: Operation timed out') ){
+            $response['response']['code'] = 408;
+          }
+        }
+
         if( array_key_exists( 'code', $response['response'] ) )
           update_post_meta( $donation_id, 'api_response_code', $response['response']['code'] );
-        if( array_key_exists( 'message', $response['response'] ) )
-          update_post_meta( $donation_id, 'api_response_message', $response['response']['message'] );
+
       }
     } else {
       wp_mail( 'webmaster@pickupmydonation.com', 'API Post Error', 'We received the following error when attempting to post Donation #' . $donation_id . ' by API:' . "\n\n" . $message );
