@@ -141,6 +141,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
         $response_message = get_post_meta( $donation->ID, 'api_response_message', true );
         if( 200 != $response_code  ){
           $fails++;
+          /*
           $reason = 'Unknown';
           if( stristr( $api_response, 'Invalid phone number' ) ){
             $reason = 'Invalid phone number';
@@ -151,13 +152,14 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
           } else if ( stristr( $api_response, 'cURL error 28' ) ){
             $reason = $api_response;
           }
+          /**/
           $failed_rows[] = [
             'No.' => $fails,
             'ID'  => $donation->ID,
             'Date'  => get_the_date( 'Y-m-d H:i:s', $donation->ID ),
             'Code'  => $response_code,
             'Message' => $response_message,
-            'Reason'  => substr( $reason, 0, 60 ),
+            /*'Reason'  => substr( $reason, 0, 60 ),*/
             'Organization' => get_post_meta( $donation->ID, '_organization_name', true ),
           ];
           //WP_CLI::line('🚨 #' . $donation->ID . ' ' . $organization_name . ' (' . $response_code . ' - ' . $response_message . '). Reason: ' . $reason );
@@ -188,7 +190,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       WP_CLI\Utils\format_items( 'table', $stats, 'Month,Total,Non-Priority,Priority,Fails,Success Rate' );
       WP_CLI::line( 'NOTE: Success Rate is calculated by dividing fails by the total number of Non-Priority and Priority donations and subtracting from 100%.' );
       if( 0 < count( $failed_rows ) )
-        WP_CLI\Utils\format_items( 'table', $failed_rows, 'No.,ID,Date,Code,Message,Reason,Organization' );
+        WP_CLI\Utils\format_items( 'table', $failed_rows, 'No.,ID,Date,Code,Message,Organization' );
 
       $donation_stats_option = get_option( "{$org_key}_donations" );
       if( ! is_array( $donation_stats_option ) )
