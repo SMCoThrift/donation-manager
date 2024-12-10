@@ -153,6 +153,19 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
             $reason = $api_response;
           }
           /**/
+          //*
+          switch ( $response_code ) {
+            case 408:
+              $response_code = WP_CLI::colorize("%r{$response_code}%n");
+              //$response_code = '↪️ ' . $response_code;
+              break;
+            
+            default:
+              $response_code = WP_CLI::colorize("%y{$response_code}%n");
+              break;
+          }
+          /**/
+
           $failed_rows[] = [
             'No.' => $fails,
             'ID'  => $donation->ID,
