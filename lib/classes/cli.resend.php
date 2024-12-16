@@ -1,4 +1,6 @@
 <?php
+use function DonationManager\donations\get_donation_routing_method;
+
 // Only run if in the WP_CLI
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
   /**
@@ -14,16 +16,19 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
      * [--age=<minutes>]
      * : The age in minutes of the donations to resend. Defaults to 5.
      *
+     * [--ids=<post_ids>]
+     * : Comma-separated list of post IDs to resend. Overrides the age parameter if provided.
+     *
      * ## EXAMPLES
      *
      *     wp dm resend
      *     wp dm resend --age=10
+     *     wp dm resend --ids=123,456,789
      *
      * @param array $args       Positional arguments.
      * @param array $assoc_args Associative arguments.
      */
     public function __invoke( $args, $assoc_args ) {
-      $age = isset( $assoc_args['age'] ) ? (int) $assoc_args['age'] : 5;
       $query_args = [
         'post_type'      => 'donation',
         'post_status'    => 'publish',
@@ -34,14 +39,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             'compare' => '=',
           ],
         ],
-        'date_query'     => [
+        'posts_per_page' => -1,
+      ];
+
+      if ( isset( $assoc_args['ids'] ) ) {
+        $post_ids = array_map( 'intval', explode( ',', $assoc_args['ids'] ) );
+        $query_args['post__in'] = $post_ids;
+      } else {
+        $age = isset( $assoc_args['age'] ) ? (int) $assoc_args['age'] : 5;
+        $query_args['date_query'] = [
           [
             'after'     => "{$age} minutes ago",
             'inclusive' => true,
           ],
-        ],
-        'posts_per_page' => -1,
-      ];
+        ];
+      }
 
       $donations = get_posts( $query_args );
 
@@ -60,6 +72,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
       WP_CLI::success( 'Finished queueing donations for RESEND.' );
     }
+
 
     /**
      * Builds the donation data array from a donation post.
@@ -104,6 +117,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
       return array_merge(
         [
+          'ID'                      => $donation->ID,
           'routing_method'          => get_donation_routing_method( $org->ID ),
           'pickup_code'             => $pickup_code,
           'org_id'                  => $org ? $org->ID : '',
@@ -130,7 +144,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
           'reason'                  => get_post_meta( $donation->ID, 'reason', true ),
           'pickuplocation'          => get_post_meta( $donation->ID, 'pickuplocation', true ),
           'fee_based'               => get_post_meta( $donation->ID, 'fee_based', true ),
-          'ID'                      => $donation->ID,
         ],
         $pickup_data,
         $different_pickup_address === 'Yes' ? [ 'pickup_address' => $pickup_address ] : []
