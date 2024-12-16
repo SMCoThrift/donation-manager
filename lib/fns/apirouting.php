@@ -12,12 +12,13 @@ use function DonationManager\organizations\{get_organizations};
  * @return void
  */
 function send_api_post( $donation ){
-  /*
+  //*
   if( DONMAN_DEV_ENV ){
-    uber_log('🔔 We are in Development Mode, not sending API Post.');
+    uber_log('🔔 We are in Development Mode, not sending API Post. $donation = ' . print_r( $donation, true ) );
     return true;
   }
   /**/
+  $status = false;
 
   switch( $donation['routing_method'] ){
     case 'chhj_api':
@@ -28,7 +29,7 @@ function send_api_post( $donation ){
         require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.chhj.php';
         $CHHJDonationRouter = \CHHJDonationRouter::get_instance();
         $CHHJDonationRouter->submit_donation( $donation );
-        return true;
+        $status = true;
       }
     break;
 
@@ -39,9 +40,12 @@ function send_api_post( $donation ){
         require_once DONMAN_PLUGIN_PATH . 'lib/classes/donation-router.1800gj.php';
         $GotJunkDonationRouter = \GotJunkDonationRouter::get_instance();
         $GotJunkDonationRouter->submit_donation( $donation );
+        $status = true;
       }
       break;
   }
+
+  return $status;
 }
 
 /**

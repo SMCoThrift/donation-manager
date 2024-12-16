@@ -50,13 +50,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         return;
       }
 
+      $BackgroundResendProcess = $GLOBALS['BackgroundResendProcess'];
       foreach ( $donations as $donation ) {
         $donation_data = $this->build_donation_array( $donation );
-        \DonationManager\apirouting\send_api_post( $donation_data );
-        WP_CLI::log( "Resent donation ID {$donation->ID}." );
+        $BackgroundResendProcess->push_to_queue( $donation_data );
+        WP_CLI::log( "Queuing Donation #{$donation->ID} for a resend." );
       }
+      $BackgroundResendProcess->save()->dispatch();
 
-      WP_CLI::success( 'Finished resending donations.' );
+      WP_CLI::success( 'Finished queueing donations for RESEND.' );
     }
 
     /**
@@ -83,9 +85,27 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         }
       }
 
+      $donor_name = get_field( 'donor_name', $donation->ID );
+      $donor_name_parts = explode( ' ', $donor_name );
+      $donor_first_name = array_shift( $donor_name_parts );
+      $donor_last_name = implode( ' ', $donor_name_parts );
+
+      $different_pickup_address = get_field( 'pickup_address_street', $donation->ID ) ? 'Yes' : 'No';
+
+      $pickup_address = $different_pickup_address === 'Yes' ? [
+        'address' => get_field( 'pickup_address_street', $donation->ID ),
+        'city'    => get_field( 'pickup_address_city', $donation->ID ),
+        'state'   => get_field( 'pickup_address_state', $donation->ID ),
+        'zip'     => get_field( 'pickup_address_zip', $donation->ID ),
+      ] : [];
+
+      $pickup_code_term = wp_get_post_terms( $donation->ID, 'pickup_code', [ 'fields' => 'names' ] );
+      $pickup_code = $pickup_code_term ? $pickup_code_term[0] : '';
+
       return array_merge(
         [
-          'pickup_code'             => get_post_meta( $donation->ID, 'pickup_code', true ),
+          'routing_method'          => get_donation_routing_method( $org->ID ),
+          'pickup_code'             => $pickup_code,
           'org_id'                  => $org ? $org->ID : '',
           'trans_dept_id'           => $trans_dept ? $trans_dept->ID : '',
           'priority'                => get_post_meta( $donation->ID, 'priority', true ),
@@ -93,8 +113,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
           'description'             => get_field( 'pickup_description', $donation->ID ),
           'address'                 => [
             'name'                  => [
-              'first'               => get_field( 'donor_name_first', $donation->ID ),
-              'last'                => get_field( 'donor_name_last', $donation->ID ),
+              'first'               => $donor_first_name,
+              'last'                => $donor_last_name,
             ],
             'company'               => get_field( 'address_company', $donation->ID ),
             'address'               => get_field( 'address_street', $donation->ID ),
@@ -102,7 +122,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             'state'                 => get_field( 'address_state', $donation->ID ),
             'zip'                   => get_field( 'address_zip', $donation->ID ),
           ],
-          'different_pickup_address' => get_post_meta( $donation->ID, 'different_pickup_address', true ),
+          'different_pickup_address' => $different_pickup_address,
           'email'                   => get_field( 'donor_email', $donation->ID ),
           'phone'                   => get_field( 'donor_phone', $donation->ID ),
           'preferred_contact_method' => get_post_meta( $donation->ID, 'preferred_contact_method', true ),
@@ -112,7 +132,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
           'fee_based'               => get_post_meta( $donation->ID, 'fee_based', true ),
           'ID'                      => $donation->ID,
         ],
-        $pickup_data
+        $pickup_data,
+        $different_pickup_address === 'Yes' ? [ 'pickup_address' => $pickup_address ] : []
       );
     }
   }

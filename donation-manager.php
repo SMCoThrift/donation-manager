@@ -72,6 +72,10 @@ $BackgroundDonationCountProcess = new DM_Donation_Count_Process();
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/background-delete-donation-process.php';
 $GLOBALS['BackgroundDeleteDonationProcess'] = new DM_Delete_Donation_Process(); // We must set this as an explicit global in order for it to be available inside WPCLI
 
+// Iniitalize background process for resending a failed donation API post:
+require_once DONMAN_PLUGIN_PATH . 'lib/classes/background-resend-process.php';
+$GLOBALS['BackgroundResendProcess'] = new DM_Resend_Process();
+
 // Include our Orphaned Donations Class
 require_once DONMAN_PLUGIN_PATH . 'lib/classes/orphaned-donations.php';
 $DMOrphanedDonations = DMOrphanedDonations::get_instance();
