@@ -36,6 +36,6 @@ class DM_Resend_Process extends WP_Background_Process {
       parent::complete();
 
       // Show notice to user or perform some other arbitrary task...
-      error_log('[DonationResendProcess] Donation #' . $donation_id . ' has been resent.');
+      error_log('[DonationResendProcess] Donation has been resent.');
   }
 }
