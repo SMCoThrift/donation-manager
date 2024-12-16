@@ -480,6 +480,10 @@ function save_donation( $donation = array() ){
   $field_group = donman_get_acf_field_group( 'group_629f701864f58' );
   $fields = $field_group->fields;
 
+  update_post_meta( $ID, 'pickuplocation', $donation['pickuplocation'] );
+  update_post_meta( $ID, 'items', $donation['items'] );
+  update_post_meta( $ID, 'preferred_contact_method', $donation['preferred_contact_method'] );
+
   foreach( $fields as $field ){
     switch( $field->name ){
       case 'address':
