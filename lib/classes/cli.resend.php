@@ -65,6 +65,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
       $BackgroundResendProcess = $GLOBALS['BackgroundResendProcess'];
       foreach ( $donations as $donation ) {
         $donation_data = $this->build_donation_array( $donation );
+        update_post_meta( $donation->ID, 'api_response_code', 'pending' );
         $BackgroundResendProcess->push_to_queue( $donation_data );
         WP_CLI::log( "Queuing Donation #{$donation->ID} for a resend." );
       }
