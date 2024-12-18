@@ -71,7 +71,7 @@ $hbs_vars['date_note'] = get_alert([
 $hbs_vars['sms_consent_note'] = get_alert([
   'type' => 'info',
   'title' => 'Communications Consent',
-  'description' => 'By submitting this form, you consent to being contacted by our partners via SMS, phone call, or email.',
+  'description' => 'By submitting this form, you consent to being contacted by our partners via SMS, phone call, or email. You may receive a call outside of standard calling hours such as evenings or weekends.',
 ]);
 
 // Setup HBS vars for Pick Up Provider Choice on Orphaned Donations
