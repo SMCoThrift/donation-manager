@@ -1,5 +1,6 @@
 <?php
 use function DonationManager\donations\get_donation_routing_method;
+use function DonationManager\organizations\get_organizations;
 
 // Only run if in the WP_CLI
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
