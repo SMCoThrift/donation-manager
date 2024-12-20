@@ -120,7 +120,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
       $fee_based = (bool) get_post_meta( $donation->ID, 'fee_based', true );
       $routing_method = get_donation_routing_method( $org->ID );
       if( ! stristr( $routing_method, 'api' ) && $fee_based ){
-        $orgs = get_organizations( $donor['pickup_code'] );
+        $orgs = get_organizations( $pickup_code );
         foreach( $orgs as $org ){
           if( stristr( $org['routing_method'], 'api') ){
             $routing_method = $org['routing_method'];
