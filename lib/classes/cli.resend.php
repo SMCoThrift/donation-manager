@@ -116,10 +116,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
       $pickup_code_term = wp_get_post_terms( $donation->ID, 'pickup_code', [ 'fields' => 'names' ] );
       $pickup_code = $pickup_code_term ? $pickup_code_term[0] : '';
 
+      $fee_based = (bool) get_post_meta( $donation->ID, 'fee_based', true );
+      $routing_method = get_donation_routing_method( $org->ID );
+      if( ! stristr( $routing_method, 'api' ) && $fee_based ){
+        $orgs = get_organizations( $donor['pickup_code'] );
+        foreach( $orgs as $org ){
+          if( stristr( $org['routing_method'], 'api') ){
+            $routing_method = $org['routing_method'];
+          }
+        }
+      }
+
       return array_merge(
         [
           'ID'                      => $donation->ID,
-          'routing_method'          => get_donation_routing_method( $org->ID ),
+          'routing_method'          => $routing_method,
           'pickup_code'             => $pickup_code,
           'org_id'                  => $org ? $org->ID : '',
           'trans_dept_id'           => $trans_dept ? $trans_dept->ID : '',
@@ -144,7 +155,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
           'preferred_code'          => get_post_meta( $donation->ID, 'preferred_code', true ),
           'reason'                  => get_post_meta( $donation->ID, 'reason', true ),
           'pickuplocation'          => get_post_meta( $donation->ID, 'pickuplocation', true ),
-          'fee_based'               => get_post_meta( $donation->ID, 'fee_based', true ),
+          'fee_based'               => $fee_based,
         ],
         $pickup_data,
         $different_pickup_address === 'Yes' ? [ 'pickup_address' => $pickup_address ] : []
