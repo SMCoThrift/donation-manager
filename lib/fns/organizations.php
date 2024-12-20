@@ -102,8 +102,8 @@ function get_organizations( $pickup_code ) {
       ]
     ],
   ];
-  if( WP_CLI && class_exists( 'WP_CLI' ) )
-    \WP_CLI::line( '🔔 get_organizations() query args = ' . print_r( $args, true ) );
+  //if( WP_CLI && class_exists( 'WP_CLI' ) )
+    //\WP_CLI::line( '🔔 get_organizations() query args = ' . print_r( $args, true ) );
 
   $trans_depts = get_posts( $args );
 
