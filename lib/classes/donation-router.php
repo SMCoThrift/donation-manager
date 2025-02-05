@@ -54,6 +54,7 @@ class DonationRouter {
 
     if( ! is_null( $donation_id ) ){
       update_post_meta( $donation_id, 'api_response', $message );
+      $this->save_api_post_timestamp( $donation_id );
 
       /**
        * Handle cURL Timeouts
@@ -77,6 +78,18 @@ class DonationRouter {
     } else {
       wp_mail( 'webmaster@pickupmydonation.com', 'API Post Error', 'We received the following error when attempting to post Donation #' . $donation_id . ' by API:' . "\n\n" . $message );
     }
+  }
+
+  /**
+   * Saves a new API post timestamp for a donation.
+   *
+   * Stores multiple timestamps for the given donation ID without overwriting existing ones.
+   *
+   * @param int $donation_id The ID of the donation post.
+   */
+  public function save_api_post_timestamp( $donation_id ){
+    $timestamp = current_time( 'mysql' );
+    add_post_meta( $donation_id, 'api_post_timestamp', $timestamp, false );    
   }
 }
 ?>
