@@ -4,13 +4,18 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.6.2
 Requires PHP: 8.1
-Stable tag: 5.0.0
+Stable tag: 5.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.1.0 =
+* Not adding alert styling to Step 1 Note when alert HTML is already present.
+* Adjusting "Prices start as low" text from "$50" to "$100".
+* Adding documentation for `[getalert/]` shortcode.
 
 = 5.0.0 =
 * Saving `api_post_timestamp`.
