@@ -91,7 +91,7 @@ label.pickup-date{font-size: 15px;}
           <div class="radio">
             <label for="fee_based_true">
               <input type="radio" name="donor[fee_based]" id="fee_based_true" value="1"'.htmlspecialchars((string)(($inary && isset($in['checked_fee_based_true'])) ? $in['checked_fee_based_true'] : null), ENT_QUOTES, 'UTF-8').'> Yes, please send this request to free <strong><em>and fee-based<sup>*</sup></em></strong> pick up services.
-              <div style="background-color: #d9edf7; padding: 10px; border-radius: 3px; color: #31708f; margin: 10px 0 20px;"><sup style="font-weight: bold;">*</sup>Prices start as low as $50 for a single item.</div>
+              <div style="background-color: #d9edf7; padding: 10px; border-radius: 3px; color: #31708f; margin: 10px 0 20px;"><sup style="font-weight: bold;">*</sup>Prices start as low as $100 for a single item.</div>
             </label>
             <label for="fee_based_false">
               <input type="radio" name="donor[fee_based]" id="fee_based_false" value="0"'.htmlspecialchars((string)(($inary && isset($in['checked_fee_based_false'])) ? $in['checked_fee_based_false'] : null), ENT_QUOTES, 'UTF-8').'> No, only send this request to free pick up services.
