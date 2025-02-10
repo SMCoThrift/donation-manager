@@ -12,7 +12,7 @@ if( DMDEBUG_VERBOSE )
   uber_log('🔔 $org_id = ' . $org_id );
 
 $step_one_notice = get_field( 'pickup_settings_step_one_notice', $org_id );
-if( ! empty( $step_one_notice ) ){
+if( ! empty( $step_one_notice ) && ! stristr( $step_one_notice, 'elementor-alert') ){
   $step_one_notice = get_alert([
     'description' => $step_one_notice,
     'type'        => 'info',
