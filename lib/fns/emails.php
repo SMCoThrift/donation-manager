@@ -126,8 +126,10 @@ function send_email( $type = '' ){
             if( ! get_referer() )
                 return;
 
-            $html = render_template( 'email.blank', [
-              'content' => '<div style="text-align: left;"><p>The following page has an invalid link to our system:</p><pre>Referrering URL = ' . get_referer() . '</pre></div>',
+            $html = render_template( 'email.user-portal-notification', [
+              'header_logo' => DONMAN_PLUGIN_URL . 'lib/images/pickupmydonation-logo-inverted_1200x144.png',
+              'year' => date( 'Y' ),
+              'email_content' => '<div style="text-align: left;"><p>The following page has an invalid link to our system:</p><p>Referrering URL = ' . get_referer() . '</p></div>',
             ]);
 
             $recipients = array( 'webmaster@pickupmydonation.com' );
@@ -143,8 +145,10 @@ function send_email( $type = '' ){
          * @content  Administrator
          */
         case 'missing_org_transdept_notification':
-            $html = render_template( 'email.blank', [
-              'content' => '<div style="text-align: left;"><p>This donation doesn\'t have an ORG and/or TRANS_DEPT set:</p><pre>$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) . '</pre></div>',
+            $html = render_template( 'email.user-portal-notification', [
+              'header_logo' => DONMAN_PLUGIN_URL . 'lib/images/pickupmydonation-logo-inverted_1200x144.png',
+              'year' => date( 'Y' ),              
+              'email_content' => '<div style="text-align: left;"><p>This donation doesn\'t have an ORG and/or TRANS_DEPT set:</p><pre style="overflow: hidden;">$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) . '</pre></div>',
             ]);
             $recipients = array( 'webmaster@pickupmydonation.com' );
             $subject = 'PMD Admin Notification - No Org/Trans Dept Set';
@@ -159,8 +163,10 @@ function send_email( $type = '' ){
          * @context  Administrator
          */
         case 'zipcode_mismatch':
-            $html = render_template( 'email.blank', [
-              'content' => '<div style="text-align: left;"><p>' . $_POST['donor']['address']['name']['first'] . ' ' . $_POST['donor']['address']['name']['last'] . '<br />$_SESSION[\'donor\'][\'pickup_code\'] = ' . $_SESSION['donor']['pickup_code'] . '<br />$_POST[\'donor\'][\'address\'][\'zip\'] = ' . $_POST['donor']['address']['zip'] . '</p><p><pre>URL PATH = ' . print_r( $_SESSION['donor']['url_path'], true ) . '</pre></p></div>',
+            $html = render_template( 'email.user-portal-notification', [
+              'header_logo' => DONMAN_PLUGIN_URL . 'lib/images/pickupmydonation-logo-inverted_1200x144.png',
+              'year' => date( 'Y' ),              
+              'email_content' => '<div style="text-align: left;"><p>' . $_POST['donor']['address']['name']['first'] . ' ' . $_POST['donor']['address']['name']['last'] . '<br />$_SESSION[\'donor\'][\'pickup_code\'] = ' . $_SESSION['donor']['pickup_code'] . '<br />$_POST[\'donor\'][\'address\'][\'zip\'] = ' . $_POST['donor']['address']['zip'] . '</p><p>URL PATH = ' . print_r( $_SESSION['donor']['url_path'], true ) . '</p></div>',
             ]);
             $recipients = ['webmaster@pickupmydonation.com'];
             $subject = 'PMD Zip Code Error - ' . esc_attr( $_POST['donor']['address']['name']['first'] ) . ' ' . esc_attr( $_POST['donor']['address']['name']['last'] );
