@@ -8,8 +8,14 @@
 if( ! isset( $DMReports ) )
   $DMReports = \DMReports::get_instance();
 
-$orgs = $DMReports->get_all_orgs();
+if( isset( $orgs ) && is_array( $orgs ) ){
+  // nothing, $orgs has been set by --orgs=<org_ids> in /lib/classes/cli.php
+} else {
+  $orgs = $DMReports->get_all_orgs();  
+}
+
 uber_log( '🔔 $orgs = ' . print_r( $orgs, true ) );
+//die();
 
 foreach( $orgs as $key => $org_id ){
   // Continue if we don't have any `monthly_report_emails` for the org
@@ -55,7 +61,7 @@ foreach( $orgs as $key => $org_id ){
     $attachment_file = get_attached_file( $attachment_id );
 
     // Send the report
-    $args = [ 'org_id' => $org_id, 'month' => $month, 'attachment_file' => $attachment_file, 'donation_count' => $donation_count, 'to' => $email_array ];
+    $args = [ 'org_id' => $org_id, 'month' => $month, 'attachment_file' => $attachment_file, 'donation_count' => $donation_count, 'to' => $email_array, 'force' => $force ];
     $DMReports->send_donation_report( $args );
 
     // Clean up

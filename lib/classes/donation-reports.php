@@ -658,11 +658,12 @@ class DMReports {
      */
     function send_donation_report( $atts ){
         $args = shortcode_atts( [
-         'org_id' => null,
-         'month' => null,
-         'attachment_file' => null,
-         'donation_count' => 0,
-         'to' => null,
+         'org_id' 			=> null,
+         'month' 			=> null,
+         'attachment_file' 	=> null,
+         'donation_count' 	=> 0,
+         'to' 				=> null,
+         'force'			=> false,
         ], $atts );
 
         if( is_null( $args['to'] ) )
@@ -671,7 +672,11 @@ class DMReports {
         $_last_donation_report = get_post_meta( $args['org_id'], '_last_donation_report', true );
         if( $args['month'] == $_last_donation_report ){
             \WP_CLI::line('  [X] Report already sent to #' . $args['org_id'] . ' ' . get_the_title( $args['org_id'] ) . ' for ' . $args['month'] . '.' );
-            return false;
+            if( true == $args['force'] ){
+            	\WP_CLI::line( '  🔔 --force=true Resending report...' );
+            } else {
+	            return false;
+	        }
         }
         \WP_CLI::line('  [>] Sending ' . $args['month'] . ' report for #' . $args['org_id'] . ' ' . get_the_title( $args['org_id'] ) . '.' );
 
@@ -730,6 +735,10 @@ class DMReports {
             'organization' => html_entity_decode( $organization ),
             'donation_value' => $donation_value,
             'donation_count' => $args['donation_count'],
+            'year'                      => current_time( 'Y' ),
+            'facebook_icon'             => DONMAN_PLUGIN_URL . 'lib/images/facebook.png',
+            'x_icon'                    => DONMAN_PLUGIN_URL . 'lib/images/twitter.png',
+            'instagram_icon'            => DONMAN_PLUGIN_URL . 'lib/images/instagram.png',            
         ];
 
         $html = DonationManager\templates\render_template( 'email.monthly-donor-report', $hbs_vars );
@@ -811,6 +820,10 @@ class DMReports {
             'organization' => $network_member_name,
             'donation_value' => $donation_value,
             'donation_count' => $args['donation_count'],
+            'year'                      => current_time( 'Y' ),
+            'facebook_icon'             => DONMAN_PLUGIN_URL . 'lib/images/facebook.png',
+            'x_icon'                    => DONMAN_PLUGIN_URL . 'lib/images/twitter.png',
+            'instagram_icon'            => DONMAN_PLUGIN_URL . 'lib/images/instagram.png',            
         ];
 
         $html = DonationManager\templates\render_template( 'email.monthly-donor-report', $hbs_vars );

@@ -105,7 +105,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      * ## OPTIONS
      *
      * --type=<type>
-     * : The specific report. Can be:
+     * : The specific report. Can be: networkmembers, organizations, zipsbytransdept
      * - networkmembers (PMD 2.0 this was called by setting `--provider=nonexclusive`)
      * - organizations (PMD 2.0 this was the default for `wp donman sendreports`, these are the `exclusive` providers)
      * - zipsbytransdept - shows all zip code assignments in the system
@@ -115,6 +115,12 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      *
      * [--format=<table|csv|json|yaml|ids|count>]
      * : Output format of the report (i.e.  ‘table’, ‘json’, ‘csv’, ‘yaml’, ‘ids’, ‘count’)
+     * 
+     * [--orgs=<org_ids>]
+     * : Limit the reports to a comma separated list of Org IDs.
+     * 
+     * [--force]
+     * : Forces a resend of reports even if they have been sent (used for testing).
      */
     function report( $args, $assoc_args ){
       $type = $assoc_args['type'];
@@ -131,6 +137,16 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       }
 
       $format = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table' ;
+
+      $force = isset( $assoc_args['force'] ); // Set force based on existence of the flag
+
+      if( isset( $assoc_args['orgs'] ) && ! empty( $assoc_args['orgs'] ) ){
+        $orgs = explode( ',', $assoc_args['orgs'] ); 
+        foreach( $orgs as $org_id ){
+          if( ! is_numeric( $org_id ) )
+            WP_CLI::error( '--orgs must be a comma separated list of numeric Org IDs.' );
+        }
+      }
 
       $report_file = DONMAN_PLUGIN_PATH . 'lib/fns/cli/report.' . $type . '.php';
       if( ! file_exists( $report_file ) )
