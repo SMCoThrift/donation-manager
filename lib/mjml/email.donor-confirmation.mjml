@@ -6,7 +6,7 @@
     	</mj-column>
     </mj-section>
     <mj-section padding-bottom="0">
-        <mj-column width="600">
+        <mj-column width="600px">
             <mj-divider border-width="8px" border-color="#0082C8" padding="0"></mj-divider>
             <mj-image src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/email-header.png" padding="0"></mj-image>
         </mj-column>
@@ -17,7 +17,7 @@
             <mj-text color="#0082C8" font-weight="600" align="center" font-size="20px" line-height="28px" padding="0 25px 10px 25px">
                 Thank you for donating to:
             </mj-text>
-            <mj-image href="{{website}}" width="300" src="{{organization_logo}}" />
+            <mj-image href="{{website}}" width="300px" src="{{organization_logo}}" />
         </mj-column>
     </mj-section>
     <mj-raw>{{/if}}</mj-raw>
@@ -29,7 +29,7 @@
         </mj-column>
     </mj-section>
     <mj-section padding-bottom="0" padding-top="0">
-        <mj-column width="600">
+        <mj-column width="600px">
             <mj-image src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/three-steps.png" padding="0"></mj-image>
         </mj-column>
     </mj-section>
@@ -70,23 +70,13 @@
     </mj-section>
     <mj-section background-color="#363636">
         <mj-column>
-            <mj-social
-                mode="horizontal"
-                display="twitter:url facebook:url instagram:url"
-                facebook-href="https://www.facebook.com/PickUpMyDonationcom"
-                facebook-content=""
-                facebook-icon-color="transparent"
-                twitter-href="https://twitter.com/pickupdonations"
-                twitter-content=""
-                twitter-icon-color="transparent"
-                instagram-href="https://www.instagram.com/pickupdonations/"
-                instagram-content=""
-                instagram-icon-color="transparent"
-                icon-size="30px"
-                base-url="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/"
-            />
+          <mj-social mode="horizontal">
+          	<mj-social-element name="facebook-noshare" background-color="transparent" title="Follow us on Facebook" href="https://www.facebook.com/PickUpMyDonation" src="{{facebook_icon}}"></mj-social-element>
+            <mj-social-element name="x-noshare" background-color="transparent" title="Follow us on X/Twitter" href="https://x.com/pickupdonations" src="{{x_icon}}"></mj-social-element>
+            <mj-social-element name="instagram" background-color="transparent" title="Follow us on Instagram" href="https://www.instagram.com/pickupmydonation/" src="{{instagram_icon}}"></mj-social-element>
+          </mj-social>
             <mj-text align="center" color="#fff">
-                    &copy; 2012 &ndash; 2024 PickUpMyDonation.com. All rights reserved.
+                    &copy; 2012 &ndash; {{year}} PickUpMyDonation.com. All rights reserved.
             </mj-text>
         </mj-column>
     </mj-section>

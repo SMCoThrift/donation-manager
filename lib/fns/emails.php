@@ -200,11 +200,15 @@ function send_email( $type = '' ){
 
           // Handlebars Email Template
           $hbs_vars = [
-            'organization_name' => $organization_name,
-            'donationreceipt' => $donationreceipt,
-            'trans_contact' => $trans_contact,
-            'orphaned_donation_note' => $orphaned_donation_note,
-            'allow_user_photo_uploads' => $user_photo_uploads['on'],
+            'organization_name'         => $organization_name,
+            'donationreceipt'           => $donationreceipt,
+            'trans_contact'             => $trans_contact,
+            'orphaned_donation_note'    => $orphaned_donation_note,
+            'allow_user_photo_uploads'  => $user_photo_uploads['on'],
+            'year'                      => current_time( 'Y' ),
+            'facebook_icon'             => DONMAN_PLUGIN_URL . 'lib/images/facebook.png',
+            'x_icon'                    => DONMAN_PLUGIN_URL . 'lib/images/twitter.png',
+            'instagram_icon'            => DONMAN_PLUGIN_URL . 'lib/images/instagram.png',
           ];
           if( $logo_url = get_the_post_thumbnail_url( $donor['org_id'], 'full' ) )
             $hbs_vars['organization_logo'] = $logo_url;
