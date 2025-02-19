@@ -4,13 +4,20 @@ Tags: donations, CPT
 Requires at least: 6.0.0
 Tested up to: 6.6.2
 Requires PHP: 8.1
-Stable tag: 5.1.0
+Stable tag: 5.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.2.0 =
+* Updating social links in Donor Confirmation, Monthly Donor Report, and Transportation Department Notification emails.
+* Adding `{{year}}` variable to email footers to allow for dynamic insertion of current year in the copyright notice.
+* Adding `--force` and `--orgs` options to `$ wp dm report`.
+* BUGFIX: Admin alerts for `invalid_link`, `missing_org_transdept_notification`, and `zipcode_mismatch` updated to utilize the "User Portal Notification" template. Previously they were set to use the legacy "Blank Template" which no longer exists resulting in an empty email which generated a fail over our transactional email API.
+* BUGFIX: Correcting redirect for an `invalid_link` to return to the home page.
 
 = 5.1.0 =
 * Not adding alert styling to Step 1 Note when alert HTML is already present.
