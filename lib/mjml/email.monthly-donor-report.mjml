@@ -31,23 +31,13 @@
     </mj-section>
     <mj-section background-color="#363636">
         <mj-column>
-            <mj-social
-                mode="horizontal"
-                display="twitter:url facebook:url instagram:url"
-                facebook-href="https://www.facebook.com/PickUpMyDonationcom"
-                facebook-content=""
-                facebook-icon-color="transparent"
-                twitter-href="https://twitter.com/pickupdonations"
-                twitter-content=""
-                twitter-icon-color="transparent"
-                instagram-href="https://www.instagram.com/pickupdonations/"
-                instagram-content=""
-                instagram-icon-color="transparent"
-                icon-size="30px"
-                base-url="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/"
-            />
+          <mj-social mode="horizontal">
+          	<mj-social-element name="facebook-noshare" background-color="transparent" title="Follow us on Facebook" href="https://www.facebook.com/PickUpMyDonation" src="{{facebook_icon}}"></mj-social-element>
+            <mj-social-element name="x-noshare" background-color="transparent" title="Follow us on X/Twitter" href="https://x.com/pickupdonations" src="{{x_icon}}"></mj-social-element>
+            <mj-social-element name="instagram" background-color="transparent" title="Follow us on Instagram" href="https://www.instagram.com/pickupmydonation/" src="{{instagram_icon}}"></mj-social-element>
+          </mj-social>
             <mj-text align="center" color="#fff">
-                    &copy; 2012 &ndash; 2024 PickUpMyDonation.com. All rights reserved.
+                    &copy; 2012 &ndash; {{year}} PickUpMyDonation.com. All rights reserved.
             </mj-text>
         </mj-column>
     </mj-section>
