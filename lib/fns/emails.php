@@ -365,6 +365,10 @@ function send_email( $type = '' ){
             'donationreceipt' => get_donation_receipt( $donor, false ),
             'orphaned_donation_note' => $orphaned_donation_note,
             'organization_name' => $organization_name,
+            'year'                      => current_time( 'Y' ),
+            'facebook_icon'             => DONMAN_PLUGIN_URL . 'lib/images/facebook.png',
+            'x_icon'                    => DONMAN_PLUGIN_URL . 'lib/images/twitter.png',
+            'instagram_icon'            => DONMAN_PLUGIN_URL . 'lib/images/instagram.png',            
           ];
 
           if( isset( $user_uploaded_image ) && ! empty( $user_uploaded_image ) )

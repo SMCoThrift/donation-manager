@@ -34,12 +34,12 @@
   </mj-section>
   <mj-section background-color="#363636">
     <mj-column>
-      <mj-social mode="horizontal" icon-size="30px">
-        <mj-social-element name="twitter-noshare" href="https://twitter.com/pickupdonations" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/twitter.png"></mj-social-element>
-        <mj-social-element name="facebook-noshare" href="https://www.facebook.com/PickUpMyDonationcom" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/facebook.png"></mj-social-element>
-        <mj-social-element name="instagram-noshare" href="https://www.instagram.com/pickupdonations/" src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/instagram.png"></mj-social-element>
+      <mj-social mode="horizontal">
+        <mj-social-element name="facebook-noshare" background-color="transparent" title="Follow us on Facebook" href="https://www.facebook.com/PickUpMyDonation" src="{{facebook_icon}}"></mj-social-element>
+        <mj-social-element name="x-noshare" background-color="transparent" title="Follow us on X/Twitter" href="https://x.com/pickupdonations" src="{{x_icon}}"></mj-social-element>
+        <mj-social-element name="instagram" background-color="transparent" title="Follow us on Instagram" href="https://www.instagram.com/pickupmydonation/" src="{{instagram_icon}}"></mj-social-element>
       </mj-social>
-      <mj-text align="center" color="#fff" line-height="20px">&copy; 2012 &ndash; 2024 PickUpMyDonation.com. All rights reserved.<br>
+      <mj-text align="center" color="#fff" line-height="20px">&copy; 2012 &ndash; {{year}} PickUpMyDonation.com. All rights reserved.<br>
         <a href="https://www.pickupmydonation.com/email-preferences?email={{{email}}}" style="color: #f68428; text-decoration: none;">Unsubscribe from these emails.</a></mj-text>
     </mj-column>
   </mj-section>
