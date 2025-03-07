@@ -3,6 +3,8 @@
 class DMOrphanedDonations {
   const DBVER = '1.0.6';
 
+  private string $orphaned_donations_hook; // Declare property
+
   private static $instance = null;
 
   public static function get_instance() {
