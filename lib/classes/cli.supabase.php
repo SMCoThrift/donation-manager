@@ -24,18 +24,26 @@ class DM_Supabase_Command {
      * <table>
      * : The table to sync. Options: donations, organizations, trans_depts.
      *
+     * [<post_ids>...]
+     * : Optional list of WordPress Post IDs to sync. If provided, only these posts will be synchronized.
+     *
      * ## EXAMPLES
      *
      *     wp dm supabase sync donations
+     *     wp dm supabase sync organizations 123 456 789
      *
      * @when after_wp_load
+     *
+     * @param array $args       Positional arguments, including the table name.
+     * @param array $assoc_args Associative arguments passed to the command.
      */
     public function sync( $args, $assoc_args ) {
       if ( ! $this->supabase_url || ! $this->supabase_apikey ) {
         WP_CLI::error( "Supabase credentials are missing. Ensure SUPABASE_URL and SUPABASE_APIKEY are defined in your .env file." );
       }
 
-      list( $table ) = $args;
+      $table = array_shift( $args );
+      $post_ids = ! empty( $args ) ? array_map( 'intval', $args ) : [];
       
       if ( ! in_array( $table, [ 'donations', 'organizations', 'trans_depts' ], true ) ) {
         WP_CLI::error( "Invalid table specified. Allowed tables: donations, organizations, trans_depts." );
@@ -49,7 +57,7 @@ class DM_Supabase_Command {
                 $this->sync_donations();
                 break;
             case 'organizations':
-                $this->sync_organizations();
+                $this->sync_organizations( $post_ids );
                 break;
             case 'trans_depts':
                 $this->sync_trans_depts();
@@ -69,12 +77,14 @@ class DM_Supabase_Command {
 
     /**
      * Sync organizations data.
+     *
+     * @param array $post_ids Optional array of post IDs to limit the sync.
      */
-    private function sync_organizations() {
+    private function sync_organizations( $post_ids = [] ) {
         WP_CLI::log( "Syncing organizations..." );
         
         // Get all organizations from WP
-        $organizations = $this->get_wp_posts( 'organization' );
+        $organizations = $this->get_wp_posts( 'organization', $post_ids );
 
         foreach ( $organizations as $organization ) {
             // Skip all CHHJ except National Org
@@ -109,12 +119,17 @@ class DM_Supabase_Command {
         }
     }
 
-    private function get_wp_posts( $post_type ) {
-      return get_posts([
+    private function get_wp_posts( $post_type, $post_ids = [] ) {
+      $args = [
         'post_type'      => $post_type,
         'posts_per_page' => -1,
         'post_status'    => 'publish',
-      ]);
+      ];
+      
+      if( is_array( $post_ids ) && 0 < count( $post_ids ) )
+        $args['post__in'] = $post_ids;      
+
+      return get_posts( $args );
     }
 
     private function get_existing_supabase_record( $table, $key, $value ) {
