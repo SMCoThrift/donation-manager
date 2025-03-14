@@ -4,13 +4,17 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.6.2  
 **Requires PHP:** 8.1  
-**Stable tag:** 5.2.0  
+**Stable tag:** 5.3.0  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 5.3.0 ###
+* Supabase syncing for Organizations and Transportation Departments via WP CLI (`wp dm supabase`).
+* Declare `orphaned_donations_hook` to fix PHP 8.2 warning.
 
 ### 5.2.0 ###
 * Updating social links in Donor Confirmation, Monthly Donor Report, and Transportation Department Notification emails.
