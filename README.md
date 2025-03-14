@@ -4,13 +4,16 @@
 **Requires at least:** 6.0.0  
 **Tested up to:** 6.6.2  
 **Requires PHP:** 8.1  
-**Stable tag:** 5.3.2  
+**Stable tag:** 5.3.3  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 5.3.3 ###
+* Loading `user-dashboard.css` only when user is logged in.
 
 ### 5.3.2 ###
 * Removing enqueue for HTMX in favor of the plugin enqueuing.
