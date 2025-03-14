@@ -79,7 +79,6 @@ function enqueue_scripts(){
   wp_enqueue_style( 'user-dashboard', DONMAN_PLUGIN_URL . 'lib/css/user-dashboard.css', null, filemtime( DONMAN_PLUGIN_PATH . 'lib/css/user-dashboard.css' ) );
 
   if( is_user_logged_in() ) {
-    wp_enqueue_script( 'htmx', DONMAN_PLUGIN_URL . 'lib/js/htmx.min.js', null, filemtime( DONMAN_PLUGIN_PATH . 'lib/js/htmx.min.js'), false );
     wp_enqueue_script( 'userportal', DONMAN_PLUGIN_URL . 'lib/js/userportal.js');
   }
 
