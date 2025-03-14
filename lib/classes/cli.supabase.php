@@ -96,7 +96,17 @@ class DM_Supabase_Command {
      */
     private function sync_trans_depts() {
         WP_CLI::log( "Syncing transaction departments..." );
-        // Add logic to sync transaction departments
+
+        $trans_depts = $this->get_wp_posts( 'transaction_department' );
+
+        foreach ( $trans_depts as $trans_dept ) {
+            $data = [
+                'title'               => $trans_dept->post_title,
+                'transaction_dept_id' => $trans_dept->ID,
+            ];
+
+            $this->upsert_supabase_record( 'trans_depts', 'transaction_dept_id', $trans_dept->ID, $data );
+        }
     }
 
     private function get_wp_posts( $post_type ) {
