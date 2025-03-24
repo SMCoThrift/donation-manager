@@ -73,8 +73,39 @@ class DM_Supabase_Command {
      * Sync donations data.
      */
     private function sync_donations() {
-        WP_CLI::log( "Syncing donations..." );
-        // Add logic to sync donations
+      WP_CLI::log( "Syncing donations..." );
+      // Add logic to sync donations
+      
+      $donations = $this->get_donations( 10 );
+
+      foreach( $donations as $donation ){
+        $organization = get_field( 'organization', $donation->ID );
+        $trans_dept = get_field( 'trans_dept', $donation->ID );
+        $fee_based = get_field( 'fee_based', $donation->ID );
+
+        $terms = get_the_terms( $donation->ID, 'pickup_code' );
+        if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+          $pickup_codes = wp_list_pluck( $terms, 'name' );
+          $pickup_codes_list = implode( ', ', $pickup_codes );            
+        }          
+
+
+        $data = [
+          'donation_id'     => $donation->ID,
+          'trans_dept_id'   => $trans_dept->ID,
+          'organization_id' => $organization->ID,
+          'title'           => $donation->post_title,
+          'description'     => $donation->post_content,
+          'fee_based'       => $fee_based,
+          'pickup_code'     => $pickup_codes_list,
+        ];
+
+        $success = $this->upsert_supabase_record( 'donations', 'donation_id', $donation->ID, $data );
+
+        // Record successful sync to supabase:
+        if( $success )
+          update_post_meta( $donation->ID, 'supabase_sync', true );
+      }
     }
 
     /**
@@ -132,24 +163,87 @@ class DM_Supabase_Command {
 
     /**
      * Retrieves WordPress posts of a specified post type, optionally filtered by post IDs.
+     * Supports limiting the number of posts returned and ordering by post date in descending 
+     * order by default.
      *
      * @param string $post_type The post type to retrieve.
      * @param array  $post_ids  Optional. An array of post IDs to retrieve. Default is an empty array.
+     * @param int    $limit     Optional. Maximum number of posts to retrieve. Default is -1 (no limit).
      *
      * @return WP_Post[] An array of WP_Post objects matching the query.
      */
-    private function get_wp_posts( $post_type, $post_ids = [] ) {
+    private function get_wp_posts( $post_type, $post_ids = [], $limit = -1 ) {
       $args = [
         'post_type'      => $post_type,
-        'posts_per_page' => -1,
+        'posts_per_page' => $limit,
         'post_status'    => 'publish',
+        'orderby'        => 'date',
+        'order'          => 'DESC',
       ];
-      
-      if( is_array( $post_ids ) && 0 < count( $post_ids ) )
-        $args['post__in'] = $post_ids;      
+
+      if ( is_array( $post_ids ) && 0 < count( $post_ids ) ) {
+        $args['post__in'] = $post_ids;
+      }
 
       return get_posts( $args );
     }
+
+    /**
+     * Retrieves Donation posts that have not been synced with Supabase.
+     * Skips posts where 'supabase_sync' meta is explicitly set to 'true'.
+     * Efficiently handles large datasets by querying in batches.
+     *
+     * @param int   $limit    Optional. Maximum number of donation posts to retrieve. Default is -1 (no limit).
+     * @param array $post_ids Optional. An array of post IDs to restrict results to. Default is an empty array.
+     *
+     * @return WP_Post[] An array of WP_Post objects matching the criteria.
+     */
+    private function get_donations( $limit = -1, $post_ids = [] ) {
+      $batch_size = 50;
+      $paged      = 1;
+      $collected  = [];
+
+      while ( $limit === -1 || count( $collected ) < $limit ) {
+        $args = [
+          'post_type'      => 'donation',
+          'posts_per_page' => $batch_size,
+          'paged'          => $paged,
+          'post_status'    => 'publish',
+          'orderby'        => 'date',
+          'order'          => 'DESC',
+          'fields'         => 'all',
+        ];
+
+        if ( is_array( $post_ids ) && count( $post_ids ) > 0 ) {
+          $args['post__in'] = $post_ids;
+        }
+
+        $query = new WP_Query( $args );
+
+        if ( ! $query->have_posts() ) {
+          break;
+        }
+
+        foreach ( $query->posts as $post ) {
+          $sync_flag = get_post_meta( $post->ID, 'supabase_sync', true );
+          if ( filter_var( $sync_flag, FILTER_VALIDATE_BOOLEAN ) ) {
+            continue;
+          }
+
+          $collected[] = $post;
+
+          if ( $limit > 0 && count( $collected ) >= $limit ) {
+            break 2; // Exit both loops
+          }
+        }
+
+        $paged++;
+      }
+
+      return $collected;
+    }
+
+
 
     /**
      * Retrieves an existing record from a Supabase table based on a given key-value pair.
@@ -190,48 +284,53 @@ class DM_Supabase_Command {
      * @param mixed  $value The value to match in the given column.
      * @param array  $data  The data to insert or update.
      *
-     * @return void
+     * @return bool TRUE upon successful upsert.
      */
     private function upsert_supabase_record( $table, $key, $value, $data ) {
-        $existing_record = $this->get_existing_supabase_record( $table, $key, $value );
-        if( $existing_record == $data ){
-          WP_CLI::log( " 🔵 No changes detected. Skipping update for {$table} record {$key}: {$value}.");
-          return;
-        } 
+      $status = true;
 
-        $request_args = [
-          'headers' => [
-            'apikey'        => $this->supabase_apikey,
-            'Authorization' => 'Bearer ' . $this->supabase_apikey,
-            'Content-Type'  => 'application/json',
-            'Prefer'        => 'return=minimal',
-          ],
-          'body'  => wp_json_encode( $data ),
-        ];
+      $existing_record = $this->get_existing_supabase_record( $table, $key, $value );
+      if( $existing_record == $data ){
+        WP_CLI::log( " 🔵 No changes detected. Skipping update for {$table} record {$key}: {$value}.");
+        return false;
+      } 
 
-        if ( ! empty( $existing_record ) ) {
-            WP_CLI::log( " 🟨 Updating record in {$table} for {$key}: {$value}" );
-            $query_url = add_query_arg([ $key => 'eq.' . intval( $value ) ], $this->supabase_url . "/rest/v1/{$table}" );
+      $request_args = [
+        'headers' => [
+          'apikey'        => $this->supabase_apikey,
+          'Authorization' => 'Bearer ' . $this->supabase_apikey,
+          'Content-Type'  => 'application/json',
+          'Prefer'        => 'return=minimal',
+        ],
+        'body'  => wp_json_encode( $data ),
+      ];
 
-            $request_args['method'] = 'PATCH';
-            $response = wp_remote_request( $query_url, $request_args );
-        } else {
-            WP_CLI::log( " ✅ Inserting new record into {$table} for {$key}: {$value}" );
-            $query_url = $this->supabase_url  . "/rest/v1/{$table}";
+      if ( ! empty( $existing_record ) ) {
+          WP_CLI::log( " 🟨 Updating record in {$table} for {$key}: {$value}" );
+          $query_url = add_query_arg([ $key => 'eq.' . intval( $value ) ], $this->supabase_url . "/rest/v1/{$table}" );
 
-            $response = wp_remote_post( $query_url, $request_args );
-        }
+          $request_args['method'] = 'PATCH';
+          $response = wp_remote_request( $query_url, $request_args );
+      } else {
+          WP_CLI::log( " ✅ Inserting new record into {$table} for {$key}: {$value}" );
+          $query_url = $this->supabase_url  . "/rest/v1/{$table}";
 
-        if( is_wp_error( $response ) ){
-          WP_CLI::log( "❌ Failed to update record in {$table}: " . $response->get_error_message() );
-          return;          
-        }
+          $response = wp_remote_post( $query_url, $request_args );
+      }
 
-        $status_code = wp_remote_retrieve_response_code( $response );
-        if ( $status_code < 200 || $status_code >= 300 ) {
-            WP_CLI::log( "❌ Unexpected response code ({$status_code}) while updating {$table} record {$key}: {$value}" );
-            WP_CLI::log( "🔎 Response: " . print_r( wp_remote_retrieve_body( $response ), true ) );
-        }        
+      if( is_wp_error( $response ) ){
+        WP_CLI::log( "❌ Failed to update record in {$table}: " . $response->get_error_message() );
+        $status = false;         
+      }
+
+      $status_code = wp_remote_retrieve_response_code( $response );
+      if ( $status_code < 200 || $status_code >= 300 ) {
+          WP_CLI::log( "❌ Unexpected response code ({$status_code}) while updating {$table} record {$key}: {$value}" );
+          WP_CLI::log( "🔎 Response: " . print_r( wp_remote_retrieve_body( $response ), true ) );
+          $status = false;
+      }     
+
+      return $status;   
     }
 
 }
