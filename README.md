@@ -1,16 +1,20 @@
 # Donation Manager #
 **Contributors:** [thewebist](https://profiles.wordpress.org/thewebist/)  
 **Tags:** donations, CPT  
-**Requires at least:** 6.0.0  
-**Tested up to:** 6.6.2  
+**Requires at least:** 6.5.0  
+**Tested up to:** 6.7.2  
 **Requires PHP:** 8.1  
-**Stable tag:** 5.3.4  
+**Stable tag:** 5.4.0  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 5.4.0 ###
+* Supabase sync for Donation CPTs via `wp dm supabase sync donations`.
+* Specify the limit for Supabase syncing via the `--limit=<limit>` parameter. Currently works for `donations`.
 
 ### 5.3.4 ###
 * Removing Dashicons for frontend users.
