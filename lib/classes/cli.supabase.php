@@ -3,6 +3,7 @@ if ( ! class_exists( 'WP_CLI' ) ) {
   return;
 }
 
+use function DonationManager\organizations\{get_priority_organizations};
 use function DonationManager\transdepts\{get_trans_dept_contact};
 
 /**
@@ -103,14 +104,24 @@ class DM_Supabase_Command {
         $pickup_codes_list = implode( ', ', $pickup_codes );
       }
 
+      $priority_org_id = null;
+      if( is_numeric( $pickup_codes_list ) ){
+        $priority_orgs = get_priority_organizations( $pickup_codes_list );
+        if( is_array( $priority_orgs ) && 0 < count( $priority_orgs ) ){
+          $priority_org = $priority_orgs[0];
+          $priority_org_id = $priority_org['id'];
+        }
+      }
+
       $data = [
-        'donation_id'     => $donation->ID,
-        'trans_dept_id'   => $trans_dept->ID,
-        'organization_id' => $organization->ID,
-        'title'           => $donation->post_title,
-        'description'     => $donation->post_content,
-        'fee_based'       => $fee_based,
-        'pickup_code'     => $pickup_codes_list,
+        'donation_id'               => $donation->ID,
+        'trans_dept_id'             => $trans_dept->ID,
+        'organization_id'           => $organization->ID,
+        'title'                     => $donation->post_title,
+        'description'               => $donation->post_content,
+        'fee_based'                 => $fee_based,
+        'pickup_code'               => $pickup_codes_list,
+        'priority_organization_id'  => $priority_org_id,
       ];
 
       $success = $this->upsert_supabase_record( 'donations', 'donation_id', $donation->ID, $data );
