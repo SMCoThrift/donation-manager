@@ -122,6 +122,7 @@ class DM_Supabase_Command {
         'fee_based'                 => $fee_based,
         'pickup_code'               => $pickup_codes_list,
         'priority_organization_id'  => $priority_org_id,
+        'post_date'                 => $donation->post_date,
       ];
 
       $success = $this->upsert_supabase_record( 'donations', 'donation_id', $donation->ID, $data );
