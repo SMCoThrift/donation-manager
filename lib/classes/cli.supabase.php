@@ -111,7 +111,7 @@ class DM_Supabase_Command {
     $donations = $this->get_donations( $limit, $start_date, $end_date );
     $total_donations = count( $donations );
 
-    if( 0 == count( $total_donations ) ){
+    if( 0 == $total_donations ){
       WP_CLI::error( 'No donations found for your specified arguments.' );
       return;
     } else {
