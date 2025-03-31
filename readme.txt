@@ -4,13 +4,17 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.7.2
 Requires PHP: 8.1
-Stable tag: 5.4.0
+Stable tag: 5.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.4.2 =
+* Adding `$test` argument to `DonationManager\Organizations\get_priority_organizations()`.
+* Adjusted output of `wp dm supabase sync donations` to show a progress bar followed by log entries.
 
 = 5.4.1 =
 * Adding `start_date` and `end_date` options to `wp dm supabase sync donations`.
