@@ -13,6 +13,7 @@ class DM_Supabase_Command {
 
   private $supabase_url;
   private $supabase_apikey;
+  private $sync_log;
 
   public function __construct() {
     $this->supabase_url = defined( 'SUPABASE_URL' ) && SUPABASE_URL ? SUPABASE_URL : false;
@@ -105,8 +106,17 @@ class DM_Supabase_Command {
    */
   private function sync_donations( $limit, $start_date = null, $end_date = null ) {
     WP_CLI::log( "Syncing donations with a limit of {$limit}..." );
+    
     // Retrieve donations with the specified limit.
     $donations = $this->get_donations( $limit, $start_date, $end_date );
+    $total_donations = count( $donations );
+
+    if( 0 == count( $total_donations ) ){
+      WP_CLI::error( 'No donations found for your specified arguments.' );
+      return;
+    } else {
+      $progress = \WP_CLI\Utils\make_progress_bar( 'Syncing donations...', $total_donations );
+    }
 
     foreach ( $donations as $donation ) {
       $organization = get_field( 'organization', $donation->ID );
@@ -146,6 +156,15 @@ class DM_Supabase_Command {
       // Record successful sync to supabase:
       if ( $success ) {
         update_post_meta( $donation->ID, 'supabase_sync', true );
+      }
+      $progress->tick();
+    }
+
+    $progress->finish();
+    if( ! empty( $this->sync_log ) && is_array( $this->sync_log ) && 0 < count( $this->sync_log ) ){
+      WP_CLI::log( "\n\nWe recorded the following logs during the sync:" );
+      foreach( $this->sync_log as $log_entry ){
+        WP_CLI::log( $log_entry );
       }
     }
   }
@@ -321,6 +340,18 @@ class DM_Supabase_Command {
     return $d && $d->format( 'Y-m-d' ) === $date;
   }
 
+  /**
+   * Logs a message to the sync log.
+   *
+   * Adds the provided message to the `$sync_log` array if the message is not null.
+   *
+   * @param string|null $message The message to log. If null, no action is taken.
+   */
+  private function log( $message = null ){
+    if( ! is_null( $message ) )
+      $this->sync_log[] = $message ;
+  }
+
 
   /**
    * Retrieves an existing record from a Supabase table based on a given key-value pair.
@@ -383,25 +414,25 @@ class DM_Supabase_Command {
     ];
 
     if ( ! empty( $existing_record ) ) {
-      WP_CLI::log( " 🟨 Updating record in {$table} for {$key}: {$value}" );
+      $this->log( " 🟨 Updating record in {$table} for {$key}: {$value}" );
       $query_url = add_query_arg( [ $key => 'eq.' . intval( $value ) ], $this->supabase_url . "/rest/v1/{$table}" );
       $request_args['method'] = 'PATCH';
       $response = wp_remote_request( $query_url, $request_args );
     } else {
-      WP_CLI::log( " ✅ Inserting new record into {$table} for {$key}: {$value}" );
+      $this->log( " ✅ Inserting new record into {$table} for {$key}: {$value}" );
       $query_url = $this->supabase_url . "/rest/v1/{$table}";
       $response = wp_remote_post( $query_url, $request_args );
     }
 
     if ( is_wp_error( $response ) ) {
-      WP_CLI::log( "❌ Failed to update record in {$table}: " . $response->get_error_message() );
+      $this->log( "❌ Failed to update record in {$table}: " . $response->get_error_message() );
       $status = false;
     }
 
     $status_code = wp_remote_retrieve_response_code( $response );
     if ( $status_code < 200 || $status_code >= 300 ) {
-      WP_CLI::log( "❌ Unexpected response code ({$status_code}) while updating {$table} record {$key}: {$value}" );
-      WP_CLI::log( "🔎 Response: " . print_r( wp_remote_retrieve_body( $response ), true ) );
+      $this->log( "❌ Unexpected response code ({$status_code}) while updating {$table} record {$key}: {$value}" );
+      $this->log( "🔎 Response: " . print_r( wp_remote_retrieve_body( $response ), true ) );
       $status = false;
     }
 
