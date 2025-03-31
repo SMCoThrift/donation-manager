@@ -420,7 +420,7 @@ class DM_Supabase_Command {
       $request_args['method'] = 'PATCH';
       $response = wp_remote_request( $query_url, $request_args );
     } else {
-      $this->log( " ✅ Inserting new record into {$table} for {$key}: {$value}" );
+      //$this->log( " ✅ Inserting new record into {$table} for {$key}: {$value}" );
       $query_url = $this->supabase_url . "/rest/v1/{$table}";
       $response = wp_remote_post( $query_url, $request_args );
     }
