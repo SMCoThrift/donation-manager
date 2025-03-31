@@ -115,6 +115,7 @@ class DM_Supabase_Command {
       WP_CLI::error( 'No donations found for your specified arguments.' );
       return;
     } else {
+      WP_CLI::log( "👉 We found {$total_donations} donations to sync." );
       $progress = \WP_CLI\Utils\make_progress_bar( 'Syncing donations...', $total_donations );
     }
 
