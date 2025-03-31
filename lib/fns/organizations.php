@@ -330,7 +330,7 @@ function get_pickuptimes( $org_id ){
 /**
  * Returns priority organizations for a given $pickup_code.
  */
-function get_priority_organizations( $pickup_code = null ){
+function get_priority_organizations( $pickup_code = null, $test = false ){
   if( is_null( $pickup_code ) )
     return false;
 
@@ -349,14 +349,14 @@ function get_priority_organizations( $pickup_code = null ){
   $organizations = array();
 
   if( $query->have_posts() ){
-    if( WP_CLI && class_exists( 'WP_CLI' ) )
+    if( WP_CLI && class_exists( 'WP_CLI' ) && $test )
       \WP_CLI::line( '🔔 Looping through Transporation Departments: $query->posts...' );
 
     while( $query->have_posts() ): $query->the_post();
       global $post;
       setup_postdata( $post );
       $org_id = get_post_meta( $post->ID, 'organization', true );
-      if( WP_CLI && class_exists( 'WP_CLI' ) )
+      if( WP_CLI && class_exists( 'WP_CLI' ) && $test )
         \WP_CLI::line( '🔔 TRANS DEPT: ' . get_the_title() . ' (ORG: ' . get_the_title( $org_id ) . ', ID: ' . $org_id . ')' );
 
       // If no `organization` is set, $org_id is a `string`. Therefore

@@ -270,7 +270,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
           if( ! isset( $args[0] ) )
             WP_CLI::error( 'This test requires a pickup code as the first postional argument.' );
           $pickup_code = $args[0];
-          $priority_orgs = DonationManager\organizations\get_priority_organizations( $pickup_code );
+          $priority_orgs = DonationManager\organizations\get_priority_organizations( $pickup_code, true );
           WP_CLI::line( '🔔 get_priority_organizations() returns $priority_orgs = ' . print_r( $priority_orgs, true ) );
           break;
 
