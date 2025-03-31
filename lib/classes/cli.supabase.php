@@ -33,9 +33,16 @@ class DM_Supabase_Command {
    * [--limit=<limit>]
    * : Optional. Specify a limit for the number of donations to sync. Defaults to 100 when syncing donations.
    *
+   * [--start_date=<start_date>]
+   * : Optional. Start date in 'YYYY-MM-DD' format.
+   *
+   * [--end_date=<end_date>]
+   * : Optional. End date in 'YYYY-MM-DD' format.
+   *
    * ## EXAMPLES
    *
    *     wp dm supabase sync donations --limit=200
+   *     wp dm supabase sync donations --start_date=2024-11-01 --end_date=2024-11-02
    *     wp dm supabase sync organizations 123 456 789
    *
    * @when after_wp_load
@@ -67,9 +74,18 @@ class DM_Supabase_Command {
       $limit = 100;
     }
 
+    // Validate and set the 'start_date' and 'end_date' parameters:
+    $start_date = isset( $assoc_args['start_date'] )? $assoc_args['start_date'] : null ;
+    if( ! $this->is_valid_date( $start_date ) )
+      WP_CLI::error( __( 'The start_date parameter must be in YYYY-MM-DD format.', 'donation-manager' ) );
+
+    $end_date = isset( $assoc_args['end_date'] )? $assoc_args['end_date'] : null ;
+    if( ! $this->is_valid_date( $end_date ) )
+      WP_CLI::error( __( 'The end_date parameter must be in YYYY-MM-DD format.', 'donation-manager' ) );    
+
     switch ( $table ) {
       case 'donations':
-        $this->sync_donations( $limit );
+        $this->sync_donations( $limit, $start_date, $end_date );
         break;
       case 'organizations':
         $this->sync_organizations( $post_ids );
@@ -87,10 +103,10 @@ class DM_Supabase_Command {
    *
    * @param int $limit Maximum number of donation posts to sync.
    */
-  private function sync_donations( $limit ) {
+  private function sync_donations( $limit, $start_date = null, $end_date = null ) {
     WP_CLI::log( "Syncing donations with a limit of {$limit}..." );
     // Retrieve donations with the specified limit.
-    $donations = $this->get_donations( $limit );
+    $donations = $this->get_donations( $limit, $start_date, $end_date );
 
     foreach ( $donations as $donation ) {
       $organization = get_field( 'organization', $donation->ID );
@@ -220,16 +236,27 @@ class DM_Supabase_Command {
    * Retrieves Donation posts that have not been synced with Supabase.
    * Skips posts where 'supabase_sync' meta is explicitly set to 'true'.
    * Efficiently handles large datasets by querying in batches.
+   * Allows filtering by an optional date range.
    *
-   * @param int   $limit    Optional. Maximum number of donation posts to retrieve. Default is -1 (no limit).
-   * @param array $post_ids Optional. An array of post IDs to restrict results to. Default is an empty array.
+   * @param int    $limit      Optional. Maximum number of donation posts to retrieve. Default is -1 (no limit).
+   * @param string $start_date Optional. Start date in 'YYYY-MM-DD' format. Default is empty.
+   * @param string $end_date   Optional. End date in 'YYYY-MM-DD' format. Default is empty.
    *
    * @return WP_Post[] An array of WP_Post objects matching the criteria.
    */
-  private function get_donations( $limit = -1, $post_ids = [] ) {
+  private function get_donations( $limit = -1, $start_date = '', $end_date = '' ) {
     $batch_size = 50;
     $paged      = 1;
     $collected  = [];
+
+    // Validate date format if provided
+    if ( ! empty( $start_date ) && ! $this->is_valid_date( $start_date ) ) {
+      WP_CLI::error( "Invalid start_date format. Expected format: YYYY-MM-DD." );
+    }
+
+    if ( ! empty( $end_date ) && ! $this->is_valid_date( $end_date ) ) {
+      WP_CLI::error( "Invalid end_date format. Expected format: YYYY-MM-DD." );
+    }
 
     while ( $limit === -1 || count( $collected ) < $limit ) {
       $args = [
@@ -242,8 +269,20 @@ class DM_Supabase_Command {
         'fields'         => 'all',
       ];
 
-      if ( is_array( $post_ids ) && count( $post_ids ) > 0 ) {
-        $args['post__in'] = $post_ids;
+      // Add date query if start_date or end_date is provided
+      if ( ! empty( $start_date ) || ! empty( $end_date ) ) {
+        $date_query = [];
+        
+        if ( ! empty( $start_date ) ) {
+          $date_query['after'] = $start_date;
+        }
+        
+        if ( ! empty( $end_date ) ) {
+          $date_query['before'] = $end_date;
+        }
+        
+        $date_query['inclusive'] = true;
+        $args['date_query']      = [ $date_query ];
       }
 
       $query = new WP_Query( $args );
@@ -270,6 +309,18 @@ class DM_Supabase_Command {
 
     return $collected;
   }
+
+  /**
+   * Validates date format as YYYY-MM-DD.
+   *
+   * @param string $date The date string to validate.
+   * @return bool True if valid, false otherwise.
+   */
+  private function is_valid_date( $date ) {
+    $d = DateTime::createFromFormat( 'Y-m-d', $date );
+    return $d && $d->format( 'Y-m-d' ) === $date;
+  }
+
 
   /**
    * Retrieves an existing record from a Supabase table based on a given key-value pair.

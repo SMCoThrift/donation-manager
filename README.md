@@ -12,6 +12,9 @@ A complete donation intake system for WordPress.
 
 ## Changelog ##
 
+### 5.4.1 ###
+* Adding `start_date` and `end_date` options to `wp dm supabase sync donations`.
+
 ### 5.4.0 ###
 * Supabase sync for Donation CPTs via `wp dm supabase sync donations`.
 * Specify the limit for Supabase syncing via the `--limit=<limit>` parameter. Currently works for `donations`.
