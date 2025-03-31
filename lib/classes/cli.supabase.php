@@ -79,10 +79,17 @@ class DM_Supabase_Command {
     $start_date = isset( $assoc_args['start_date'] )? $assoc_args['start_date'] : null ;
     if( isset( $assoc_args['start_date'] ) && ! $this->is_valid_date( $start_date ) )
       WP_CLI::error( __( 'The start_date parameter must be in YYYY-MM-DD format.', 'donation-manager' ) );
+    
+    if( is_null( $start_date ) )
+      $start_date = date('Y-m-d', strtotime('yesterday'));
 
     $end_date = isset( $assoc_args['end_date'] )? $assoc_args['end_date'] : null ;
     if( isset( $assoc_args['end_date'] ) && ! $this->is_valid_date( $end_date ) )
-      WP_CLI::error( __( 'The end_date parameter must be in YYYY-MM-DD format.', 'donation-manager' ) );    
+      WP_CLI::error( __( 'The end_date parameter must be in YYYY-MM-DD format.', 'donation-manager' ) );  
+
+    if( is_null( $end_date ) )
+      $end_date = date('Y-m-d');
+
 
     switch ( $table ) {
       case 'donations':
