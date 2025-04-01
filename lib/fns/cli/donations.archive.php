@@ -18,10 +18,11 @@
       if( 12 < $month )
         WP_CLI::error('Month must be a numeral, 1-12.');
 
+      $archive_limit = ( defined( 'DM_ARCHIVE_LIMIT' ) && is_int( DM_ARCHIVE_LIMIT ) )? DM_ARCHIVE_LIMIT : 3;
       $archive_time = strtotime( $year . '-' . $month );
-      $archive_time_limit = current_time( 'timestamp' ) - ( MONTH_IN_SECONDS * 3 );
+      $archive_time_limit = current_time( 'timestamp' ) - ( MONTH_IN_SECONDS * $archive_limit );
       if( $archive_time > $archive_time_limit )
-        WP_CLI::error( 'The archive date you provided was less than 3 months in the past. Please try again using an archive date greater than 3 months in the past.', true );
+        WP_CLI::error( "The archive date you provided was less than {$archive_limit} months in the past. Please try again using an archive date greater than {$archive_limit} months in the past.\n\n👉 NOTE: You may define this limit by setting DM_ARCHIVE_LIMIT via the environment variables.", true );
 
       $query_args['monthnum'] = $month;
     } else if( isset( $assoc_args['month'] ) && ! preg_match( '/[0-9]{1,2}/', $assoc_args['month'] ) ){

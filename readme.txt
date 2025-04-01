@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.7.2
 Requires PHP: 8.1
-Stable tag: 5.4.3
+Stable tag: 5.4.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.4.4 =
+* When running `wp dm archive <year> --month=<month>`, allow for setting the number of months back we can archive donations via `DM_ARCHIVE_LIMIT`.
 
 = 5.4.3 =
 * Adjusting defaults for `wp dm supabase sync donations` with `$start_date=yesterday` and `$end_date=today` if no values passed.
