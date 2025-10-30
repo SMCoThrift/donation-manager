@@ -54,24 +54,26 @@ function donman_get_acf_field_group( $field_group = null ){
 /**
  * Adds ACF Option Pages.
  */
-if( function_exists( 'acf_add_options_page' ) ){
-  acf_add_options_page([
-    'page_title'  => 'Donation Manager',
-    'menu_slug'   => 'donation-manager-settings',
-    'capability'  => 'edit_posts',
-    'redirect'    => true,
-    'icon_url'    => 'dashicons-archive',
-  ]);
+add_action( 'acf/init', function(){
+  if( function_exists( 'acf_add_options_page' ) ){
+    acf_add_options_page([
+      'page_title'  => 'Donation Manager',
+      'menu_slug'   => 'donation-manager-settings',
+      'capability'  => 'edit_posts',
+      'redirect'    => true,
+      'icon_url'    => 'dashicons-archive',
+    ]);
 
-  acf_add_options_page([
-    'page_title'  => 'General Settings',
-    'menu_title'  => 'General',
-    'parent_slug' => 'donation-manager-settings',
-  ]);
+    acf_add_options_page([
+      'page_title'  => 'General Settings',
+      'menu_title'  => 'General',
+      'parent_slug' => 'donation-manager-settings',
+    ]);
 
-  acf_add_options_page([
-    'page_title'  => 'Stats Settings',
-    'menu_title'  => 'Stats',
-    'parent_slug' => 'donation-manager-settings',
-  ]);
-}
+    acf_add_options_page([
+      'page_title'  => 'Stats Settings',
+      'menu_title'  => 'Stats',
+      'parent_slug' => 'donation-manager-settings',
+    ]);
+  }
+} );
