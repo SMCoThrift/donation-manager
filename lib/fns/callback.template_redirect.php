@@ -24,10 +24,12 @@ function callback_template_redirect() {
       $_SESSION['donor']['form'] = 'contact-details';
       preg_match( '/nextpage="(.*)"/U', $post->post_content, $matches );
       if( $matches[1] ){
-        uber_log( '🔔 Skipping screening questions. Redirecting to `' . $matches[1] . '`' );
+        $location = trailingslashit( home_url( $matches[1] ) );
+        $_SESSION['donor']['_redirecting'] = true;
+        uber_log( '🔔 Skipping screening questions. Redirecting to `' . $location . "\n\n" . '$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) );
         session_write_close();
-        header( 'Location: ' . $matches[1] );
-        die();
+        wp_safe_redirect( $location );
+        exit;
       }
     }
   }
