@@ -17,9 +17,9 @@
  *
  * @var        string  $css_dir Either `css` or `dist` depending on Site URL.
  */
-$css_dir = ( stristr( site_url(), '.local' ) || SCRIPT_DEBUG )? 'css' : 'dist' ;
+$css_dir = ( stristr( site_url(), '.test' ) || SCRIPT_DEBUG )? 'css' : 'dist' ;
 define( 'DONMAN_CSS_DIR', $css_dir );
-define( 'DONMAN_DEV_ENV', stristr( site_url(), '.local' ) );
+define( 'DONMAN_DEV_ENV', stristr( site_url(), '.test' ) );
 define( 'DONMAN_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DONMAN_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 //define( 'ORPHANED_PICKUP_RADIUS', 15 ); // radius in miles for zipcode search
