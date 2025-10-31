@@ -5,6 +5,18 @@ use function DonationManager\templates\{render_template};
 use function DonationManager\realtors\{get_realtor_ads};
 use function DonationManager\globals\{add_html};
 
+if( ! isset( $_SESSION['donor']['org_id'] ) ){
+  if( current_user_can( 'activate_plugins' ) ){
+    add_html( 
+      get_alert([
+        'type' => 'danger',
+        'description' => 'No <code>$_SESSION[\'donor\'][\'org_id\']</code> set! Aborting Preferred Pick Up Date processing...'
+      ])
+    );
+  }
+  return;
+} 
+
 $pickuptimes = get_pickuptimes( $_SESSION['donor']['org_id'] );
 
 for ( $i=1; $i < 4; $i++ ) {

@@ -3,6 +3,18 @@ use function DonationManager\emails\{notify_admin};
 use function DonationManager\globals\{add_html};
 use function DonationManager\utilities\{get_alert};
 
+if( ! isset( $_SESSION['donor']['org_id'] ) ){
+  if( current_user_can( 'activate_plugins' ) ){
+    add_html( 
+      get_alert([
+        'type' => 'danger',
+        'description' => 'No <code>$_SESSION[\'donor\'][\'org_id\']</code> set! Aborting Validate Contact Details processing...'
+      ])
+    );
+  }
+  return;
+} 
+
 /**
  * 05. VALIDATE CONTACT DETAILS
  */
