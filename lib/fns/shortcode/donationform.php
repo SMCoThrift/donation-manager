@@ -58,8 +58,21 @@ function donationform( $atts ){
    */
   global $wp;
   $current_url = home_url( add_query_arg( array(), $wp->request ) );
-  if( is_front_page() || is_page('donate-now') || stristr( $current_url, 'city-pages' ) )
-      $_SESSION['donor'] = array();
+  $reset_session_donor = false;
+  if( is_front_page() || is_page('donate-now') || stristr( $current_url, 'city-pages' ) ){
+    if( isset( $_SESSION['donor']['_redirecting'] ) && true == $_SESSION['donor']['_redirecting'] ){
+      unset( $_SESSION['donor']['_redirecting'] );
+    } else {
+      $msg = '⚠️⚠️⚠️ RESETTING $_SESSION[donor]' . "\n - is_front_page() = " . is_front_page() . "\n - is_page('donate-now') = " . is_page('donate-now') . "\n - stristr( $current_url, 'city-pages' ) = " . stristr( $current_url, 'city-pages' );
+      if( isset( $_SESSION['donor']['_redirecting'] ) )
+        $msg.= "\n\n - 💡 _redirecting = " . $_SESSION['donor']['_redirecting'];
+      uber_log( $msg );
+      $reset_session_donor = true;  
+    }
+  }
+
+  if( $reset_session_donor )
+    $_SESSION['donor'] = array();
 
   track_url_path();
 
