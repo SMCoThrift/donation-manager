@@ -57,8 +57,8 @@ if( isset( $_POST['donor']['options'] ) ) {
       }
     }
     $_SESSION['donor']['description'] = strip_tags( $_POST['donor']['description'] );
-    if( DONMAN_DEV_ENV )
-      uber_log( '🔔 Donation Descripton = ' . $_SESSION['donor']['description'] );
+    //if( DONMAN_DEV_ENV )
+      //uber_log( '🔔 Donation Descripton = ' . $_SESSION['donor']['description'] );
 
     /**
      * For Priority Pick Ups, we need to skip the screening questions
@@ -81,8 +81,10 @@ if( isset( $_POST['donor']['options'] ) ) {
 
     if( isset( $_POST['nextpage'] ) && ! empty( $_POST['nextpage'] ) ){
       session_write_close();
-      header( 'Location: ' . $_POST['nextpage'] );
-      die();
+      $location = trailingslashit( $_POST['nextpage'] );
+      uber_log('🔔 Redirecting to ' . $location );
+      wp_safe_redirect( $location );
+      exit;
     } else {
       DonationManager\globals\add_html( '<div class="alert alert-error">No $_POST[nextpage] defined.</div>' );
     }
