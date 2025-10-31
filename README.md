@@ -14,6 +14,7 @@ A complete donation intake system for WordPress.
 
 ### 5.5.0 ###
 * Initial implementation of new CHHJ API.
+* BUGFIX: When an organization had their settings set to "Skip Screening Questions", we were unsetting `$_SESSION['donor']`. To fix, we are now setting `$_SESSION['donor']['_redirecting']` and testing for that before unsetting the donor array.
 
 ### 5.4.5 ###
 * Correctly calling `acf_add_options_page()` inside `acf/init` hook. Removes "Notice: Function _load_textdomain_just_in_time was called incorrectly."
