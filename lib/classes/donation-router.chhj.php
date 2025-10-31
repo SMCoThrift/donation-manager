@@ -103,9 +103,9 @@ class CHHJDonationRouter extends DonationRouter{
         if( DONMAN_DEV_ENV ){
             uber_log('INFO: `DONMAN_DEV_ENV` is ON. CHHJ pickup request not sent.');
             return;
+        } else {
+          $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );  
         }
-
-        $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );
         
         // 10/30/2025 (16:48) - Posting to New CHHJ API EP:
         if ( defined( 'CHHJ_API_EP' ) && defined( 'CHHJ_API_TOKEN' ) && 
