@@ -49,22 +49,55 @@ class CHHJDonationRouter extends DonationRouter{
         // $special_instructions = pick updates and $donation['pickup_address']
         $special_instructions = "\n\n# PREFERRED PICK UP DATES\n" . implode( "\n", $pickup_dates ) . $pickup_address;
 
-      $args = array(
-        'body' => array(
-          'Client_Postal_Zip' => $donation['pickup_code'],
-          'Type_Of_Junk' => $type_of_junk,
-          'Client_First_Name' => $donation['address']['name']['first'],
-          'Client_Last_Name' => $donation['address']['name']['last'],
-          'Client_Address' => $donation['address']['address'],
-          'Client_City' => $donation['address']['city'],
-          'Client_Prov_State' => $donation['address']['state'],
-          'Client_Zip' => $donation['address']['zip'],
-          'Special_Instructions' => $special_instructions,
-          'Client_Email' => $donation['email'],
-                'Client_Phone' => $donation['phone'],
-      ),
-    );
+        $args = array(
+          'body' => array(
+            'Client_Postal_Zip' => $donation['pickup_code'],
+            'Type_Of_Junk' => $type_of_junk,
+            'Client_First_Name' => $donation['address']['name']['first'],
+            'Client_Last_Name' => $donation['address']['name']['last'],
+            'Client_Address' => $donation['address']['address'],
+            'Client_City' => $donation['address']['city'],
+            'Client_Prov_State' => $donation['address']['state'],
+            'Client_Zip' => $donation['address']['zip'],
+            'Special_Instructions' => $special_instructions,
+            'Client_Email' => $donation['email'],
+            'Client_Phone' => $donation['phone'],
+          ),
+        );
         $this->save_api_post( $donation['ID'], $args );
+
+        $json_body = array(
+          'first_name'      => $donation['address']['name']['first'],
+          'last_name'       => $donation['address']['name']['last'],
+          'phone'           => $donation['phone'],
+          'email'           => $donation['email'],
+          'source'          => 'PickUpMyDonation',
+          'medium'          => 'referral',
+          'content'         => null,
+          'campaign'        => null,
+          'keyword'         => null,
+          'notes'           => $special_instructions,
+          'address'         => $donation['address']['address'],
+          'address2'        => null,
+          'city'            => $donation['address']['city'],
+          'state'           => $donation['address']['state'],
+          'postal'          => $donation['address']['zip'],
+          'country'         => 'US',
+          'account_type'    => 5,
+          'referral_source' => '572777',
+          'service_type'    => 1,
+        );
+        $new_args = [
+          'headers' => [
+            'Authorization' => 'Bearer ' . CHHJ_API_TOKEN,
+            'Content-Type'  => 'application/json',
+          ],
+          'body'    => wp_json_encode( $json_body ),
+          'method'  => 'POST',
+          'timeout' => 20,
+        ];
+        $this->save_api_post( $donation['ID'], $new_args );
+        uber_log( '👉 $new_args = ', $new_args );
 
         // Don't send if we're debugging:
         if( DONMAN_DEV_ENV ){
@@ -72,8 +105,14 @@ class CHHJDonationRouter extends DonationRouter{
             return;
         }
 
-
         $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );
+        
+        // 10/30/2025 (16:48) - Posting to New CHHJ API EP:
+        if ( defined( 'CHHJ_API_EP' ) && defined( 'CHHJ_API_TOKEN' ) && 
+          0 < strlen( CHHJ_API_EP ) && 0 < strlen( CHHJ_API_TOKEN ) ) {
+          $response = wp_remote_post( CHHJ_API_EP, $new_args );
+        }
+
         $this->save_api_response( $donation['ID'], $response );
         $this->save_api_method( $donation['ID'], 'chhj_api' );
     }

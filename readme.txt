@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.4.5
+Stable tag: 5.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.5.0 =
+* Initial implementation of new CHHJ API.
 
 = 5.4.5 =
 * Correctly calling `acf_add_options_page()` inside `acf/init` hook. Removes "Notice: Function _load_textdomain_just_in_time was called incorrectly."
