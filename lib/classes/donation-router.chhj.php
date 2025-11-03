@@ -66,6 +66,8 @@ class CHHJDonationRouter extends DonationRouter{
         );
         $this->save_api_post( $donation['ID'], $args );
 
+        // account_type = (3 = commercial, 5 = residential)
+        $account_type = ( isset( $donation['address']['company'] ) && !empty($donation['address']['company'] ) )? 3 : 5 ;
         $json_body = array(
           'first_name'      => $donation['address']['name']['first'],
           'last_name'       => $donation['address']['name']['last'],
@@ -83,7 +85,7 @@ class CHHJDonationRouter extends DonationRouter{
           'state'           => $donation['address']['state'],
           'postal'          => $donation['address']['zip'],
           'country'         => 'US',
-          'account_type'    => 5,
+          'account_type'    => $account_type,
           'referral_source' => '572777',
           'service_type'    => 1,
         );
@@ -101,8 +103,7 @@ class CHHJDonationRouter extends DonationRouter{
 
         // Don't send if we're debugging:
         if( DONMAN_DEV_ENV ){
-            uber_log('INFO: `DONMAN_DEV_ENV` is ON. CHHJ pickup request not sent.');
-            return;
+          uber_log('INFO: `DONMAN_DEV_ENV` is ON. CHHJ pickup request not sent.');
         } else {
           $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );  
         }
@@ -111,6 +112,9 @@ class CHHJDonationRouter extends DonationRouter{
         if ( defined( 'CHHJ_API_EP' ) && defined( 'CHHJ_API_TOKEN' ) && 
           0 < strlen( CHHJ_API_EP ) && 0 < strlen( CHHJ_API_TOKEN ) ) {
           $response = wp_remote_post( CHHJ_API_EP, $new_args );
+          uber_log('🔔 NEW API $response = ' . print_r( $response, true  ) );
+        } else {
+          uber_log('I could not find CHHJ_API_EP and CHHJ_API_TOKEN!');
         }
 
         $this->save_api_response( $donation['ID'], $response );
