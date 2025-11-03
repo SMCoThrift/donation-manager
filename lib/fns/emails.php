@@ -30,8 +30,8 @@ function notify_admin( $message = '' ){
     default:
       //send_email( 'missing_org_transdept_notification' );
       $pickup_code = ( 'Yes' == $_SESSION['donor']['different_pickup_address'] )? $_SESSION['donor']['pickup_address']['zip'] : $_SESSION['donor']['address']['zip'];
-      header( 'Location: ' . home_url( '/select-your-organization/?pcode=' . $pickup_code . '&message=no_org_transdept' ) );
-      die();
+      wp_safe_redirect( home_url( '/select-your-organization/?pcode=' . $pickup_code . '&message=no_org_transdept' ) );
+      exit;
       break;
   }
 }
