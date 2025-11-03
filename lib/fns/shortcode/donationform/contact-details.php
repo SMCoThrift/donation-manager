@@ -93,7 +93,7 @@ $hbs_vars = [
   'reason_option' => get_donation_reason_select(),
 ];
 
-if( $user_photo_uploads['on'] && isset( $_SESSION['donor']['image'] ) ){
+if( isset( $user_photo_uploads ) && $user_photo_uploads['on'] && isset( $_SESSION['donor']['image'] ) ){
     $uploaded_image = '';
     $images = $_SESSION['donor']['image'];
     foreach( $images as $image ){
