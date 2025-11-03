@@ -61,9 +61,19 @@ function donationform( $atts ){
   $reset_session_donor = false;
   if( is_front_page() || is_page('donate-now') || stristr( $current_url, 'city-pages' ) ){
     if( isset( $_SESSION['donor']['_redirecting'] ) && true == $_SESSION['donor']['_redirecting'] ){
-      unset( $_SESSION['donor']['_redirecting'] );
+      //unset( $_SESSION['donor']['_redirecting'] );
+      if ( isset( $_SESSION['donor']['_redirecting'] ) ) {
+          unset( $_SESSION['donor']['_redirecting'] );
+          session_write_close();
+      }
     } else {
-      $msg = '⚠️⚠️⚠️ RESETTING $_SESSION[donor]' . "\n - is_front_page() = " . is_front_page() . "\n - is_page('donate-now') = " . is_page('donate-now') . "\n - stristr( $current_url, 'city-pages' ) = " . stristr( $current_url, 'city-pages' );
+      $msg = '⚠️⚠️⚠️ RESETTING $_SESSION[donor]';
+      $msg.= "\n" . ' - is_front_page() = ' . is_front_page();
+      $msg.= "\n" . ' - is_page(\'donate-now\') = ' . is_page('donate-now');
+      $msg.= "\n" . ' - stristr( ' . $current_url . ', \'city-pages\' ) = ' . stristr( $current_url, 'city-pages' );
+      $msg.= "\n" . ' - REFERRER: ' . wp_get_referer();
+
+
       if( isset( $_SESSION['donor']['_redirecting'] ) )
         $msg.= "\n\n - 💡 _redirecting = " . $_SESSION['donor']['_redirecting'];
       uber_log( $msg );
