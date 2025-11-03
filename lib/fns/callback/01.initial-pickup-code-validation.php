@@ -20,8 +20,8 @@ if( isset( $_REQUEST['pickupcode'] ) || isset( $_REQUEST['pcode'] ) ) {
         if( isset( $_REQUEST['pickupcode'] ) ){
             $_SESSION['donor']['rewrite_titles'] = false;
             session_write_close();
-            header( 'Location: ' . $_REQUEST['nextpage'] . '?pcode=' . $pickupcode );
-            die();
+            wp_safe_redirect( trailingslashit( $_REQUEST['nextpage'] ) . '?pcode=' . $pickupcode );
+            exit;
         }
     } else {
         $step = 'default';

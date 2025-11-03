@@ -68,8 +68,8 @@ if( isset( $_POST['donor']['pickupdate1'] ) ){
 
     // Redirect to next step
     session_write_close();
-    header( 'Location: ' . $_REQUEST['nextpage'] );
-    die();
+    wp_safe_redirect( trailingslashit( $_REQUEST['nextpage'] ) );
+    exit;
   } else {
     $errors = $form->getErrors();
     $error_msg = array();

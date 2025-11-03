@@ -119,8 +119,8 @@ if( isset( $_POST['donor']['address'] ) ) {
 
     //$_SESSION['donor']['form'] = 'select-preferred-pickup-dates';
     session_write_close();
-    header( 'Location: ' . $_REQUEST['nextpage'] );
-    die();
+    wp_safe_redirect( trailingslashit( $_REQUEST['nextpage'] ) );
+    exit;
   } else {
     $errors = $form->getErrors();
     $error_msg = array();

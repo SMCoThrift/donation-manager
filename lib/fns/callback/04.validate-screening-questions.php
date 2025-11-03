@@ -99,8 +99,8 @@ if( isset( $_POST['donor']['questions'] ) ) {
                 $_SESSION['donor']['form'] = 'contact-details';
                 if( isset( $_POST['nextpage'] ) && ! empty( $_POST['nextpage'] ) ){
                     session_write_close();
-                    header( 'Location: ' . $_POST['nextpage'] );
-                    die();
+                    wp_safe_redirect( trailingslashit( $_POST['nextpage'] ) );
+                    exit;
                 } else {
                     add_html( '<div class="alert alert-error">No $_POST[nextpage] defined.</div>' );
                 }
