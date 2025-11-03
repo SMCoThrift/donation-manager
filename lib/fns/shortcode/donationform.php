@@ -88,6 +88,10 @@ function donationform( $atts ){
       $form = 'describe-your-donation';
   }
 
+  $user_photo_uploads = [
+    'on'       => false,
+    'required' => false,
+  ];
   if( isset( $_SESSION['donor']['org_id'] ) ){
     /**
      * Used to switch on interface elements for User Photo Uploads.
