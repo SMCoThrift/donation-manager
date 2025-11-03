@@ -33,10 +33,15 @@ $dmdebug_verbose = ( isset( $_COOKIE['dmdebug_verbose'] ) && 'on' == $_COOKIE['d
 define( 'DMDEBUG_VERBOSE', $dmdebug_verbose );
 
 /**
- * Start our session
+ * Ensure session starts early and consistently.
  */
-if( ! defined( 'WP_CLI' ) && ! headers_sent() )
-  session_start();
+function donman_start_session() {
+    if ( defined('WP_CLI') ) return;
+    if ( session_status() === PHP_SESSION_NONE ) {
+        session_start();
+    }
+}
+add_action( 'init', 'donman_start_session', 1 );
 
 /**
  * Load required files
