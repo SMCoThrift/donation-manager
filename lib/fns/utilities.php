@@ -293,3 +293,40 @@ function save_report_csv( $filename = null, $content = null ){
     return $attach_id;
   }
 }
+
+/**
+ * Centralized redirect helper to preserve donor session state
+ * before redirecting during the multi-step donation flow.
+ *
+ * @param string $location Absolute or site-relative URL.
+ * @return void|false
+ */
+function donman_safe_redirect( $location = '' ) {
+  if ( empty( $location ) ) {
+    uber_log( '⚠️ donman_safe_redirect called with empty $location' );
+    return false;
+  }
+
+  // Normalize URL
+  $location = esc_url_raw( trailingslashit( $location ) );
+
+  // Mark redirect in session
+  $_SESSION['donor']['_redirecting'] = true;
+
+  // Debug crumb
+  uber_log(
+    "🔔 Redirecting donor flow\n" .
+    "➡️ URL: {$location}\n" .
+    "🧪 session_status(): " . session_status() . "\n" .
+    "🆔 PHPSESSID before redirect: " . session_id()
+  );
+
+  // Guarantee session persistence
+  if ( session_status() === PHP_SESSION_ACTIVE ) {
+    session_write_close();
+  }
+
+  wp_safe_redirect( $location );
+  exit;
+}
+

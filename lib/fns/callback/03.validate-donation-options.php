@@ -1,5 +1,5 @@
 <?php
-use function DonationManager\utilities\{get_alert};
+use function DonationManager\utilities\{get_alert,donman_safe_redirect};
 
 /**
  *  03. VALIDATE DONATION OPTIONS/ITEMS
@@ -80,11 +80,15 @@ if( isset( $_POST['donor']['options'] ) ) {
       $_SESSION['donor']['skipquestions'] = true;
 
     if( isset( $_POST['nextpage'] ) && ! empty( $_POST['nextpage'] ) ){
-      session_write_close();
+      /*
       $location = trailingslashit( $_POST['nextpage'] );
-      uber_log('🔔 Redirecting to ' . $location );
+      $_SESSION['donor']['_redirecting'] = true;
+      uber_log('🔔 Redirecting to: ' . $location . "\nsession_status() = ".session_status()."\n⚠️ PHPSESSID before redirect: " . session_id() );
+      session_write_close();
       wp_safe_redirect( $location );
       exit;
+      /**/
+      donman_safe_redirect( $_POST['nextpage'] );
     } else {
       DonationManager\globals\add_html( '<div class="alert alert-error">No $_POST[nextpage] defined.</div>' );
     }
