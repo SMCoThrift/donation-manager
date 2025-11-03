@@ -40,7 +40,17 @@ function donationform( $atts ){
    *  turn allows for adding the various pages as steps in an
    *  analytics tracking funnel (e.g. Google Analytics).
    */
-  $nextpage = ( is_null( $args['nextpage'] ) || empty( $args['nextpage'] ) )? get_permalink() : home_url( $args['nextpage'] ) ;
+  //$nextpage = ( is_null( $args['nextpage'] ) || empty( $args['nextpage'] ) )? get_permalink() : home_url( $args['nextpage'] ) ;
+  $nextpage_attr = trim( (string) $args['nextpage'] );
+  if ( $nextpage_attr === '' ) {
+    $nextpage = get_permalink();
+  } elseif ( filter_var( $nextpage_attr, FILTER_VALIDATE_URL ) ) {
+    $nextpage = $nextpage_attr;
+  } else {
+    // Ensure single leading slash; avoid double slashes when concatenating with home_url().
+    $nextpage = home_url( '/' . ltrim( $nextpage_attr, '/' ) );
+  }
+
 
   /**
    *  RESET $_SESSION['donor'] ON HOME PAGE
