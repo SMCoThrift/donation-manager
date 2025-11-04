@@ -1,5 +1,5 @@
 <?php
-use function DonationManager\utilities\{get_alert};
+use function DonationManager\utilities\{get_alert,donman_safe_redirect};
 use function DonationManager\globals\{add_html};
 
 /**
@@ -17,10 +17,17 @@ if( isset( $_REQUEST['pickupcode'] ) || isset( $_REQUEST['pcode'] ) ) {
     if( $form->validate( $_REQUEST ) ) {
         $_SESSION['donor']['pickup_code'] = $pickupcode;
         $_SESSION['donor']['form'] = 'select-your-organization';
+
+        // User is "in the flow", record this in the session:
+        if ( empty( $_SESSION['donor']['_in_flow'] ) ) {
+            $_SESSION['donor']['_in_flow'] = true;
+        }
+
         if( isset( $_REQUEST['pickupcode'] ) ){
             $_SESSION['donor']['rewrite_titles'] = false;
-            session_write_close();
-            wp_safe_redirect( trailingslashit( $_REQUEST['nextpage'] ) . '?pcode=' . $pickupcode );
+            //session_write_close();
+            //wp_safe_redirect( trailingslashit( $_REQUEST['nextpage'] ) . '?pcode=' . $pickupcode );
+            donman_safe_redirect( trailingslashit( $_REQUEST['nextpage'] ) . '?pcode=' . $pickupcode );
             exit;
         }
     } else {

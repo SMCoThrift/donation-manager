@@ -34,6 +34,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
   <div class="elementor-widget-container">
     <form class="elementor-form" method="post" name="Find a Pick Up Provider">
       <input type="hidden" name="nextpage" value="'.htmlspecialchars((string)(($inary && isset($in['nextpage'])) ? $in['nextpage'] : null), ENT_QUOTES, 'UTF-8').'">
+      <input type="hidden" name="donman_step" value="pickup_zip">
       <div class="elementor-form-fields-wrapper elementor-labels-above">
         <div class="elementor-field-type-text elementor-field-group elementor-column elementor-field-group-name elementor-col-60 elementor-field-required">
           <label for="form-field-name" class="elementor-field-label visually-hidden" aria-hidden="true" aria-labelledby="Zip/Donation Code">Zip/Donation Code</label>

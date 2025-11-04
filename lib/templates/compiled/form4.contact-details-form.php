@@ -122,7 +122,7 @@ use \LightnCandy\SafeString as SafeString;use \LightnCandy\Runtime as LR;return 
             </div>
 
             <div class="elementor-field-type-tel elementor-field-group elementor-column elementor-field-group-phone elementor-col-50 elementor-field-required elementor-mark-required">
-              <label for="form-field-phone" class="elementor-field-label">Phone</label>
+              <label for="form-field-phone" class="elementor-field-label">Mobile Phone</label>
               <input size="1" type="tel" name="donor[phone]" value="'.htmlspecialchars((string)(($inary && isset($in['donor_phone'])) ? $in['donor_phone'] : null), ENT_QUOTES, 'UTF-8').'" id="donor_phone" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="(___) ___-____" required="required" aria-required="true" title="Only numbers and phone characters (#, -, *, etc) are accepted.">
             </div>
 

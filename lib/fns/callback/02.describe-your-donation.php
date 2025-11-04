@@ -1,4 +1,5 @@
 <?php
+use function DonationManager\utilities\{donman_safe_redirect};
 
 /**
  *  02. DESCRIBE YOUR DONATION
@@ -41,10 +42,12 @@ if ( isset( $_REQUEST['oid'] ) && isset( $_REQUEST['tid'] ) && ! isset( $_POST['
         if( isset( $_REQUEST['orphanid'] ) && is_numeric( $_REQUEST['orphanid'] ) ){
             $_SESSION['donor']['orphan_provider_id'] = $_REQUEST['orphanid'];
         }
+        session_write_close();
     } else {
         // Invalid org_id or trans_dept_id, redirect to site home page
         DonationManager\emails\notify_admin( 'invalid_link' );
-        wp_safe_redirect( home_url() );
+        //wp_safe_redirect( home_url() );
+        donman_safe_redirect( home_url() );
         exit;
     }
 }

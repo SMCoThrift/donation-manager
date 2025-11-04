@@ -6,7 +6,7 @@ $template = 'form0.enter-your-zipcode';
 if( ! empty( $args['template'] ) && template_exists( $args['template'] ) )
   $template = $args['template'];
 
-$html = render_template( $template, [ 'nextpage' => $nextpage ] );
+$html = render_template( $template, [ 'nextpage' => trailingslashit( $nextpage ) ] );
 add_html( $html );
 if( current_user_can( 'activate_plugins') && ! isset( $_COOKIE['dmdebug'] ) ){
   add_html( '<div style="text-align: center; font-size: 12px; margin-top: -20px;"><a href="./?dmdebug=true">Start Debug Mode</a> • <a href="./?dmdebug=true&verbose=true">Debug with Verbose Output</a></div>' );

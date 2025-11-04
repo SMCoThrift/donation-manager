@@ -3,7 +3,7 @@
 namespace DonationManager\shortcodes;
 use function DonationManager\callbacks\{track_url_path};
 use function DonationManager\templates\{template_exists};
-use function DonationManager\utilities\{get_alert};
+use function DonationManager\utilities\{get_alert,donman_start_session};
 use function DonationManager\globals\{add_html,get_html};
 
 /**
@@ -24,103 +24,120 @@ function donationform( $atts ){
   $args = shortcode_atts([
     'nextpage'  => null,
     'template'  => null,
+    'reset'     => false,
   ], $atts );
+  $args['reset'] = filter_var( $args['reset'], FILTER_VALIDATE_BOOLEAN );
 
-  /**
-   * Show DEBUG info when $_COOKIE['dmdebug'] is TRUE:
-   */
+  // Show DEBUG info
   donationform_docs( $atts );
 
-  /**
-   *  NEXT PAGE - WHERE DOES OUR FORM REDIRECT?
-   *
-   *  The form's redirect is defined by the `nextpage` shortcode
-   *  attribute. We allow this redirect to be user defined so
-   *  the user can control the path through the site. This in
-   *  turn allows for adding the various pages as steps in an
-   *  analytics tracking funnel (e.g. Google Analytics).
-   */
-  //$nextpage = ( is_null( $args['nextpage'] ) || empty( $args['nextpage'] ) )? get_permalink() : home_url( $args['nextpage'] ) ;
+  // Determine nextpage URL
   $nextpage_attr = trim( (string) $args['nextpage'] );
   if ( $nextpage_attr === '' ) {
     $nextpage = get_permalink();
   } elseif ( filter_var( $nextpage_attr, FILTER_VALIDATE_URL ) ) {
     $nextpage = $nextpage_attr;
   } else {
-    // Ensure single leading slash; avoid double slashes when concatenating with home_url().
     $nextpage = home_url( '/' . ltrim( $nextpage_attr, '/' ) );
   }
 
-
   /**
-   *  RESET $_SESSION['donor'] ON HOME PAGE
-   *
-   *  We're assuming that the donation process begins on the site
-   *  homepage. Therefore, we always reset the donor array so that
-   *  we can begin the donation process and show the proper form
-   *  by making sure that $_SESSION['donor']['form'] is unset.
-   *
-   *  In the event that we ever want to change this behavior, we
-   *  could add some settings to the Donation Settings page we
-   *  create with the ACF plugin. These settings would define
-   *  which form displays on which page. Otherwise, we setup
-   *  $_SESSION['donor']['form'] inside callback_init().
+   * SESSION RESET LOGIC — hardened to avoid nuking donor mid-flow
    */
   global $wp;
   $current_url = home_url( add_query_arg( array(), $wp->request ) );
   $reset_session_donor = false;
-  if( is_front_page() || is_page('donate-now') || stristr( $current_url, 'city-pages' ) ){
-    if( isset( $_SESSION['donor']['_redirecting'] ) && true == $_SESSION['donor']['_redirecting'] ){
-      //unset( $_SESSION['donor']['_redirecting'] );
-      if ( isset( $_SESSION['donor']['_redirecting'] ) ) {
-          unset( $_SESSION['donor']['_redirecting'] );
-          session_write_close();
-      }
-    } else {
+
+  donman_start_session(); // ensure session before tests
+
+  $in_flow = ! empty( $_SESSION['donor']['_in_flow'] );
+
+  // If redirect flag present, clear it and bail (no reset)
+  if ( isset( $_SESSION['donor']['_redirecting'] ) ) {
+    unset( $_SESSION['donor']['_redirecting'] );
+    session_write_close();
+  } 
+  else {
+
+    $is_start_page = (
+      is_front_page()
+      || is_page('donate-now')
+      || stristr( $current_url, 'city-pages' )
+      || $args['reset']
+    );
+
+    // Only reset if: on a start page AND not already in flow
+    if ( $is_start_page && ! $in_flow ) {
+
       $msg = '⚠️⚠️⚠️ RESETTING $_SESSION[donor]';
+      $msg.= "\n" . ' - $args[reset] = ' . $args['reset'];
       $msg.= "\n" . ' - is_front_page() = ' . is_front_page();
       $msg.= "\n" . ' - is_page(\'donate-now\') = ' . is_page('donate-now');
       $msg.= "\n" . ' - stristr( ' . $current_url . ', \'city-pages\' ) = ' . stristr( $current_url, 'city-pages' );
       $msg.= "\n" . ' - REFERRER: ' . wp_get_referer();
+      $msg.= "\n" . ' - Session 🆔: ' . session_id();
 
-
-      if( isset( $_SESSION['donor']['_redirecting'] ) )
-        $msg.= "\n\n - 💡 _redirecting = " . $_SESSION['donor']['_redirecting'];
       uber_log( $msg );
-      $reset_session_donor = true;  
+      $reset_session_donor = true;
     }
   }
 
-  if( $reset_session_donor )
+  if ( $reset_session_donor ) {
     $_SESSION['donor'] = array();
+    // Mark fresh start of flow
+    $_SESSION['donor']['_in_flow'] = true;
+  }
+
+  // If we're on the final "thank you" page, reset donor session
+  if ( is_page('thank-you') ) {
+
+      if ( DMDEBUG_VERBOSE ) {
+          uber_log("🎯 Flow complete — resetting donor session on thank-you page.");
+      }
+
+      // Reset session to allow new donation flow
+      //$_SESSION['donor'] = [];
+      $_SESSION['donor']['_completed'] = true; // optional for reporting
+      unset( $_SESSION['donor']['_in_flow'] );
+
+      session_write_close();
+  }  
+
+  // Abort/reset flow ONLY if user truly navigates to homepage
+  if (
+      isset($_SESSION['donor']['_in_flow'])
+      && ! isset($_SESSION['donor']['_redirecting'])
+      && is_front_page()
+      && empty($_GET) // no query parameters
+      && ! wp_get_referer() // direct visit, not redirect bounce
+  ) {
+      if ( DMDEBUG_VERBOSE ) {
+          uber_log("🏠 Clean home visit — resetting donor session (true abort).");
+      }
+
+      $_SESSION['donor'] = [];
+      session_write_close();
+  }
 
   track_url_path();
 
   /**
-   * The form we're displaying.
-   *
-   * @var        string
+   * Determine form file to load based on state
    */
   $form = ( isset( $_SESSION['donor']['form'] ) )? $_SESSION['donor']['form'] : 'default';
+
   if( isset( $_REQUEST['pcode'] ) ){
-      $form = 'select-your-organization';
-  } else if( isset( $_REQUEST['oid'] ) && isset( $_REQUEST['tid'] ) ){
-      $form = 'describe-your-donation';
+    $form = 'select-your-organization';
+  } elseif( isset( $_REQUEST['oid'] ) && isset( $_REQUEST['tid'] ) ){
+    $form = 'describe-your-donation';
   }
 
   $user_photo_uploads = [
     'on'       => false,
     'required' => false,
   ];
+
   if( isset( $_SESSION['donor']['org_id'] ) ){
-    /**
-     * Used to switch on interface elements for User Photo Uploads.
-     *
-     * Used in the following files included by require_once():
-     * - lib/fns/shortcode/donationform/contact-details.php
-     *
-     * @var        array
-     */
     $user_photo_uploads = [
       'on'        => get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] ),
       'required'  => get_field( 'pickup_settings_user_photo_uploads_required', $_SESSION['donor']['org_id'] ),
@@ -128,11 +145,16 @@ function donationform( $atts ){
   }
 
   $form_filename = DONMAN_PLUGIN_PATH . 'lib/fns/shortcode/donationform/' . $form . '.php';
-  /**
-   * If $form_filename does not exist, "bail" and show alert:
-   */
-  if( ! file_exists( $form_filename ) )
-    return get_alert(['description' => 'I could not find <code>lib/fns/shortcode/donationform/' . basename( $form_filename ) . '</code>. Please create this file with any neccessary pre-processing for this form.']);
+
+  if( ! file_exists( $form_filename ) ) {
+    return get_alert(['description' => 'I could not find <code>lib/fns/shortcode/donationform/' . basename( $form_filename ) . '</code>.']);
+  }
+
+  static $donationform_rendered = false;
+  if ( $donationform_rendered ) {
+    return ''; // prevent duplicate screens
+  }
+  $donationform_rendered = true;  
 
   wp_enqueue_style( 'form' );
   require_once( $form_filename );

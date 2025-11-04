@@ -63,7 +63,7 @@ foreach( $organizations as $org ) {
     ){
       $link = $org['alternate_donate_now_url'];
     } else if( array_key_exists( 'id', $org ) && array_key_exists( 'trans_dept_id', $org ) ) {
-      $link = $nextpage . '?oid=' . $org['id'] . '&tid=' . $org['trans_dept_id'];
+      $link = $nextpage . '?donman_step=describe&oid=' . $org['id'] . '&tid=' . $org['trans_dept_id'];
     }
 
     if( FALSE === stristr( $link, '&priority=' ) ){

@@ -33,17 +33,6 @@ $dmdebug_verbose = ( isset( $_COOKIE['dmdebug_verbose'] ) && 'on' == $_COOKIE['d
 define( 'DMDEBUG_VERBOSE', $dmdebug_verbose );
 
 /**
- * Ensure session starts early and consistently.
- */
-function donman_start_session() {
-    if ( defined('WP_CLI') ) return;
-    if ( session_status() === PHP_SESSION_NONE ) {
-        session_start();
-    }
-}
-add_action( 'init', 'donman_start_session', 1 );
-
-/**
  * Load required files
  */
 $required_files = array_diff( scandir( DONMAN_PLUGIN_PATH . 'lib/fns' ), [ '.', '..', 'shortcode', 'cli', 'callback', 'callback-donation-report.organizations.php', 'callback-donation-report.donors.php' ] );

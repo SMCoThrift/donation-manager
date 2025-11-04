@@ -45,6 +45,7 @@ span.label-text{font-size: 1.25em; font-weight: bold;}
 '.(($inary && isset($in['step_one_notice'])) ? $in['step_one_notice'] : null).'
 <p class="lead"><strong>Step 1 of 4:</strong> What Items do you have to donate? (<em>Check all that apply</em>)</p>
 <form action="" method="post" style="margin-bottom: 3em;">
+  <input type="hidden" name="donman_step" value="donation_description">
   <table class="">
 '.LR::sec($cx, (($inary && isset($in['checkboxes'])) ? $in['checkboxes'] : null), null, $in, true, function($cx, $in) {$inary=is_array($in);return '    <tr>
       <td>

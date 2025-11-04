@@ -302,13 +302,25 @@ function save_report_csv( $filename = null, $content = null ){
  * @return void|false
  */
 function donman_safe_redirect( $location = '' ) {
+  //uber_log('🚨 donman_safe_redirect() is disabled. Not redirecting to ' . $location . "\n\n" . '$_SESSION[donor] = ' . print_r( $_SESSION['donor'],true) );
+  //return false;
+
+
   if ( empty( $location ) ) {
     uber_log( '⚠️ donman_safe_redirect called with empty $location' );
     return false;
   }
 
+  // Caller info
+  $trace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+  $caller = $trace[1] ?? null;
+  $caller_file = $caller['file'] ?? 'unknown';
+  $caller_line = $caller['line'] ?? 'unknown';
+
   // Normalize URL
-  $location = esc_url_raw( trailingslashit( $location ) );
+  if( ! stristr( $location, '?' ) )
+    trailingslashit( $location );
+  $location = esc_url_raw( $location );
 
   // Mark redirect in session
   $_SESSION['donor']['_redirecting'] = true;
@@ -317,9 +329,15 @@ function donman_safe_redirect( $location = '' ) {
   uber_log(
     "🔔 Redirecting donor flow\n" .
     "➡️ URL: {$location}\n" .
+    "📁 Called from: " . basename( $caller_file ) . ":{$caller_line}\n" .
     "🧪 session_status(): " . session_status() . "\n" .
     "🆔 PHPSESSID before redirect: " . session_id()
   );
+
+  // Mark this navigation with a new flow debug id
+  $_SESSION['donor']['req_id'] = wp_generate_uuid4();
+  unset($_SESSION['donor']['_debug_header_printed']); // allow new debug banner after redirect
+
 
   // Guarantee session persistence
   if ( session_status() === PHP_SESSION_ACTIVE ) {
@@ -329,4 +347,47 @@ function donman_safe_redirect( $location = '' ) {
   wp_safe_redirect( $location );
   exit;
 }
+
+/**
+ * Initialize the PHP session for donation flow if not already active.
+ *
+ * Ensures the session is intentionally started with secure configuration,
+ * prevents multiple session starts, and initializes the donor session array.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+ */
+function donman_start_session() {
+  static $session_started = false;
+
+  if ( $session_started ) {
+    return;
+  }
+  $session_started = true;
+
+  if ( session_status() !== PHP_SESSION_ACTIVE && ! headers_sent() ) {
+    uber_log( str_repeat('-', 20) . ' 🔔🔔 STARTING SESSION 🔔🔔 ' . str_repeat('-', 20) );
+    session_start([
+      'read_and_close' => false,
+      'cookie_httponly' => true,
+      'cookie_secure'   => is_ssl(),
+      'use_strict_mode' => true,
+    ]);
+
+    // Assign per-navigation request id if not already set
+    if ( empty($_SESSION['donor']['req_id']) ) {
+        $_SESSION['donor']['req_id'] = wp_generate_uuid4();
+    }
+
+  } else {
+    uber_log('ℹ️ SESSION already started...');
+  }
+
+  if ( empty( $_SESSION['donor'] ) ) {
+    uber_log('🔔 Initializing $_SESSION[donor]...' . str_repeat('-', 25));
+    $_SESSION['donor'] = [];
+  }
+}
+
 

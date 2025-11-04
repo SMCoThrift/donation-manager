@@ -13,6 +13,7 @@ span.label-text{font-size: 1.25em; font-weight: bold;}
 {{{step_one_notice}}}
 <p class="lead"><strong>Step 1 of 4:</strong> What Items do you have to donate? (<em>Check all that apply</em>)</p>
 <form action="" method="post" style="margin-bottom: 3em;">
+  <input type="hidden" name="donman_step" value="donation_description">
   <table class="">
     {{#each checkboxes}}
     <tr>
