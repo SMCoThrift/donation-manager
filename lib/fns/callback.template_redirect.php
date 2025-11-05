@@ -18,14 +18,18 @@ namespace DonationManager\callbacks;
  */
 function callback_template_redirect() {
   if( isset( $_SESSION['donor']['skipquestions'] ) && true == $_SESSION['donor']['skipquestions'] && 'screening-questions' == $_SESSION['donor']['form'] ) {
-    global $post;
+    global $post, $wp;
     unset( $_SESSION['donor']['skipquestions'] );
     if( has_shortcode( $post->post_content, 'donationform' ) ) {
       $_SESSION['donor']['form'] = 'contact-details';
       preg_match( '/nextpage="(.*)"/U', $post->post_content, $matches );
       if( $matches[1] ){
         $location = trailingslashit( home_url( $matches[1] ) );
+
+        // Mark as redirect and add redirect reference
         $_SESSION['donor']['_redirecting'] = true;
+        $_SESSION['donor']['_recent_redirect_ref'] = home_url( add_query_arg([], $wp->request) );
+
         uber_log( '🔔 Skipping screening questions. Redirecting to `' . $location . "\n\n" . '$_SESSION[\'donor\'] = ' . print_r( $_SESSION['donor'], true ) );
         session_write_close();
         wp_safe_redirect( $location );

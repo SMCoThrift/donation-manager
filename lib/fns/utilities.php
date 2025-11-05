@@ -304,7 +304,7 @@ function save_report_csv( $filename = null, $content = null ){
 function donman_safe_redirect( $location = '' ) {
   //uber_log('🚨 donman_safe_redirect() is disabled. Not redirecting to ' . $location . "\n\n" . '$_SESSION[donor] = ' . print_r( $_SESSION['donor'],true) );
   //return false;
-
+  global $wp;
 
   if ( empty( $location ) ) {
     uber_log( '⚠️ donman_safe_redirect called with empty $location' );
@@ -322,8 +322,9 @@ function donman_safe_redirect( $location = '' ) {
     trailingslashit( $location );
   $location = esc_url_raw( $location );
 
-  // Mark redirect in session
+  // Mark as redirect and add redirect reference
   $_SESSION['donor']['_redirecting'] = true;
+  $_SESSION['donor']['_recent_redirect_ref'] = home_url( add_query_arg([], $wp->request) );
 
   // Debug crumb
   uber_log(

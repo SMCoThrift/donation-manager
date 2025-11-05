@@ -54,7 +54,7 @@ function donationform( $atts ){
 
   // If redirect flag present, clear it and bail (no reset)
   if ( isset( $_SESSION['donor']['_redirecting'] ) ) {
-    unset( $_SESSION['donor']['_redirecting'] );
+    unset( $_SESSION['donor']['_redirecting'], $_SESSION['donor']['_recent_redirect_ref'] );
     session_write_close();
   } 
   else {
@@ -103,20 +103,25 @@ function donationform( $atts ){
       session_write_close();
   }  
 
-  // Abort/reset flow ONLY if user truly navigates to homepage
+  // Abort/reset flow if user hits home page intentionally (not redirect bounce)
   if (
       isset($_SESSION['donor']['_in_flow'])
       && ! isset($_SESSION['donor']['_redirecting'])
       && is_front_page()
-      && empty($_GET) // no query parameters
-      && ! wp_get_referer() // direct visit, not redirect bounce
+      && empty($_GET) // no query args
   ) {
-      if ( DMDEBUG_VERBOSE ) {
-          uber_log("🏠 Clean home visit — resetting donor session (true abort).");
-      }
+      $ref = wp_get_referer();
 
-      $_SESSION['donor'] = [];
-      session_write_close();
+      // If no referrer OR referrer is not a post-redirect landing page → abort
+      $is_redirect_bounce = ($ref && isset($_SESSION['donor']['_recent_redirect_ref']) && $_SESSION['donor']['_recent_redirect_ref'] === $ref);
+
+      if ( ! $is_redirect_bounce ) {
+          if ( DMDEBUG_VERBOSE ) {
+              uber_log( "🏠 Home navigation — abort flow and reset session.\n" . '- $ref = ' . $ref );
+          }
+          $_SESSION['donor'] = [];
+          session_write_close();
+      }
   }
 
   track_url_path();

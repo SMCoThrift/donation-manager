@@ -42,7 +42,7 @@ function handle_form_submissions() {
 
   // Prevent re-processing right after redirect
   if ( ! empty( $_SESSION['donor']['_redirecting'] ) ) {
-    unset( $_SESSION['donor']['_redirecting'] );
+    unset( $_SESSION['donor']['_redirecting'], $_SESSION['donor']['_recent_redirect_ref'] );
     if ( DMDEBUG_VERBOSE ) {
       uber_log('⛔ Skipping processing — post-redirect bounce');
     }
