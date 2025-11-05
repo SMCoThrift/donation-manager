@@ -8,7 +8,7 @@ use function DonationManager\transdepts\{get_trans_dept_ads};
 use function DonationManager\realtors\{get_realtor_ads};
 
 $ads = [];
-$pickup_code = $_REQUEST['pcode'];
+$pickup_code = ( isset($_REQUEST['pcode'] ) )? $_REQUEST['pcode'] : '' ;
 
 $organizations = get_organizations( $pickup_code );
 

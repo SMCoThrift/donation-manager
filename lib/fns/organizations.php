@@ -88,7 +88,7 @@ function get_default_organization( $priority = false ) {
  *
  * @return     array   The organizations.
  */
-function get_organizations( $pickup_code ) {
+function get_organizations( $pickup_code = '' ) {
   $pickup_code = ltrim( $pickup_code, '0' );
 
   $args = [
