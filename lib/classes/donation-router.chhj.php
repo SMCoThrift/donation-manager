@@ -49,6 +49,7 @@ class CHHJDonationRouter extends DonationRouter{
         // $special_instructions = pick updates and $donation['pickup_address']
         $special_instructions = "\n\n# PREFERRED PICK UP DATES\n" . implode( "\n", $pickup_dates ) . $pickup_address;
 
+        /*
         $args = array(
           'body' => array(
             'Client_Postal_Zip' => $donation['pickup_code'],
@@ -65,7 +66,17 @@ class CHHJDonationRouter extends DonationRouter{
           ),
         );
         $this->save_api_post( $donation['ID'], $args );
-
+        // Don't send if we're debugging:
+        if( DONMAN_DEV_ENV ){
+          uber_log('INFO: `DONMAN_DEV_ENV` is ON. CHHJ pickup request not sent.');
+        } else {
+          $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );  
+        }
+        /**/
+        
+        /**
+         * 10/30/2025 (16:48) - Posting to New CHHJ API EP:
+         */
         // account_type = (3 = commercial, 5 = residential)
         $account_type = ( isset( $donation['address']['company'] ) && !empty($donation['address']['company'] ) )? 3 : 5 ;
         $json_body = array(
@@ -99,20 +110,10 @@ class CHHJDonationRouter extends DonationRouter{
           'timeout' => 20,
         ];
         $this->save_api_post( $donation['ID'], $new_args );
-        uber_log( '👉 $new_args = ', $new_args );
-
-        // Don't send if we're debugging:
-        if( DONMAN_DEV_ENV ){
-          uber_log('INFO: `DONMAN_DEV_ENV` is ON. CHHJ pickup request not sent.');
-        } else {
-          $response = wp_remote_post( 'https://support.chhj.com/hunkware/API/ClientCreatePickUpMyDonation.php', $args );  
-        }
-        
-        // 10/30/2025 (16:48) - Posting to New CHHJ API EP:
+        uber_log( '👉 $new_args = ' . print_r( $new_args, true ) );
         if ( defined( 'CHHJ_API_EP' ) && defined( 'CHHJ_API_TOKEN' ) && 
           0 < strlen( CHHJ_API_EP ) && 0 < strlen( CHHJ_API_TOKEN ) ) {
           $response = wp_remote_post( CHHJ_API_EP, $new_args );
-          uber_log('🔔 NEW API $response = ' . print_r( $response, true  ) );
         } else {
           uber_log('I could not find CHHJ_API_EP and CHHJ_API_TOKEN!');
         }
