@@ -4,13 +4,34 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.5.0
+Stable tag: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.6.0 =
+Version 5.6.0 delivers major backend improvements focused on session management, redirect handling, and debugging capabilities. The donation form submission handler has been completely rewritten to process requests more reliably, moving from the `init` hook to `template_redirect` to eliminate duplicate processing and ensure predictable behavior throughout the multi-step donation flow.
+
+Session handling is now centralized through new utility functions that guarantee secure session initialization, preserve donor state across redirects, and prevent accidental data loss. Enhanced debugging provides flow-based tracking with unique request IDs, making it easier to trace individual donor journeys through server logs. The CHHJ integration has been updated to post to their new API endpoint with automatic account type detection based on donor information.
+
+* Complete rewrite of form submission handler, moved from `init` to `template_redirect` hook for more reliable processing.
+* Enhanced routing logic with better step detection and redirect bounce protection.
+* New `donman_start_session()` utility for centralized, secure session initialization with static guards and secure configuration.
+* New `donman_safe_redirect()` utility for preserving donor session state during navigation with comprehensive debug logging.
+* Hardened session reset logic that prevents accidental data loss during active donation flows using `_in_flow` flag tracking.
+* Added `_recent_redirect_ref` for improved redirect reference tracking.
+* Added `reset` attribute to `[donationform]` shortcode for manual session clearing.
+* Updated CHHJ API integration to post to new endpoint defined via `CHHJ_API_EP` and `CHHJ_API_TOKEN` constants.
+* Dynamic account type detection (commercial vs. residential) based on presence of company name in donation.
+* Flow-based debugging with unique request IDs (UUIDs) for tracking individual donor sessions across redirects.
+* Enhanced `uber_log()` with session-aware header printing, color-coded output, and improved timestamp formatting.
+* SECURITY: Replaced all `header()` redirect calls with WordPress `wp_safe_redirect()` across all callback files.
+* Added `isset()` checks for company name, pickup location, and session variables to prevent PHP notices.
+* Improved `$nextpage` URL handling with validation for empty/null attributes and external URLs.
+* Updated contact details form field label from "Phone" to "Mobile Phone" for clearer donor expectations.
 
 = 5.5.0 =
 * Initial implementation of new CHHJ API.
