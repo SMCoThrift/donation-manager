@@ -4,13 +4,16 @@
 **Requires at least:** 6.5.0  
 **Tested up to:** 6.8.3  
 **Requires PHP:** 8.1  
-**Stable tag:** 5.6.0  
+**Stable tag:** 5.6.1  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 A complete donation intake system for WordPress.
 
 ## Changelog ##
+
+### 5.6.1 ###
+* Updating language in Donor Confirmation email (changing references to "donation" to "pickup request").
 
 ### 5.6.0 ###
 Version 5.6.0 delivers major backend improvements focused on session management, redirect handling, and debugging capabilities. The donation form submission handler has been completely rewritten to process requests more reliably, moving from the `init` hook to `template_redirect` to eliminate duplicate processing and ensure predictable behavior throughout the multi-step donation flow.
