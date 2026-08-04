@@ -37,6 +37,7 @@ yarn.lock
 tests
 vendor
 node_modules
+languages/*.pot
 *.sql
 *.tar.gz
 *.zip
