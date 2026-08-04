@@ -18,7 +18,7 @@ foreach( $donman_required_constants as $constant ){
   if( ! defined( $constant ) ){
     define( $constant, null );
     add_action( 'admin_notices', function() use ( $constant ){
-      $message = __( 'Missing required constant: <code>' . $constant . '</code>. Please add <code>define( \'' . $constant . '\', ... )</code> to your <code>wp-config.php</code>.' );
+      $message = __( 'Missing required constant: <code>' . $constant . '</code>. Please add <code>define( \'' . $constant . '\', ... )</code> to your <code>wp-config.php</code>.', 'donation-manager' );
       printf( '<div class="notice notice-error" style="padding: 10px;">%1$s</div>', $message );
     });
   }
