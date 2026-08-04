@@ -37,5 +37,10 @@
     "scripts": {
         "readme": "wp2md -i readme.txt -o README.md",
         "makepot": "wp i18n make-pot . languages/donation-manager.pot --domain=donation-manager --exclude=node_modules,vendor,tests"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
