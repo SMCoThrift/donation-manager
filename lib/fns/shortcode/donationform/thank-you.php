@@ -6,6 +6,22 @@ use function DonationManager\donations\{get_donation_receipt};
 use function DonationManager\utilities\{get_alert};
 use function DonationManager\realtors\{get_realtor_ads};
 
+/**
+ * GA4 conversion tracking — fires exactly once per completed donation.
+ *
+ * Tied to $_SESSION['donor']['ID'], which save_donation() sets only when a new
+ * donation record is created (see 06.a/06.b validate-pickup-*.php). The
+ * `_ga_event_sent` flag is set immediately after so a page refresh, back/forward
+ * navigation, or bookmarked revisit of /thank-you/ does NOT re-fire the event.
+ * This replaces the old GA4 "Create event" rules that matched any page_view of
+ * /thank-you/, which double- and over-counted conversions.
+ */
+if ( ! empty( $_SESSION['donor']['ID'] ) && empty( $_SESSION['donor']['_ga_event_sent'] ) ) {
+  $donation_id = (int) $_SESSION['donor']['ID'];
+  add_html( '<script>gtag("event", "donation_completed", {"transaction_id": "' . esc_js( $donation_id ) . '"});</script>' );
+  $_SESSION['donor']['_ga_event_sent'] = true;
+}
+
 add_html( '<p>Thank you for donating! We will contact you to finalize your pickup date. Below is a copy of your donation receipt which you will also receive via email.</p>' );
 
 // Retrieve the donation receipt
