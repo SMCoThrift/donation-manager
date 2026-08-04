@@ -159,7 +159,7 @@ function donationform( $atts ){
   if ( $donationform_rendered ) {
     return ''; // prevent duplicate screens
   }
-  $donationform_rendered = true;  
+  $donationform_rendered = true;
 
   wp_enqueue_style( 'form' );
   require_once( $form_filename );

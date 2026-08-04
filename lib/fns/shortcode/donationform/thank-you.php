@@ -15,11 +15,22 @@ use function DonationManager\realtors\{get_realtor_ads};
  * navigation, or bookmarked revisit of /thank-you/ does NOT re-fire the event.
  * This replaces the old GA4 "Create event" rules that matched any page_view of
  * /thank-you/, which double- and over-counted conversions.
+ *
+ * donationform.php already calls session_write_close() for is_page('thank-you')
+ * before this file loads, so the session must be explicitly reopened here or the
+ * `_ga_event_sent` write below is silently lost — never persisted, so it never
+ * sticks and the event re-fires on every refresh. donman_start_session() can't be
+ * reused for this: it has a static "already started" guard that no-ops after its
+ * first call this request.
  */
 if ( ! empty( $_SESSION['donor']['ID'] ) && empty( $_SESSION['donor']['_ga_event_sent'] ) ) {
+  if ( PHP_SESSION_ACTIVE !== session_status() && ! headers_sent() ) {
+    session_start();
+  }
   $donation_id = (int) $_SESSION['donor']['ID'];
   add_html( '<script>gtag("event", "donation_completed", {"transaction_id": "' . esc_js( $donation_id ) . '"});</script>' );
   $_SESSION['donor']['_ga_event_sent'] = true;
+  session_write_close();
 }
 
 add_html( '<p>Thank you for donating! We will contact you to finalize your pickup date. Below is a copy of your donation receipt which you will also receive via email.</p>' );
