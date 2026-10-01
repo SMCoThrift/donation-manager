@@ -11,7 +11,8 @@ function track_url_path(){
     if( ! isset( $_SESSION['donor']['url_path'] ) || ! is_array( $_SESSION['donor']['url_path'] )  )
         $_SESSION['donor']['url_path'] = array();
 
-    $site_host = str_replace( array( 'http://', 'https://' ), '', site_url() );
+    // site_url() includes the WordPress subdirectory (e.g. `/wp`), so it never matches a referer's host.
+    $site_host = parse_url( home_url(), PHP_URL_HOST );
 
     $referer = ( isset( $_SERVER['HTTP_REFERER'] ) && ! empty( $_SERVER['HTTP_REFERER'] ) )? $_SERVER['HTTP_REFERER'] : '' ;
     $referer_url = parse_url( $referer );
