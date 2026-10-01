@@ -1,6 +1,7 @@
 <?php
 use function DonationManager\utilities\{get_alert,donman_safe_redirect};
 use function DonationManager\globals\{add_html};
+use function DonationManager\callbacks\{get_landing_url_path};
 
 /**
  *  01. INITIAL ZIP/PICKUP CODE VALIDATION
@@ -15,6 +16,14 @@ if( isset( $_REQUEST['pickupcode'] ) || isset( $_REQUEST['pcode'] ) ) {
     $form->setValues( [ 'pickupcode' => $pickupcode ] );
 
     if( $form->validate( $_REQUEST ) ) {
+        // Submitting the zip/donation code form is the start of a new flow. The
+        // pages showing that form are served from the page cache without a session,
+        // so the donor reset and the referrer capture which used to happen when
+        // those pages rendered happen here instead.
+        if( isset( $_POST['pickupcode'] ) ){
+            $_SESSION['donor'] = [ 'url_path' => get_landing_url_path() ];
+        }
+
         $_SESSION['donor']['pickup_code'] = $pickupcode;
         $_SESSION['donor']['form'] = 'select-your-organization';
 

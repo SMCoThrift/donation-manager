@@ -34,6 +34,13 @@ if ( isset( $_REQUEST['oid'] ) && isset( $_REQUEST['tid'] ) && ! isset( $_POST['
     ]);
 
     if( $form->validate( array( 'org_id' => $_REQUEST['oid'], 'trans_dept_id' => $_REQUEST['tid'] ) ) ){
+        // Donors can arrive here from a direct link without submitting the zip
+        // form, so don't carry a previously completed donation into a new one.
+        if( ! empty( $_SESSION['donor']['_completed'] ) ){
+            $url_path = ( isset( $_SESSION['donor']['url_path'] ) && is_array( $_SESSION['donor']['url_path'] ) )? $_SESSION['donor']['url_path'] : [];
+            $_SESSION['donor'] = [ 'url_path' => $url_path, '_in_flow' => true ];
+        }
+
         $_SESSION['donor']['form'] = 'describe-your-donation';
         $_SESSION['donor']['org_id'] = $_REQUEST['oid'];
         $_SESSION['donor']['trans_dept_id'] = $_REQUEST['tid'];

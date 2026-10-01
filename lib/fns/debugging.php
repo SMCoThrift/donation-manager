@@ -32,15 +32,17 @@ if( ! function_exists( 'uber_log' ) ){
     // Local PHP-process guard (prevents multiple banners during this single execution)
     static $local_debug_header_printed = false;
 
-    // Ensure session exists so we can track flow-level state
+    // Ensure session exists so we can track flow-level state. This is a no-op
+    // on requests which must stay cacheable (see donman_request_needs_session()).
     if ( session_status() !== PHP_SESSION_ACTIVE ) {
         if ( function_exists('\DonationManager\utilities\donman_start_session') ) {
             \DonationManager\utilities\donman_start_session();
         }
     }
+    $has_session = ( session_status() === PHP_SESSION_ACTIVE );
 
     // Create flow ID if missing
-    if ( empty($_SESSION['donor']['req_id']) ) {
+    if ( $has_session && empty($_SESSION['donor']['req_id']) ) {
         $_SESSION['donor']['req_id'] = wp_generate_uuid4();
     }
 
@@ -48,9 +50,11 @@ if( ! function_exists( 'uber_log' ) ){
     if ( ! $local_debug_header_printed && empty($_SESSION['donor']['_debug_header_printed']) ) {
 
         $local_debug_header_printed = true;
-        $_SESSION['donor']['_debug_header_printed'] = true;
+        if ( $has_session ) {
+            $_SESSION['donor']['_debug_header_printed'] = true;
+        }
 
-        $flow_id = $_SESSION['donor']['req_id'];
+        $flow_id = $has_session ? $_SESSION['donor']['req_id'] : 'no-session';
         $green   = "\033[32m";
         $reset   = "\033[0m";
 

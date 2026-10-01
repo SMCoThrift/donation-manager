@@ -3,7 +3,7 @@
 namespace DonationManager\shortcodes;
 use function DonationManager\callbacks\{track_url_path};
 use function DonationManager\templates\{template_exists};
-use function DonationManager\utilities\{get_alert,donman_start_session};
+use function DonationManager\utilities\{get_alert,donman_start_session,donman_request_needs_session};
 use function DonationManager\globals\{add_html,get_html};
 
 /**
@@ -41,6 +41,49 @@ function donationform( $atts ){
     $nextpage = home_url( '/' . ltrim( $nextpage_attr, '/' ) );
   }
 
+  // Cacheable requests never get a session, so they always show the start form.
+  $form = donman_request_needs_session() ? get_current_form( $args ) : 'default';
+
+  $user_photo_uploads = [
+    'on'       => false,
+    'required' => false,
+  ];
+
+  if( isset( $_SESSION['donor']['org_id'] ) ){
+    $user_photo_uploads = [
+      'on'        => get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] ),
+      'required'  => get_field( 'pickup_settings_user_photo_uploads_required', $_SESSION['donor']['org_id'] ),
+    ];
+  }
+
+  $form_filename = DONMAN_PLUGIN_PATH . 'lib/fns/shortcode/donationform/' . $form . '.php';
+
+  if( ! file_exists( $form_filename ) ) {
+    return get_alert(['description' => 'I could not find <code>lib/fns/shortcode/donationform/' . basename( $form_filename ) . '</code>.']);
+  }
+
+  static $donationform_rendered = false;
+  if ( $donationform_rendered ) {
+    return ''; // prevent duplicate screens
+  }
+  $donationform_rendered = true;
+
+  wp_enqueue_style( 'form' );
+  require_once( $form_filename );
+
+  return get_html();
+}
+add_shortcode( 'donationform', __NAMESPACE__ . '\\donationform' );
+
+/**
+ * Starts the session, applies the donor reset rules, and returns the form to
+ * display for the donor's current position in the flow.
+ *
+ * @param      array  $args  The parsed `[donationform]` shortcode attributes.
+ *
+ * @return     string  Name of a file in lib/fns/shortcode/donationform/ (minus `.php`).
+ */
+function get_current_form( $args ){
   /**
    * SESSION RESET LOGIC — hardened to avoid nuking donor mid-flow
    */
@@ -137,36 +180,8 @@ function donationform( $atts ){
     $form = 'describe-your-donation';
   }
 
-  $user_photo_uploads = [
-    'on'       => false,
-    'required' => false,
-  ];
-
-  if( isset( $_SESSION['donor']['org_id'] ) ){
-    $user_photo_uploads = [
-      'on'        => get_field( 'pickup_settings_allow_user_photo_uploads', $_SESSION['donor']['org_id'] ),
-      'required'  => get_field( 'pickup_settings_user_photo_uploads_required', $_SESSION['donor']['org_id'] ),
-    ];
-  }
-
-  $form_filename = DONMAN_PLUGIN_PATH . 'lib/fns/shortcode/donationform/' . $form . '.php';
-
-  if( ! file_exists( $form_filename ) ) {
-    return get_alert(['description' => 'I could not find <code>lib/fns/shortcode/donationform/' . basename( $form_filename ) . '</code>.']);
-  }
-
-  static $donationform_rendered = false;
-  if ( $donationform_rendered ) {
-    return ''; // prevent duplicate screens
-  }
-  $donationform_rendered = true;
-
-  wp_enqueue_style( 'form' );
-  require_once( $form_filename );
-
-  return get_html();
+  return $form;
 }
-add_shortcode( 'donationform', __NAMESPACE__ . '\\donationform' );
 
 /**
  * Outputs the docs for the `[donationform]` shortcode.

@@ -27,3 +27,44 @@ function track_url_path(){
         $_SESSION['donor']['url_path'][] = $referer;
 }
 add_action( 'init', __NAMESPACE__ . '\\track_url_path', 100 );
+
+/**
+ * Builds the initial $_SESSION['donor']['url_path'] when the zip/donation code
+ * form is submitted.
+ *
+ * The page the donor landed on is served from the page cache without a session,
+ * so the referrer which brought them to the site can't be recorded server side.
+ * lib/js/scripts.js records it in the browser and posts it with the form as
+ * `donman_referrer` and `donman_landing`.
+ *
+ * The first value is always the external referrer (empty for direct visits) as
+ * that is what get_referer() saves with the donation.
+ *
+ * @return array The external referrer followed by the landing page URL.
+ */
+function get_landing_url_path(){
+    $site_host = parse_url( home_url(), PHP_URL_HOST );
+
+    $posted_url = function( $key ){
+        if( ! isset( $_POST[ $key ] ) || ! is_string( $_POST[ $key ] ) )
+            return '';
+        return esc_url_raw( substr( wp_unslash( $_POST[ $key ] ), 0, 2000 ), [ 'http', 'https' ] );
+    };
+
+    $referrer = $posted_url( 'donman_referrer' );
+    if( $site_host == parse_url( $referrer, PHP_URL_HOST ) )
+        $referrer = '';
+
+    // Without JS, the page which posted the form is the best landing page we have.
+    $landing = $posted_url( 'donman_landing' );
+    if( empty( $landing ) && ! empty( $_SERVER['HTTP_REFERER'] ) )
+        $landing = esc_url_raw( $_SERVER['HTTP_REFERER'], [ 'http', 'https' ] );
+    if( $site_host != parse_url( $landing, PHP_URL_HOST ) )
+        $landing = '';
+
+    $url_path = [ $referrer ];
+    if( ! empty( $landing ) )
+        $url_path[] = $landing;
+
+    return $url_path;
+}

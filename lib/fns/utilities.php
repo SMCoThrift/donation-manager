@@ -350,6 +350,62 @@ function donman_safe_redirect( $location = '' ) {
 }
 
 /**
+ * Slugs of the pages which make up the donation flow.
+ *
+ * These are the only front-end pages an anonymous visitor needs a session on.
+ * They are excluded from the server's page cache.
+ *
+ * @return array Page slugs.
+ */
+function donman_flow_pages() {
+  return [
+    'donate-now',
+    'select-your-organization',
+    'step-one',
+    'step-two',
+    'step-three',
+    'step-four',
+    'thank-you',
+  ];
+}
+
+/**
+ * Does the current request need a PHP session?
+ *
+ * Starting a session sends `Set-Cookie: PHPSESSID` and `Cache-Control: no-store`,
+ * either of which keeps the response out of the server's page cache. So an
+ * anonymous GET for a page outside the donation flow (home page, city pages,
+ * organization pages, etc.) must never start one, even when the visitor already
+ * has a session cookie: those responses are stored and served to everyone.
+ *
+ * The flow begins when the zip/donation code form POSTs, which is where the
+ * session is first started.
+ *
+ * @return bool TRUE if the request needs a session.
+ */
+function donman_request_needs_session() {
+  if ( is_admin() || wp_doing_ajax() ) {
+    return true;
+  }
+
+  $method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( $_SERVER['REQUEST_METHOD'] ) : 'GET';
+  if ( ! in_array( $method, [ 'GET', 'HEAD' ], true ) ) {
+    return true;
+  }
+
+  if ( function_exists( 'is_user_logged_in' ) && is_user_logged_in() ) {
+    return true;
+  }
+
+  // Conditional tags aren't reliable until the main query has been parsed.
+  if ( ! did_action( 'wp' ) ) {
+    return false;
+  }
+
+  return is_page( donman_flow_pages() );
+}
+
+/**
  * Initialize the PHP session for donation flow if not already active.
  *
  * Ensures the session is intentionally started with secure configuration,
@@ -363,6 +419,12 @@ function donman_start_session() {
   static $session_started = false;
 
   if ( $session_started ) {
+    return;
+  }
+
+  // Checked before latching $session_started so an early caller (e.g. uber_log()
+  // before the main query is parsed) can't block the real start later on.
+  if ( ! donman_request_needs_session() ) {
     return;
   }
   $session_started = true;

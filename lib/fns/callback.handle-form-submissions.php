@@ -1,7 +1,7 @@
 <?php
 
 namespace DonationManager\callbacks;
-use function DonationManager\utilities\{get_alert,donman_start_session};
+use function DonationManager\utilities\{get_alert,donman_start_session,donman_flow_pages};
 use function DonationManager\globals\{add_html};
 
 /**
@@ -21,19 +21,8 @@ function handle_form_submissions() {
     return;
   }
 
-  // Only run on pages in the donation flow
-  $flow_pages = [
-    'donate-now',
-    'select-your-organization',
-    'step-one',
-    'step-two',
-    'step-three',
-    'step-four',
-    'thank-you',
-  ];
-
   // If this is a GET request, only run on flow pages
-  if ( $_SERVER['REQUEST_METHOD'] === 'GET' && ! is_page( $flow_pages ) ) {
+  if ( $_SERVER['REQUEST_METHOD'] === 'GET' && ! is_page( donman_flow_pages() ) ) {
     return;
   } 
 
