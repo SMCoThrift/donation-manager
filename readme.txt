@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.8.1
+Stable tag: 5.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.8.2 =
+* Fix PHP warnings in the Orphaned Donations Providers grid when a request has no sort column or search.
 
 = 5.8.1 =
 * Index `contact_id` and `donation_id` on the orphaned donations table (DB version 3.2.0). The Orphaned Donations grid and the donation_id lookups no longer scan the whole table.
