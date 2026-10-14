@@ -6,13 +6,14 @@
  * - 2.0.0 - Adding donman_contacts table
  * - 3.0.0 - Adding donman_orphaned_donations table
  * - 3.1.0 - Adding `click_timestamp` to orphaned_donations table
+ * - 3.2.0 - Indexing `contact_id` and `donation_id` on orphaned_donations table
  *
  * @author     Mwender
  * @since      2022
  */
 
 global $donman_db_version;
-$donman_db_version = '3.1.0';
+$donman_db_version = '3.2.0';
 
 function donman_install(){
   global $wpdb;
@@ -77,7 +78,9 @@ function donman_install(){
       contact_id bigint(20) unsigned DEFAULT NULL,
       timestamp datetime DEFAULT NULL,
       click_timestamp datetime DEFAULT NULL,
-      PRIMARY KEY  (ID)
+      PRIMARY KEY  (ID),
+      KEY contact_id (contact_id,timestamp),
+      KEY donation_id (donation_id)
     ) $charset_collate;";
   }
   dbDelta( $sql );
