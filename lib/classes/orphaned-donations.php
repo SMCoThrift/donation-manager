@@ -389,6 +389,7 @@ class DMOrphanedDonations {
         'search' => null,
         'searchfield' => 'email',
         'priority' => 'all',
+        'count' => false,
     ));
 
     // Since priority, orderby, sort, and limit can be passed via
@@ -415,6 +416,9 @@ class DMOrphanedDonations {
 
       $search = "\n\t\t" . 'WHERE ' . $searchfield . ' LIKE \'%' . esc_sql( $args['search'] ) . '%\'';
     }
+
+    if ( $args['count'] )
+      return 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'donman_contacts' . $search;
 
     $sql_format = 'SELECT ID,store_name,zipcode,email_address,receive_emails,priority
         FROM ' . $wpdb->prefix . 'donman_contacts %4$s
@@ -456,6 +460,7 @@ class DMOrphanedDonations {
         'search' => null,
         'priority' => 'all',
         'filterby' => 'email_address',
+        'count' => false,
       ) );
 
     // Since priority, orderby, sort, and limit can be passed via
@@ -488,14 +493,23 @@ class DMOrphanedDonations {
 
     $search = ( ! empty( $args['search'] ) )? "\n\t\t" . 'AND ' . $filterby . ' LIKE \'%' . esc_sql( $args['search'] ) . '%\'' : null;
 
-    $sql_format = 'SELECT contacts.ID,store_name,zipcode,email_address,receive_emails,timestamp,COUNT(donation_id) AS total_donations
-        FROM ' . $wpdb->prefix . 'donman_contacts AS contacts, ' . $wpdb->prefix . 'donman_orphaned_donations AS donations
-        WHERE contacts.ID = donations.contact_id %s%s%s
+    $from = 'FROM ' . $wpdb->prefix . 'donman_contacts AS contacts
+        INNER JOIN ' . $wpdb->prefix . 'donman_orphaned_donations AS donations ON contacts.ID = donations.contact_id
+        WHERE 1=1' . $priority . $date_range . $search;
+
+    // Count the matching stores without fetching them.
+    if ( $args['count'] )
+      return 'SELECT COUNT(DISTINCT donations.contact_id) ' . $from;
+
+    // COUNT(*) lets MySQL count from the contact_id index alone
+    // (donation_id is never NULL).
+    $sql_format = 'SELECT contacts.ID,store_name,zipcode,email_address,receive_emails,timestamp,COUNT(*) AS total_donations
+        %s
         GROUP BY contact_id
         ORDER BY %s %s
         %s';
 
-    return sprintf( $sql_format, $priority, $date_range, $search, $orderby, $sort, $limit );
+    return sprintf( $sql_format, $from, $orderby, $sort, $limit );
   }
 
   /**
@@ -618,11 +632,11 @@ class DMOrphanedDonations {
       $priority = 'all';
 
     // SQL: Count the total number of records
-    $count_sql = $this->_get_orphaned_donation_pickup_providers_query( array( 'orderby' => $response->orderby, 'sort' => $response->sort, 'search' => $response->search, 'priority' => $priority, 'searchfield' => $response->searchfield ) );
+    $count_sql = $this->_get_orphaned_donation_pickup_providers_query( array( 'search' => $response->search, 'priority' => $priority, 'searchfield' => $response->searchfield, 'count' => true ) );
 
-    $wpdb->get_results( $count_sql );
-    $response->recordsTotal = (int) $wpdb->num_rows;
-    $response->recordsFiltered = (int) $wpdb->num_rows;
+    $total = (int) $wpdb->get_var( $count_sql );
+    $response->recordsTotal = $total;
+    $response->recordsFiltered = $total;
     $response->count_sql = $wpdb->last_query;
 
     // Get the data
@@ -741,11 +755,11 @@ class DMOrphanedDonations {
     $response->filterby = ( isset( $_POST['filterby'] ) )? $_POST['filterby'] : '';
 
     // SQL: Count the total number of records
-    $count_sql = $this->_get_orphaned_donations_query( array( 'orderby' => $response->orderby, 'sort' => $response->sort, 'start_date' => $start_date, 'search' => $response->search, 'priority' => $priority, 'filterby' => $response->filterby ) );
+    $count_sql = $this->_get_orphaned_donations_query( array( 'start_date' => $start_date, 'search' => $response->search, 'priority' => $priority, 'filterby' => $response->filterby, 'count' => true ) );
 
-    $wpdb->get_results( $count_sql );
-    $response->recordsTotal = (int) $wpdb->num_rows;
-    $response->recordsFiltered = (int) $wpdb->num_rows;
+    $total = (int) $wpdb->get_var( $count_sql );
+    $response->recordsTotal = $total;
+    $response->recordsFiltered = $total;
     $response->count_sql = $wpdb->last_query;
 
     // Get the data
