@@ -614,7 +614,7 @@ class DMOrphanedDonations {
 
     // ORDER BY
     $cols = array( 1 => 'store_name', 2 => 'email_address', 3 => 'zipcode', 4 => 'priority' );
-    $order_key = ( isset( $_POST['order'][0]['column'] ) && array_key_exists( $_POST['order'][0]['column'], $cols ) )? $_POST['order'][0]['column'] : 0;
+    $order_key = ( isset( $_POST['order'][0]['column'] ) && array_key_exists( $_POST['order'][0]['column'], $cols ) )? $_POST['order'][0]['column'] : 1;
     $response->orderby = $cols[$order_key];
     $response->order_key = $order_key;
 
@@ -622,12 +622,8 @@ class DMOrphanedDonations {
     $response->sort = ( isset( $_POST['order'][0]['dir'] ) )? strtoupper( $_POST['order'][0]['dir'] ) : 'DESC';
 
     // Search
-    if ( isset( $_POST['search']['value'] ) ) {
-      $response->search = $_POST['search']['value'];
-    }
-    if( isset( $_POST['searchfield'] ) ){
-      $response->searchfield = $_POST['searchfield'];
-    }
+    $response->search = ( isset( $_POST['search']['value'] ) )? $_POST['search']['value'] : null;
+    $response->searchfield = ( isset( $_POST['searchfield'] ) )? $_POST['searchfield'] : 'email_address';
     if( ! isset( $priority ) )
       $priority = 'all';
 
