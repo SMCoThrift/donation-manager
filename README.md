@@ -5,13 +5,19 @@
 **Requires at least:** 6.5.0 \
 **Tested up to:** 6.8.3 \
 **Requires PHP:** 8.1 \
-**Stable tag:** 5.8.0 \
+**Stable tag:** 5.8.1 \
 **License:** GPLv2 or later \
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 ## Changelog
+
+### 5.8.1
+
+* Index `contact_id` and `donation_id` on the orphaned donations table (DB version 3.2.0). The Orphaned Donations grid and the donation_id lookups no longer scan the whole table.
+* Count the Orphaned Donations and Providers grid rows with a COUNT query instead of fetching every matching row.
+* Debounce search on the Orphaned Donations and Providers grids so typing doesn't send a request per keystroke.
 
 ### 5.8.0
 
