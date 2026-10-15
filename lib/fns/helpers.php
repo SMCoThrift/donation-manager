@@ -70,6 +70,39 @@ function get_coordinates( $zipcode = null ){
 }
 
 /**
+ * Returns the zip codes within a radius of a point.
+ *
+ * The distance formula is the one this plugin has always used. A bounding
+ * box goes in front of it so MySQL can use the `lat_lon` index instead of
+ * computing the distance for every row of donman_zipcodes (~145k rows,
+ * ~0.7s). The box is slightly larger than the radius, and the formula
+ * still decides, so the results are the same.
+ *
+ * @param float $lat    Latitude of the center.
+ * @param float $lon    Longitude of the center.
+ * @param int   $radius Radius in miles.
+ * @return array Zip codes (as stored: integers without leading zeros).
+ */
+function get_zipcodes_in_radius( $lat, $lon, $radius ){
+  global $wpdb;
+
+  $lat = (float) $lat;
+  $lon = (float) $lon;
+  $radius = (int) $radius;
+
+  // The formula works out to ~69.08 miles per degree; 69 widens the box a hair.
+  $lat_delta = $radius / 69;
+  $widest_lat = min( 89, abs( $lat ) + $lat_delta );
+  $lon_delta = $radius / ( 69 * sqrt( cos( deg2rad( $widest_lat ) ) * cos( deg2rad( $lat ) ) ) );
+
+  $sql = 'SELECT DISTINCT ZIPCode FROM ' . $wpdb->prefix . 'donman_zipcodes'
+    . ' WHERE Latitude BETWEEN %f AND %f AND Longitude BETWEEN %f AND %f'
+    . ' AND (3958*3.1415926*sqrt((Latitude-' . $lat . ')*(Latitude-' . $lat . ') + cos(Latitude/57.29578)*cos(' . $lat . '/57.29578)*(Longitude-' . $lon . ')*(Longitude-' . $lon . '))/180) <= %d';
+
+  return $wpdb->get_col( $wpdb->prepare( $sql, $lat - $lat_delta, $lat + $lat_delta, $lon - $lon_delta, $lon + $lon_delta, $radius ) );
+}
+
+/**
  * Returns donations from a specified interval.
  *
  * @since 1.4.6
