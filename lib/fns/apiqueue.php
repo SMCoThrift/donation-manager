@@ -114,6 +114,27 @@ function handle_api_post( $donation, $attempt = 1 ){
 add_action( HOOK, __NAMESPACE__ . '\\handle_api_post', 10, 2 );
 
 /**
+ * Returns the IDs of donations with a partner API post waiting in the queue.
+ *
+ * Reads the (autoloaded) cron array once per request.
+ *
+ * @return int[]
+ */
+function get_queued_donation_ids(){
+  static $ids = null;
+  if( is_null( $ids ) ){
+    $ids = [];
+    foreach( (array) _get_cron_array() as $hooks ){
+      if( ! isset( $hooks[ HOOK ] ) )
+        continue;
+      foreach( $hooks[ HOOK ] as $event )
+        $ids[] = (int) $event['args'][0]['ID'];
+    }
+  }
+  return $ids;
+}
+
+/**
  * Counts queued API posts that should have run more than 15 minutes ago.
  *
  * @return int

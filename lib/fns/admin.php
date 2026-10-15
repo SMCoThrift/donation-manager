@@ -6,6 +6,7 @@ use function DonationManager\organizations\{is_orphaned_donation,get_default_org
 use function DonationManager\donations\{get_orphaned_donation_notifications};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact};
 use function DonationManager\organizations\{get_organizations};
+use function DonationManager\apiqueue\{get_queued_donation_ids};
 
 /**
  * Admin CSS
@@ -177,8 +178,13 @@ add_action( 'manage_trans_dept_posts_custom_column', __NAMESPACE__ . '\\custom_c
  * @return     string  HTML for the API Response column.
  */
 function custom_column_api_response_content( $donation_id ){
+  // Same for every row, so look it up once per page.
+  static $default_org = null;
+  if( is_null( $default_org ) )
+    $default_org = get_default_organization();
+
   $html = [];
-  $default_org = get_default_organization();
+  $routing_method = null;
   $org = get_post_meta( $donation_id, 'organization', true );
   if( is_numeric( $org ) )
     $routing_method = get_donation_routing_method( $org );
@@ -255,17 +261,33 @@ function custom_column_api_response_content( $donation_id ){
           } elseif( ! empty( $response_code ) ) {
             $html[] = '<div class="response-pill warning">Warning (Code: ' . $response_code . ')</div>';
             $html[] = '<div class="response-msg">Msg: ' . $response_message . '</div>';
+          } elseif( empty( $response_code ) && is_string( $api_response ) && ! empty( $api_response ) && ! is_serialized( $api_response ) ) {
+            // A transport error other than a timeout (e.g. DNS, connection refused).
+            $html[] = '<div class="response-pill error2">Error</div>';
+            $html[] = '<div class="response-msg">API Msg: ' . esc_html( $api_response ) . '</div>';
+          } elseif( in_array( (int) $donation_id, get_queued_donation_ids(), true ) ) {
+            $html[] = '<div class="response-pill note">Queued</div>';
+            $html[] = '<div class="response-msg">Waiting for the next cron run.</div>';
+          } elseif( metadata_exists( 'post', $donation_id, 'api_post' ) && empty( $api_response ) ) {
+            // Posted, but the partner hasn't answered yet (or never did).
+            $sending = ( time() - get_post_time( 'U', true, $donation_id ) ) < 10 * MINUTE_IN_SECONDS;
+            $html[] = ( $sending )? '<div class="response-pill note">Sending&hellip;</div>' : '<div class="response-pill warning">No API Response</div>' ;
           } elseif( ! metadata_exists( 'post', $donation_id, 'api_post' ) ) {
             $html[] = '<div class="response-pill note">Not Sent/Emailed</div>';
             $pickup_codes = wp_get_post_terms( $donation_id, 'pickup_code', [ 'fields' => 'names' ] );
-            $pickup_code = $pickup_codes[0];
-            $organizatons = get_organizations( $pickup_code );
-            $html[] = '<p style="margin-top: 4px;">Available orgs for ' . $pickup_code .':</p>';
-            $html[] = '<ul>';
-            foreach( $organizatons as $organizaton ){
-              $html[] = '<li>' . $organizaton['name'] . '</li>';
+            if( ! is_wp_error( $pickup_codes ) && ! empty( $pickup_codes ) ){
+              $pickup_code = $pickup_codes[0];
+              // Rows often share a zip code; look each one up once per page.
+              static $orgs_by_zip = [];
+              if( ! array_key_exists( $pickup_code, $orgs_by_zip ) )
+                $orgs_by_zip[ $pickup_code ] = get_organizations( $pickup_code );
+              $html[] = '<p style="margin-top: 4px;">Available orgs for ' . $pickup_code .':</p>';
+              $html[] = '<ul>';
+              foreach( $orgs_by_zip[ $pickup_code ] as $organizaton ){
+                $html[] = '<li>' . $organizaton['name'] . '</li>';
+              }
+              $html[] = '</ul>';
             }
-            $html[] = '</ul>';
           }
       }
     } else {
