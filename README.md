@@ -5,13 +5,20 @@
 **Requires at least:** 6.5.0 \
 **Tested up to:** 6.8.3 \
 **Requires PHP:** 8.1 \
-**Stable tag:** 5.8.2 \
+**Stable tag:** 5.9.0 \
 **License:** GPLv2 or later \
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 ## Changelog
+
+### 5.9.0
+
+* Send partner API posts (1-800-GOT-JUNK, College Hunks) from WP-Cron instead of during the donor's form submission, so a slow partner API no longer holds the donor or a PHP worker.
+* Retry timed-out, unreachable and 5xx partner API posts at +5 and +30 minutes (3 attempts).
+* Post each donation to each partner once; the orphaned-donation path no longer sends College Hunks a second post.
+* Email webmaster@ and show an admin notice when queued partner API posts are more than 15 minutes overdue.
 
 ### 5.8.2
 
