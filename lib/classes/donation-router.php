@@ -15,6 +15,40 @@ class DonationRouter {
   }
 
   /**
+   * The most recent response passed to save_api_response() by any router.
+   *
+   * Lets the API queue (lib/fns/apiqueue.php) decide whether to retry
+   * without re-reading post meta that another partner may have written.
+   *
+   * @var mixed
+   */
+  protected static $last_response = null;
+
+  /**
+   * Clears the stored last response before a new API post.
+   */
+  public static function reset_last_response(){
+    self::$last_response = null;
+  }
+
+  /**
+   * Returns the HTTP code of the last API response.
+   *
+   * @return int|null  HTTP code; 408 for a cURL timeout; 0 for any other
+   *                   transport error; null when nothing was posted.
+   */
+  public static function last_response_code(){
+    $response = self::$last_response;
+    if( is_null( $response ) )
+      return null;
+    if( is_wp_error( $response ) )
+      return ( stristr( $response->get_error_message(), 'cURL error 28' ) )? 408 : 0 ;
+    if( is_array( $response ) && isset( $response['response']['code'] ) )
+      return (int) $response['response']['code'];
+    return 0;
+  }
+
+  /**
    * Saves the API method for a given donation.
    *
    * Updates the post meta for the specified donation with the provided API method.
@@ -43,6 +77,7 @@ class DonationRouter {
    * @param      mixed  $response     The response
    */
   public function save_api_response( $donation_id, $response ){
+    self::$last_response = $response;
     $message = '';
     if( is_wp_error( $response ) ){
       $message = $response->get_error_message();
