@@ -4,7 +4,7 @@ namespace DonationManager\emails;
 use function DonationManager\utilities\{get_referer};
 use function DonationManager\templates\{render_template,get_template_part};
 use function DonationManager\transdepts\{get_trans_dept_contact};
-use function DonationManager\apirouting\{send_api_post};
+use function DonationManager\apiqueue\{queue_api_post};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact,get_orphaned_donation_contacts};
 use function DonationManager\organizations\{is_orphaned_donation,get_organizations};
 use function DonationManager\donations\{get_donation_routing_method,add_orphaned_donation,get_donation_receipt,get_click_to_claim_link};
@@ -246,7 +246,7 @@ function send_email( $type = '' ){
           if( ! $orphaned_donation ){
             $donor['routing_method'] = get_donation_routing_method( $donor['org_id'] );
             if( 'email' != $donor['routing_method'] ){
-              send_api_post( $donor );
+              queue_api_post( $donor );
               uber_log('🔔 `trans_dept_notification` donor routing_method = ' . $donor['routing_method'] );
 
               switch( $donor['routing_method'] ){
@@ -282,7 +282,7 @@ function send_email( $type = '' ){
                  */
                 if( stristr( $org['routing_method'], 'api' ) ){
                   $donor['routing_method'] = $org['routing_method'];
-                  send_api_post( $donor );
+                  queue_api_post( $donor );
                   $donor['routing_method'] = 'email';
                 }
 
@@ -500,7 +500,7 @@ function send_email( $type = '' ){
       // all orphans via this:
       $donor['routing_method'] = 'api-chhj';
       if( $donor['fee_based'] )
-        send_api_post( $donor );
+        queue_api_post( $donor );
     } else {
       if( 'trans_dept_notification' == $type ){
         foreach ($recipients as $email ) {
