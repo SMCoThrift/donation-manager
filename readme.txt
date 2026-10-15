@@ -4,13 +4,18 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.9.0
+Stable tag: 5.10.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.10.0 =
+* Speed up zip-radius lookups (Donations list, orphaned-donation routing, donor zip search, REST zip search): a bounding box in front of the distance formula plus new indexes (DB version 3.3.0). Results are unchanged.
+* Donations list, API Response column: show Queued and Sending states and non-timeout transport errors (previously blank), and look up shared data once per page.
+* Save donors' screening answers with the donation so `wp dm resend` includes them.
 
 = 5.9.0 =
 * Send partner API posts (1-800-GOT-JUNK, College Hunks) from WP-Cron instead of during the donor's form submission, so a slow partner API no longer holds the donor or a PHP worker.

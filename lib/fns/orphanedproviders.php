@@ -1,7 +1,7 @@
 <?php
 
 namespace DonationManager\orphanedproviders;
-use function DonationManager\helpers\{in_array_r};
+use function DonationManager\helpers\{in_array_r,get_zipcodes_in_radius};
 
 /**
  * Gets the orphaned provider contact.
@@ -81,19 +81,12 @@ function get_orphaned_donation_contacts( $args ){
     $lon = $coordinates[0]->Longitude;
 
     // Get all zipcodes within $args['radius'] miles of our pcode
-    $sql = 'SELECT distinct(ZipCode) FROM ' . $wpdb->prefix . 'donman_zipcodes  WHERE (3958*3.1415926*sqrt((Latitude-' . $lat . ')*(Latitude-' . $lat . ') + cos(Latitude/57.29578)*cos(' . $lat . '/57.29578)*(Longitude-' . $lon . ')*(Longitude-' . $lon . '))/180) <= %d';
-    $zipcodes = $wpdb->get_results( $wpdb->prepare( $sql, $args['radius'] ) );
+    $zipcodes = get_zipcodes_in_radius( $lat, $lon, $args['radius'] );
 
     if( ! $zipcodes )
         return $error->add( 'nozipcodes', 'No zip codes returned for ' . $args['pcode'] . '.' );
 
-    if( $zipcodes ){
-        $zipcodes_array = array();
-        foreach( $zipcodes as $zipcode ){
-            $zipcodes_array[] = $zipcode->ZipCode;
-        }
-        $zipcodes = implode( ',', $zipcodes_array );
-    }
+    $zipcodes = implode( ',', array_map( 'intval', $zipcodes ) );
 
     // Get all email addresses for contacts in our group of zipcodes
     $sql = 'SELECT ID,' . $args['fields'] . ' FROM ' . $wpdb->prefix . 'donman_contacts WHERE receive_emails=1 AND priority=' . $args['priority'] . ' AND zipcode IN (' . $zipcodes . ')';
@@ -102,6 +95,10 @@ function get_orphaned_donation_contacts( $args ){
 
     if( isset( $args['show_in_results'] ) && ! is_null( $args['show_in_results'] ) && in_array( $args['show_in_results'], [0,1] ) )
         $sql.= ' AND show_in_results=' . $args['show_in_results'];
+
+    // Duplicates are dropped below keeping the first row, so keep the
+    // historical ID order (the zipcode index would otherwise reorder rows).
+    $sql.= ' ORDER BY ID';
 
     if( ! is_null( $args['limit'] ) && is_numeric( $args['limit'] ) )
         $sql.= ' LIMIT ' . $args['limit'];

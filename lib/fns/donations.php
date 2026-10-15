@@ -484,6 +484,10 @@ function save_donation( $donation = array() ){
   update_post_meta( $ID, 'items', $donation['items'] );
   update_post_meta( $ID, 'preferred_contact_method', $donation['preferred_contact_method'] );
 
+  // Kept so `wp dm resend` can send partners the donor's screening answers.
+  if( isset( $donation['screening_questions'] ) && is_array( $donation['screening_questions'] ) )
+    update_post_meta( $ID, 'screening_questions', $donation['screening_questions'] );
+
   foreach( $fields as $field ){
     switch( $field->name ){
       case 'address':

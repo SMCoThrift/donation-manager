@@ -3,7 +3,7 @@
  * Functions for interacting with the WP REST API
  */
 namespace DonationManager\restapi;
-use function DonationManager\helpers\{get_coordinates};
+use function DonationManager\helpers\{get_coordinates,get_zipcodes_in_radius};
 use function DonationManager\organizations\{get_default_organization};
 use function DonationManager\donations\{get_donation_zip_code};
 
@@ -63,19 +63,11 @@ function get_donations_by_area( $request ){
     $lng = $coordinates['lng'];
 
     // Get all zipcodes within $args['radius'] miles of our pcode
-    $sql = 'SELECT distinct(ZipCode) FROM ' . $wpdb->prefix . 'donman_zipcodes  WHERE (3958*3.1415926*sqrt((Latitude-' . $lat . ')*(Latitude-' . $lat . ') + cos(Latitude/57.29578)*cos(' . $lat . '/57.29578)*(Longitude-' . $lng . ')*(Longitude-' . $lng . '))/180) <= %d';
-    $zipcodes = $wpdb->get_results( $wpdb->prepare( $sql, $request['radius'] ) );
+    $zipcodes_array = get_zipcodes_in_radius( $lat, $lng, $request['radius'] );
 
-    if( ! $zipcodes ){
+    if( ! $zipcodes_array ){
         $error->add( 'nozipcodes', 'No zip codes returned for ' . $request['zipcode'] . '.' );
         wp_send_json( $error, 200 );
-    }
-
-    if( $zipcodes ){
-        $zipcodes_array = array();
-        foreach( $zipcodes as $zipcode ){
-            $zipcodes_array[] = $zipcode->ZipCode;
-        }
     }
 
     $default_org = get_default_organization();

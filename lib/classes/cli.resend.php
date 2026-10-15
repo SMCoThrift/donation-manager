@@ -156,6 +156,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
           'preferred_code'          => get_post_meta( $donation->ID, 'preferred_code', true ),
           'reason'                  => get_post_meta( $donation->ID, 'reason', true ),
           'pickuplocation'          => get_post_meta( $donation->ID, 'pickuplocation', true ),
+          'screening_questions'     => get_post_meta( $donation->ID, 'screening_questions', true ) ?: [],
           'fee_based'               => $fee_based,
         ],
         $pickup_data,
