@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.10.0
+Stable tag: 5.10.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.10.1 =
+* Orphaned Donations grid: searching (e.g. by store name) no longer takes ~9s. Donations are totaled per contact before the contacts join. Results are unchanged.
 
 = 5.10.0 =
 * Speed up zip-radius lookups (Donations list, orphaned-donation routing, donor zip search, REST zip search): a bounding box in front of the distance formula plus new indexes (DB version 3.3.0). Results are unchanged.
