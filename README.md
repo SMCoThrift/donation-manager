@@ -5,13 +5,18 @@
 **Requires at least:** 6.5.0 \
 **Tested up to:** 6.8.3 \
 **Requires PHP:** 8.1 \
-**Stable tag:** 5.11.0 \
+**Stable tag:** 5.11.1 \
 **License:** GPLv2 or later \
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 ## Changelog
+
+### 5.11.1
+
+* Stats charts: hovering a bar shows a tooltip with that day or month's donations, orphaned donations and partner API volume and success rates.
+* Stats: removed the Orphaned "Emails" column.
 
 ### 5.11.0
 
