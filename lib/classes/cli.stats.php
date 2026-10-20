@@ -218,6 +218,60 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
       update_option( "{$org_key}_donations", $donation_stats_option );
       /////
     }
+
+    /**
+     * Rebuilds the stats table behind the Dashboard and Donations → Stats.
+     *
+     * Recounts daily stats for every day that still has donation posts,
+     * backfills daily orphaned-donation stats for earlier days, and imports
+     * monthly rows for archived months from the legacy options. Scans the
+     * whole orphaned_donations table, so run it off-hours.
+     *
+     * ## OPTIONS
+     *
+     * [--from=<date>]
+     * : First day to recount from donation posts (Y-m-d). Defaults to the day of the oldest donation.
+     *
+     * [--to=<date>]
+     * : Last day to recount (Y-m-d). Defaults to today.
+     *
+     * ## EXAMPLES
+     *
+     *     wp dm stats rebuild
+     *     wp dm stats rebuild --from=2026-10-01
+     */
+    function rebuild( $args, $assoc_args ){
+      global $wpdb;
+
+      $oldest = $wpdb->get_var( "SELECT DATE(MIN(post_date)) FROM {$wpdb->posts} WHERE post_type = 'donation' AND post_status = 'publish'" );
+      $from = isset( $assoc_args['from'] )? $assoc_args['from'] : $oldest;
+      $to = isset( $assoc_args['to'] )? $assoc_args['to'] : current_time( 'Y-m-d' );
+      foreach( [ $from, $to ] as $date ){
+        if( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $date ) )
+          WP_CLI::error( "Invalid date `{$date}`, use Y-m-d." );
+      }
+
+      $written = 0;
+      for( $start = $from; $start <= $to; $start = date( 'Y-m-d', strtotime( $start . ' first day of next month' ) ) ){
+        $end = min( date( 'Y-m-t', strtotime( $start ) ), $to );
+        $rows = DonationManager\stats\rollup_days( $start, $end );
+        WP_CLI::log( "{$start} → {$end}: {$rows} rows" );
+        $written+= $rows;
+      }
+
+      // Only a full rebuild reaches back past the oldest donation.
+      if( ! isset( $assoc_args['from'] ) ){
+        $rows = DonationManager\stats\backfill_orphaned_before( $from );
+        WP_CLI::log( "Orphaned donations before {$from}: {$rows} rows" );
+        $written+= $rows;
+
+        $rows = DonationManager\stats\import_legacy_months();
+        WP_CLI::log( "Legacy monthly stats: {$rows} rows" );
+        $written+= $rows;
+      }
+
+      WP_CLI::success( "Wrote {$written} stat rows." );
+    }
   }
   WP_CLI::add_command( 'dm stats', 'DonationManagerStats' );
 } else {

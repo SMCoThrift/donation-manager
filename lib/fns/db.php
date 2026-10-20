@@ -8,13 +8,14 @@
  * - 3.1.0 - Adding `click_timestamp` to orphaned_donations table
  * - 3.2.0 - Indexing `contact_id` and `donation_id` on orphaned_donations table
  * - 3.3.0 - Indexing Latitude/Longitude on zipcodes and `zipcode` on contacts (radius lookups)
+ * - 3.4.0 - Adding donman_stats table (daily/monthly stats rollup, see lib/fns/stats.php)
  *
  * @author     Mwender
  * @since      2022
  */
 
 global $donman_db_version;
-$donman_db_version = '3.3.0';
+$donman_db_version = '3.4.0';
 
 function donman_install(){
   global $wpdb;
@@ -84,6 +85,18 @@ function donman_install(){
       PRIMARY KEY  (ID),
       KEY contact_id (contact_id,timestamp),
       KEY donation_id (donation_id)
+    ) $charset_collate;";
+  }
+  dbDelta( $sql );
+
+  $table_name = $wpdb->prefix . 'donman_stats';
+  if( $installed_version != $donman_db_version ){
+    $sql = "CREATE TABLE $table_name (
+      period char(5) CHARACTER SET ascii NOT NULL,
+      stat_date date NOT NULL,
+      metric varchar(32) CHARACTER SET ascii NOT NULL,
+      value int(10) unsigned NOT NULL DEFAULT '0',
+      PRIMARY KEY  (period,stat_date,metric)
     ) $charset_collate;";
   }
   dbDelta( $sql );
