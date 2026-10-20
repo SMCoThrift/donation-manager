@@ -230,7 +230,7 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
      * ## OPTIONS
      *
      * [--from=<date>]
-     * : First day to recount from donation posts (Y-m-d). Defaults to the day of the oldest donation.
+     * : First day to recount from donation posts (Y-m-d). Defaults to the day of the oldest donation, and can't be earlier: archived days keep the stats they had.
      *
      * [--to=<date>]
      * : Last day to recount (Y-m-d). Defaults to today.
@@ -250,6 +250,14 @@ if( defined( 'WP_CLI' ) && 'WP_CLI' && true == WP_CLI ){
         if( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $date ) )
           WP_CLI::error( "Invalid date `{$date}`, use Y-m-d." );
       }
+
+      // Recounting a day whose donations were archived (deleted) would
+      // overwrite its daily stats with zeros.
+      if( $from < $oldest )
+        WP_CLI::error( "--from={$from} is before the oldest donation on the site ({$oldest}). Earlier donations were archived, so recounting those days would replace their stats with zeros. Use --from={$oldest} or later." );
+      $archiving = isset( $GLOBALS['BackgroundDeleteDonationProcess'] ) && $GLOBALS['BackgroundDeleteDonationProcess']->is_queued();
+      if( $archiving )
+        WP_CLI::error( '`wp dm archive` is still deleting donations in the background, so the oldest month on the site may be half-deleted. Run this again once it finishes.' );
 
       $written = 0;
       for( $start = $from; $start <= $to; $start = date( 'Y-m-d', strtotime( $start . ' first day of next month' ) ) ){
