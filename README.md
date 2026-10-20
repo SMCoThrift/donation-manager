@@ -5,13 +5,18 @@
 **Requires at least:** 6.5.0 \
 **Tested up to:** 6.8.3 \
 **Requires PHP:** 8.1 \
-**Stable tag:** 5.11.1 \
+**Stable tag:** 5.11.2 \
 **License:** GPLv2 or later \
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 ## Changelog
+
+### 5.11.2
+
+* Stats: Priority donations stand out: tinted Priority columns, a combined "Priority donations" chart, and a Dashboard tile and chart.
+* Stats: the Total row's numbers now line up with their columns.
 
 ### 5.11.1
 
