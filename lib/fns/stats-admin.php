@@ -22,6 +22,7 @@ const WIDGET_ID = 'donman_stats';
  */
 const CHARTS = [
   'donations'          => 'Donations',
+  'priority'           => 'Priority donations',
   'orphaned_donations' => 'Orphaned donations',
   '1800gj'             => '1-800-GOT-JUNK? API',
   'chhj'               => 'College Hunks API',
@@ -35,6 +36,13 @@ const CHARTS = [
  * @return int
  */
 function chart_value( $metrics, $chart ){
+  // Priority donations are the ones the partners pay for, across all of them.
+  if( 'priority' == $chart ){
+    $total = 0;
+    foreach( array_keys( PARTNERS ) as $partner )
+      $total+= partner_figures( $metrics, $partner )['priority'];
+    return $total;
+  }
   if( array_key_exists( $chart, PARTNERS ) )
     return partner_figures( $metrics, $chart )['total'];
   return isset( $metrics[ $chart ] )? $metrics[ $chart ] : 0;
@@ -91,9 +99,10 @@ function format_rate( $rate ){
  *
  * @param array  $points [ [ 'label' => axis label or '', 'tip' => tooltip() data, 'value' => int ] ].
  * @param string $name   Accessible name for the chart.
+ * @param string $series Optional series class, e.g. `priority`.
  * @return string SVG markup.
  */
-function bar_chart( $points, $name ){
+function bar_chart( $points, $name, $series = '' ){
   $width = 900;
   $height = 160;
   $top = 8;
@@ -114,7 +123,7 @@ function bar_chart( $points, $name ){
   $tick = max( 1, $tick );
   $scale_max = ceil( $max / $tick ) * $tick;
 
-  $svg = '<svg class="donman-chart" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="' . esc_attr( $name ) . '">';
+  $svg = '<svg class="donman-chart' . ( $series? ' series-' . esc_attr( $series ) : '' ) . '" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="' . esc_attr( $name ) . '">';
 
   for( $v = 0; $v <= $scale_max; $v+= $tick ){
     $y = $top + $plot_h - ( $v / $scale_max * $plot_h );
@@ -161,7 +170,7 @@ function table_head( $first_col, $pending = false ){
     $html.= '<th colspan="' . $span . '" class="group">' . esc_html( $partner['name'] ) . ' API</th>';
   $html.= '</tr><tr>';
   foreach( PARTNERS as $partner ){
-    $html.= '<th>Non-Priority</th><th>Priority</th><th>Fails</th>';
+    $html.= '<th>Non-Priority</th><th class="priority">Priority</th><th>Fails</th>';
     if( $pending )
       $html.= '<th>Pending</th>';
     $html.= '<th>Total</th><th>Success</th>';
@@ -183,7 +192,7 @@ function table_cells( $metrics, $pending = false ){
   $html = '<td>' . $n( 'donations' ) . '</td><td>' . $n( 'orphaned_donations' ) . '</td>';
   foreach( array_keys( PARTNERS ) as $partner ){
     $f = partner_figures( $metrics, $partner );
-    $html.= '<td>' . number_format( $f['non_priority'] ) . '</td><td>' . number_format( $f['priority'] ) . '</td><td>' . number_format( $f['fails'] ) . '</td>';
+    $html.= '<td>' . number_format( $f['non_priority'] ) . '</td><td class="priority">' . number_format( $f['priority'] ) . '</td><td>' . number_format( $f['fails'] ) . '</td>';
     if( $pending )
       $html.= '<td>' . number_format( $f['pending'] ) . '</td>';
     $html.= '<td>' . number_format( $f['total'] ) . '</td><td>' . format_rate( $f['success_rate'] ) . '</td>';
@@ -311,7 +320,7 @@ function render_months( $year, $chart, $current_month, $first_month ){
     $points[] = [ 'label' => date( 'M', strtotime( $ym . '-01' ) ), 'tip' => tooltip( date( 'F Y', strtotime( $ym . '-01' ) ), $data['metrics'], $chart ), 'value' => $value ];
   }
   echo chart_picker( $chart, $year? [ 'year' => $year ] : [] );
-  echo '<div class="donman-chart-wrap">' . bar_chart( $points, CHARTS[ $chart ] . ' per month' ) . '</div>';
+  echo '<div class="donman-chart-wrap">' . bar_chart( $points, CHARTS[ $chart ] . ' per month', $chart ) . '</div>';
 
   echo '<p>Click a month to see its days.</p>';
   echo '<div class="donman-table-wrap"><table class="widefat striped donman-stats-table">' . table_head( 'Month' ) . '<tbody>';
@@ -359,7 +368,7 @@ function render_month( $month, $chart, $current_month, $first_month ){
     $points[] = [ 'label' => ( 1 == $day || 0 == $day % 5 )? $day : '', 'tip' => tooltip( date( 'D, M j', strtotime( $date ) ), $metrics, $chart ), 'value' => $value ];
   }
   echo chart_picker( $chart, [ 'month' => $month ] );
-  echo '<div class="donman-chart-wrap">' . bar_chart( $points, CHARTS[ $chart ] . ' per day, ' . date( 'F Y', strtotime( $start ) ) ) . '</div>';
+  echo '<div class="donman-chart-wrap">' . bar_chart( $points, CHARTS[ $chart ] . ' per day, ' . date( 'F Y', strtotime( $start ) ), $chart ) . '</div>';
 
   $total = sum_metrics( $days );
   $pending = false;
@@ -404,24 +413,30 @@ function render_widget(){
 
   echo '<div class="donman-stats">';
   echo '<h3>Last 30 days</h3><div class="donman-tiles">';
+  $split = [];
+  foreach( PARTNERS as $partner => $config )
+    $split[] = esc_html( $config['name'] ) . ' ' . number_format( partner_figures( $last_30, $partner )['priority'] );
   $tiles = [
-    'Donations' => number_format( isset( $last_30['donations'] )? $last_30['donations'] : 0 ),
-    'Orphaned donations' => number_format( isset( $last_30['orphaned_donations'] )? $last_30['orphaned_donations'] : 0 ),
+    [ 'Donations', number_format( isset( $last_30['donations'] )? $last_30['donations'] : 0 ), '' ],
+    [ 'Priority donations', number_format( chart_value( $last_30, 'priority' ) ) . '<span>' . implode( ' · ', $split ) . '</span>', 'priority' ],
+    [ 'Orphaned donations', number_format( isset( $last_30['orphaned_donations'] )? $last_30['orphaned_donations'] : 0 ), '' ],
   ];
   foreach( PARTNERS as $partner => $config ){
     $f = partner_figures( $last_30, $partner );
-    $tiles[ $config['name'] . ' API' ] = number_format( $f['total'] ) . '<span>' . format_rate( $f['success_rate'] ) . ' success</span>';
+    $tiles[] = [ $config['name'] . ' API', number_format( $f['total'] ) . '<span>' . format_rate( $f['success_rate'] ) . ' success</span>', '' ];
   }
-  foreach( $tiles as $label => $value )
-    echo '<div class="donman-tile"><div class="label">' . esc_html( $label ) . '</div><div class="value">' . $value . '</div></div>';
+  foreach( $tiles as list( $label, $value, $class ) )
+    echo '<div class="donman-tile ' . esc_attr( $class ) . '"><div class="label">' . esc_html( $label ) . '</div><div class="value">' . $value . '</div></div>';
   echo '</div>';
 
-  $points = [];
-  foreach( $days as $date => $metrics ){
-    $value = chart_value( $metrics, 'donations' );
-    $points[] = [ 'label' => ( 0 == count( $points ) % 7 )? date( 'M j', strtotime( $date ) ) : '', 'tip' => tooltip( date( 'D, M j', strtotime( $date ) ), $metrics, 'donations' ), 'value' => $value ];
+  foreach( [ 'donations', 'priority' ] as $chart ){
+    $points = [];
+    foreach( $days as $date => $metrics ){
+      $value = chart_value( $metrics, $chart );
+      $points[] = [ 'label' => ( 0 == count( $points ) % 7 )? date( 'M j', strtotime( $date ) ) : '', 'tip' => tooltip( date( 'D, M j', strtotime( $date ) ), $metrics, $chart ), 'value' => $value ];
+    }
+    echo '<h3>' . esc_html( CHARTS[ $chart ] ) . ' per day</h3><div class="donman-chart-wrap">' . bar_chart( $points, CHARTS[ $chart ] . ' per day, last 30 days', $chart ) . '</div>';
   }
-  echo '<h3>Donations per day</h3><div class="donman-chart-wrap">' . bar_chart( $points, 'Donations per day, last 30 days' ) . '</div>';
 
   echo '<h3>This month vs. last month</h3>';
   echo '<div class="donman-table-wrap"><table class="widefat striped donman-stats-table">' . table_head( 'Month' ) . '<tbody>';
@@ -445,7 +460,7 @@ function admin_css(){
   echo '<style>
   #dashboard-widgets #postbox-container-1{width:100%;}
   #dashboard-widgets #postbox-container-2,#dashboard-widgets #postbox-container-3,#dashboard-widgets #postbox-container-4{display:none;}
-  .donman-stats{--donman-bar:#2271b1;--donman-bar-hover:#135e96;--donman-grid:#e0e0e0;--donman-ink-muted:#646970;}
+  .donman-stats{--donman-bar:#2271b1;--donman-bar-hover:#135e96;--donman-priority:#008a20;--donman-priority-hover:#005c12;--donman-priority-tint:#edfaef;--donman-grid:#e0e0e0;--donman-ink-muted:#646970;}
   .donman-stats h3{margin:1.2em 0 .5em;font-size:14px;font-weight:600;}
   .donman-stats h3:first-child{margin-top:.4em;}
   .donman-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
@@ -453,6 +468,7 @@ function admin_css(){
   .donman-tile .label{color:var(--donman-ink-muted);font-size:12px;}
   .donman-tile .value{font-size:22px;font-weight:600;line-height:1.4;}
   .donman-tile .value span{display:block;font-size:12px;font-weight:400;color:var(--donman-ink-muted);}
+  .donman-tile.priority{background:var(--donman-priority-tint);border-color:var(--donman-priority);border-left-width:4px;}
   .donman-chart-wrap{max-width:900px;position:relative;}
   .donman-tip{position:absolute;z-index:10;pointer-events:none;background:#fff;border:1px solid #dcdcde;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.15);padding:8px 10px;font-size:12px;line-height:1.5;white-space:nowrap;}
   .donman-tip[hidden]{display:none;}
@@ -465,6 +481,8 @@ function admin_css(){
   .donman-chart{display:block;width:100%;height:auto;}
   .donman-chart .bar{fill:var(--donman-bar);}
   .donman-chart .col:hover .bar{fill:var(--donman-bar-hover);}
+  .donman-chart.series-priority .bar{fill:var(--donman-priority);}
+  .donman-chart.series-priority .col:hover .bar{fill:var(--donman-priority-hover);}
   .donman-chart .hit{fill:transparent;}
   .donman-chart .grid{stroke:var(--donman-grid);stroke-width:1;vector-effect:non-scaling-stroke;}
   .donman-chart .axis{fill:var(--donman-ink-muted);font-size:11px;}
@@ -476,6 +494,9 @@ function admin_css(){
   .donman-stats-table thead th{font-weight:600;}
   .donman-stats-table thead th.group{text-align:center;border-bottom:1px solid #dcdcde;}
   .donman-stats-table tfoot th,.donman-stats-table tfoot td{font-weight:600;}
+  table.widefat.donman-stats-table tfoot td{text-align:right;}
+  table.widefat.donman-stats-table .priority{background:var(--donman-priority-tint);font-weight:600;}
+  table.widefat.donman-stats-table thead th.priority{box-shadow:inset 0 3px 0 var(--donman-priority);}
   </style>';
 }
 add_action( 'admin_head', __NAMESPACE__ . '\\admin_css' );
