@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.11.2
+Stable tag: 5.11.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.11.3 =
+* `wp dm stats rebuild` refuses a `--from` before the oldest donation on the site, or to run while `wp dm archive` is still deleting, so archived days keep their stats.
 
 = 5.11.2 =
 * Stats: Priority donations stand out: tinted Priority columns, a combined "Priority donations" chart, and a Dashboard tile and chart.
