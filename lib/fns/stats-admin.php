@@ -41,6 +41,29 @@ function chart_value( $metrics, $chart ){
 }
 
 /**
+ * Tooltip content for one day or month: every chartable series, with the
+ * charted one marked.
+ *
+ * @param string $heading The day or month.
+ * @param array  $metrics [ metric => value ].
+ * @param string $chart   Key from CHARTS.
+ * @return array heading and rows of [ label, value, note, current ].
+ */
+function tooltip( $heading, $metrics, $chart ){
+  $rows = [];
+  foreach( CHARTS as $key => $label ){
+    $note = '';
+    if( array_key_exists( $key, PARTNERS ) ){
+      $rate = partner_figures( $metrics, $key )['success_rate'];
+      if( ! is_null( $rate ) )
+        $note = format_rate( $rate ) . ' success';
+    }
+    $rows[] = [ $label, number_format( chart_value( $metrics, $key ) ), $note, $key == $chart ];
+  }
+  return [ 'heading' => $heading, 'rows' => $rows ];
+}
+
+/**
  * URL of the Stats page.
  *
  * @param array $args Query args (month, year, chart).
@@ -63,9 +86,10 @@ function format_rate( $rate ){
 /**
  * Renders a single-series bar chart as inline SVG.
  *
- * Each column has a native tooltip (<title>) on a full-height hit area.
+ * Each column has a full-height hit area carrying its tooltip() data, which
+ * tooltip_script() shows on hover.
  *
- * @param array  $points [ [ 'label' => axis label or '', 'title' => tooltip, 'value' => int ] ].
+ * @param array  $points [ [ 'label' => axis label or '', 'tip' => tooltip() data, 'value' => int ] ].
  * @param string $name   Accessible name for the chart.
  * @return string SVG markup.
  */
@@ -105,7 +129,7 @@ function bar_chart( $points, $name ){
     $x = $left + $i * $col + 1;
     $h = $point['value'] / $scale_max * $plot_h;
     $base = $top + $plot_h;
-    $svg.= '<g class="col"><title>' . esc_html( $point['title'] ) . '</title>';
+    $svg.= '<g class="col" data-tip="' . esc_attr( wp_json_encode( $point['tip'] ) ) . '">';
     $svg.= '<rect class="hit" x="' . ( $left + $i * $col ) . '" y="' . $top . '" width="' . $col . '" height="' . $plot_h . '"/>';
     if( 0 < $h ){
       $r = min( $radius, $h );
@@ -132,10 +156,10 @@ function bar_chart( $points, $name ){
  */
 function table_head( $first_col, $pending = false ){
   $span = $pending? 6 : 5;
-  $html = '<thead><tr><th rowspan="2" class="first">' . esc_html( $first_col ) . '</th><th rowspan="2">Donations</th><th colspan="2" class="group">Orphaned</th>';
+  $html = '<thead><tr><th rowspan="2" class="first">' . esc_html( $first_col ) . '</th><th rowspan="2">Donations</th><th rowspan="2">Orphaned<br>donations</th>';
   foreach( PARTNERS as $partner )
     $html.= '<th colspan="' . $span . '" class="group">' . esc_html( $partner['name'] ) . ' API</th>';
-  $html.= '</tr><tr><th>Donations</th><th>Emails</th>';
+  $html.= '</tr><tr>';
   foreach( PARTNERS as $partner ){
     $html.= '<th>Non-Priority</th><th>Priority</th><th>Fails</th>';
     if( $pending )
@@ -156,7 +180,7 @@ function table_cells( $metrics, $pending = false ){
   $n = function( $key ) use ( $metrics ){
     return number_format( isset( $metrics[ $key ] )? $metrics[ $key ] : 0 );
   };
-  $html = '<td>' . $n( 'donations' ) . '</td><td>' . $n( 'orphaned_donations' ) . '</td><td>' . $n( 'orphaned_emails' ) . '</td>';
+  $html = '<td>' . $n( 'donations' ) . '</td><td>' . $n( 'orphaned_donations' ) . '</td>';
   foreach( array_keys( PARTNERS ) as $partner ){
     $f = partner_figures( $metrics, $partner );
     $html.= '<td>' . number_format( $f['non_priority'] ) . '</td><td>' . number_format( $f['priority'] ) . '</td><td>' . number_format( $f['fails'] ) . '</td>';
@@ -284,7 +308,7 @@ function render_months( $year, $chart, $current_month, $first_month ){
   $points = [];
   foreach( array_reverse( $months, true ) as $ym => $data ){
     $value = chart_value( $data['metrics'], $chart );
-    $points[] = [ 'label' => date( 'M', strtotime( $ym . '-01' ) ), 'title' => date( 'F Y', strtotime( $ym . '-01' ) ) . ': ' . number_format( $value ), 'value' => $value ];
+    $points[] = [ 'label' => date( 'M', strtotime( $ym . '-01' ) ), 'tip' => tooltip( date( 'F Y', strtotime( $ym . '-01' ) ), $data['metrics'], $chart ), 'value' => $value ];
   }
   echo chart_picker( $chart, $year? [ 'year' => $year ] : [] );
   echo '<div class="donman-chart-wrap">' . bar_chart( $points, CHARTS[ $chart ] . ' per month' ) . '</div>';
@@ -332,7 +356,7 @@ function render_month( $month, $chart, $current_month, $first_month ){
   foreach( $days as $date => $metrics ){
     $value = chart_value( $metrics, $chart );
     $day = date( 'j', strtotime( $date ) );
-    $points[] = [ 'label' => ( 1 == $day || 0 == $day % 5 )? $day : '', 'title' => date( 'D, M j', strtotime( $date ) ) . ': ' . number_format( $value ), 'value' => $value ];
+    $points[] = [ 'label' => ( 1 == $day || 0 == $day % 5 )? $day : '', 'tip' => tooltip( date( 'D, M j', strtotime( $date ) ), $metrics, $chart ), 'value' => $value ];
   }
   echo chart_picker( $chart, [ 'month' => $month ] );
   echo '<div class="donman-chart-wrap">' . bar_chart( $points, CHARTS[ $chart ] . ' per day, ' . date( 'F Y', strtotime( $start ) ) ) . '</div>';
@@ -395,7 +419,7 @@ function render_widget(){
   $points = [];
   foreach( $days as $date => $metrics ){
     $value = chart_value( $metrics, 'donations' );
-    $points[] = [ 'label' => ( 0 == count( $points ) % 7 )? date( 'M j', strtotime( $date ) ) : '', 'title' => date( 'D, M j', strtotime( $date ) ) . ': ' . number_format( $value ) . ' donations', 'value' => $value ];
+    $points[] = [ 'label' => ( 0 == count( $points ) % 7 )? date( 'M j', strtotime( $date ) ) : '', 'tip' => tooltip( date( 'D, M j', strtotime( $date ) ), $metrics, 'donations' ), 'value' => $value ];
   }
   echo '<h3>Donations per day</h3><div class="donman-chart-wrap">' . bar_chart( $points, 'Donations per day, last 30 days' ) . '</div>';
 
@@ -429,7 +453,15 @@ function admin_css(){
   .donman-tile .label{color:var(--donman-ink-muted);font-size:12px;}
   .donman-tile .value{font-size:22px;font-weight:600;line-height:1.4;}
   .donman-tile .value span{display:block;font-size:12px;font-weight:400;color:var(--donman-ink-muted);}
-  .donman-chart-wrap{max-width:900px;}
+  .donman-chart-wrap{max-width:900px;position:relative;}
+  .donman-tip{position:absolute;z-index:10;pointer-events:none;background:#fff;border:1px solid #dcdcde;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.15);padding:8px 10px;font-size:12px;line-height:1.5;white-space:nowrap;}
+  .donman-tip[hidden]{display:none;}
+  .donman-tip .heading{font-weight:600;margin-bottom:4px;}
+  .donman-tip table{border-collapse:collapse;}
+  .donman-tip td{padding:0 0 0 12px;color:var(--donman-ink-muted);}
+  .donman-tip td:first-child{padding-left:0;}
+  .donman-tip td.value{text-align:right;color:#1d2327;font-variant-numeric:tabular-nums;}
+  .donman-tip tr.current td{font-weight:600;color:#1d2327;}
   .donman-chart{display:block;width:100%;height:auto;}
   .donman-chart .bar{fill:var(--donman-bar);}
   .donman-chart .col:hover .bar{fill:var(--donman-bar-hover);}
@@ -447,3 +479,55 @@ function admin_css(){
   </style>';
 }
 add_action( 'admin_head', __NAMESPACE__ . '\\admin_css' );
+
+/**
+ * Shows a chart column's tooltip() data on hover.
+ */
+function tooltip_script(){
+  $screen = get_current_screen();
+  if( ! $screen || ! in_array( $screen->id, [ 'dashboard', 'donation_page_' . PAGE_SLUG ] ) )
+    return;
+  ?>
+  <script>
+  document.querySelectorAll( '.donman-chart-wrap' ).forEach( function( wrap ){
+    var tip = document.createElement( 'div' );
+    tip.className = 'donman-tip';
+    tip.hidden = true;
+    wrap.appendChild( tip );
+
+    var esc = function( text ){
+      var span = document.createElement( 'span' );
+      span.textContent = text;
+      return span.innerHTML;
+    };
+
+    wrap.querySelectorAll( '.col' ).forEach( function( col ){
+      col.addEventListener( 'mouseenter', function(){
+        var data = JSON.parse( col.dataset.tip );
+        var html = '<div class="heading">' + esc( data.heading ) + '</div><table>';
+        data.rows.forEach( function( row ){
+          html += '<tr' + ( row[3] ? ' class="current"' : '' ) + '><td>' + esc( row[0] ) + '</td><td class="value">' + esc( row[1] ) + '</td><td>' + esc( row[2] ) + '</td></tr>';
+        } );
+        tip.innerHTML = html + '</table>';
+        tip.hidden = false;
+
+        // Beside the column (left of it near the right edge), level with
+        // the top of its bar, so it never covers the bar being read.
+        var w = wrap.getBoundingClientRect(), c = col.getBoundingClientRect();
+        var bar = col.querySelector( '.bar' );
+        var barTop = bar ? bar.getBoundingClientRect().top : c.bottom;
+        var left = c.right - w.left + 8;
+        if( left + tip.offsetWidth > w.width )
+          left = c.left - w.left - tip.offsetWidth - 8;
+        tip.style.left = Math.max( 0, left ) + 'px';
+        tip.style.top = Math.max( 0, Math.min( barTop - w.top, w.height - tip.offsetHeight ) ) + 'px';
+      } );
+      col.addEventListener( 'mouseleave', function(){
+        tip.hidden = true;
+      } );
+    } );
+  } );
+  </script>
+  <?php
+}
+add_action( 'admin_footer', __NAMESPACE__ . '\\tooltip_script' );
