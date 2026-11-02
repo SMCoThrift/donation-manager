@@ -6,10 +6,12 @@ WordPress plugin (`smcothrift/donation-manager`) powering the donation intake fo
 
 This directory (`localdev-donation-manager`) is the actual development copy — its own git repo, where real commits belong. A sibling plugin folder in the same Bedrock site, `donation-manager`, is the VCS/composer-managed copy pulled from this repo's tagged releases; it's gitignored in the site's own repo and gets overwritten on `composer update`. Never hand-edit `donation-manager` directly — changes there are invisible to git and silently lost.
 
-A custom `localdev-switcher` plugin toggles which of the two is WP-active. Before editing or testing anything, confirm which copy is actually active — it changes independently of this conversation, mid-workflow, whenever the toggle is clicked in wp-admin:
+Paths below are relative to this directory, which sits at `web/app/plugins/localdev-donation-manager` in the Bedrock site: `../../..` is the site's `web/` and `../../../..` its root. The site lives on the Mac Mini, at `~/webdev/bedrock/pickupmydonation.com`.
+
+A custom `localdev-switcher` plugin toggles which of the two is WP-active. Before editing or testing anything, confirm which copy is actually active — it changes independently of this conversation, mid-workflow, whenever the toggle is clicked in wp-admin, and a production database pull resets it (the Bedrock site's `bin/sync.d/post-import.sh` switches back to this copy afterwards):
 
 ```bash
-cd /Users/mwender/webdev/laravel-valet/bedrock/pickupmydonation.com/web
+cd ../../..   # the Bedrock site's web/
 wp plugin list --status=active | grep donation
 # or, authoritative, bypasses any wp-cli display staleness:
 wp option get active_plugins --format=json | grep donation
@@ -52,7 +54,7 @@ update_option("active_plugins", $active);
 The Bedrock project pins an exact version. Bump `"smcothrift/donation-manager"` in its `composer.json` to `X.Y.Z`, then pull the release in:
 
 ```bash
-cd /Users/mwender/webdev/laravel-valet/bedrock/pickupmydonation.com
+cd ../../../..   # the Bedrock site root
 composer update smcothrift/donation-manager
 ```
 
