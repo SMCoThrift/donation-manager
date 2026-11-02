@@ -31,6 +31,15 @@ update_option("active_plugins", $active);
 ```
 (Reverse the `array_map` condition, and drop `"donation-manager"` from the overrides array, to switch back to VCS.)
 
+## Build tooling
+
+There's no JavaScript build. Grunt was dropped in August 2026; what it did is now two Composer scripts:
+
+- `composer readme` regenerates `README.md` from `readme.txt` with `wpreadme2markdown/wp2md` (a `require-dev` package). wp2md is abandoned on Packagist with no replacement, and Michael accepted that: it's build-time only and the format is stable. If it ever breaks, the agreed fallback is a small PHP script for this readme. Since the switch, the Contributors line is a plain name rather than a link to the wordpress.org profile.
+- `composer makepot` runs `wp i18n make-pot` (WP-CLI from Homebrew, not a project dependency). Unlike the old Grunt task, it doesn't add missing text-domain arguments to source files: fix any warning by hand.
+
+Both need this clone's own `composer install` first; the Bedrock site's Composer copy doesn't include dev packages. The front-end libraries under `lib/components/vendor/` come from `bower install` (gitignored), which production's deploy script also runs.
+
 ## Releasing a new version
 
 `main` is protected: every change reaches it through a pull request (0 approvals required, since the maintainer can't approve their own PRs). Don't push to `main` directly, not even the release docs commit. GitHub lets the owner's account bypass the rule, but the point is to keep every change in a PR.
