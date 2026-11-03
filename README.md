@@ -5,13 +5,21 @@
 **Requires at least:** 6.5.0 \
 **Tested up to:** 6.8.3 \
 **Requires PHP:** 8.1 \
-**Stable tag:** 5.11.3 \
+**Stable tag:** 5.12.0 \
 **License:** GPLv2 or later \
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 ## Changelog
+
+### 5.12.0
+
+* Orphan follow-up email: 48 hours after an orphaned donation whose donor declined fee-based pickup, the donor gets one email offering the priority partner(s) in their zip. Zips without a priority partner get nothing. Turn it on, and set the delay, under Donation Manager → General (off by default).
+* The email's button opens a new Priority Upgrade page (`[priority-upgrade]` shortcode on a page with the slug `priority-upgrade`). When the donor confirms, the same donation moves to the partner and is sent to them as a priority donation (email and/or API), with no second donation created.
+* `wp dm orphan-followup` sends each batch (run it every 15 minutes from the site user's crontab), lists who's due (`--dry-run`), or sends a test copy (`--donation=<id> --to=<email>`).
+* New "Orphaned Donation Stats" Dashboard widget: orphans who declined fee-based pickup, follow-ups sent, upgrades and upgrade rate, by partner. Upgrades also count in the partner rows of the existing stats.
+* `wp dm resend` and the upgrade share a new `get_donation_data()`, which also no longer warns on unused pickup time rows.
 
 ### 5.11.3
 
