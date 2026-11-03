@@ -403,6 +403,32 @@ function dashboard_setup(){
 add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\dashboard_setup', PHP_INT_MAX );
 
 /**
+ * Keeps our two widgets in their columns (stats left, follow-up stats
+ * right), whatever order a user saved by dragging before. Dragging is
+ * turned off by lock_dashboard_script().
+ *
+ * @return array Column => comma-separated widget IDs.
+ */
+function dashboard_order(){
+  return [ 'normal' => WIDGET_ID, 'side' => FOLLOWUP_WIDGET_ID, 'column3' => '', 'column4' => '' ];
+}
+add_filter( 'get_user_option_meta-box-order_dashboard', __NAMESPACE__ . '\\dashboard_order' );
+
+/**
+ * Turns off dragging Dashboard widgets: dashboard_order() would put them
+ * back on the next page load anyway. Printed after the footer scripts, so
+ * its ready handler runs after the one in dashboard.js that makes the
+ * columns sortable.
+ */
+function lock_dashboard_script(){
+  $screen = get_current_screen();
+  if( ! $screen || 'dashboard' != $screen->id )
+    return;
+  echo "<script>jQuery(function(){var s=jQuery('#dashboard-widgets .meta-box-sortables');if(s.sortable('instance'))s.sortable('disable');});</script>";
+}
+add_action( 'admin_print_footer_scripts', __NAMESPACE__ . '\\lock_dashboard_script', 100 );
+
+/**
  * Renders the Dashboard widget: the last 30 days, and this month vs. last.
  */
 function render_widget(){
@@ -528,6 +554,8 @@ function admin_css(){
   #wpbody-content #dashboard-widgets #postbox-container-1,#wpbody-content #dashboard-widgets #postbox-container-2{width:100%;}
   @media (min-width:800px){#wpbody-content #dashboard-widgets #postbox-container-1{width:66.666%;}#wpbody-content #dashboard-widgets #postbox-container-2{width:33.333%;}}
   #dashboard-widgets #postbox-container-3,#dashboard-widgets #postbox-container-4{display:none;}
+  #dashboard-widgets .handle-order-higher,#dashboard-widgets .handle-order-lower{display:none;}
+  #dashboard-widgets .postbox .hndle{cursor:default;}
   .donman-stats{--donman-bar:#2271b1;--donman-bar-hover:#135e96;--donman-priority:#008a20;--donman-priority-hover:#005c12;--donman-priority-tint:#edfaef;--donman-grid:#e0e0e0;--donman-ink-muted:#646970;}
   .donman-stats h3{margin:1.2em 0 .5em;font-size:14px;font-weight:600;}
   .donman-stats h3:first-child{margin-top:.4em;}
