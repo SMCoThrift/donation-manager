@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.12.1
+Stable tag: 5.12.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.12.2 =
+* Dashboard: the two stats widgets always sit in their columns (stats left, Orphaned Donation Stats right), even for users who saved a different widget order before. Dragging and the move arrows are turned off.
 
 = 5.12.1 =
 * Dashboard: the PickUpMyDonation.com Stats widget is two-thirds wide and the Orphaned Donation Stats widget sits beside it, one-third wide (stacked below 800px). The follow-up widget's table fits the narrower column.
