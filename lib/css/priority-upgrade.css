@@ -1,0 +1,218 @@
+/**
+ * The [priority-upgrade] page. Loaded only there; see
+ * lib/fns/shortcode/priority-upgrade.php.
+ */
+.donman-priority-upgrade {
+  --donman-upgrade-width: 800px;
+  --donman-upgrade-blue: #0082c8;
+  --donman-upgrade-ink: #333;
+  --donman-upgrade-muted: #6f6f6f;
+  --donman-upgrade-card: #f4f5f6;
+  --donman-upgrade-fee: #fff4ea;
+  --donman-upgrade-fee-border: #f7941d;
+}
+
+/*
+ * The site's Elementor "Single Page" template (ID 1122) renders this page:
+ * narrow its boxed container and hide its title widget, since the form has
+ * its own heading. The `.site-main` rule covers the theme's own template, in
+ * case the Elementor one ever stops applying.
+ */
+body.donman-priority-upgrade .elementor-location-single .elementor-container,
+body.donman-priority-upgrade .site-main {
+  max-width: var(--donman-upgrade-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body.donman-priority-upgrade .elementor-location-single .elementor-widget-theme-post-title {
+  display: none;
+}
+
+.donman-upgrade,
+.donman-upgrade-panel {
+  margin: 0 0 60px;
+  color: var(--donman-upgrade-ink);
+}
+
+/* Keeps names like 1-800-GOT-JUNK? from breaking at a hyphen. */
+.donman-upgrade-nowrap {
+  white-space: nowrap;
+}
+
+.donman-upgrade h1,
+.donman-upgrade-panel h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.donman-upgrade h1.donman-upgrade-heading {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* Partner logo on the left, Send button on the right; stacked on phones. */
+.donman-upgrade-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.donman-upgrade-title {
+  flex: 0 1 66%;
+}
+
+.donman-upgrade-action {
+  flex: 0 0 auto;
+}
+
+.donman-upgrade-logo {
+  display: block;
+  max-height: 90px;
+  width: auto;
+}
+
+.donman-upgrade-panel .donman-upgrade-logo {
+  margin-bottom: 16px;
+}
+
+.donman-upgrade-button.elementor-button {
+  display: inline-block;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 4px;
+  background-color: var(--donman-upgrade-blue);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+}
+
+.donman-upgrade-button.elementor-button:hover,
+.donman-upgrade-button.elementor-button:focus {
+  background-color: #006ba5;
+  color: #fff;
+}
+
+.donman-upgrade-button.elementor-button:disabled {
+  opacity: .6;
+  cursor: progress;
+}
+
+.donman-upgrade-button-block.elementor-button {
+  display: block;
+  width: 100%;
+  padding: 18px 22px;
+  font-size: 18px;
+}
+
+/* The one thing a donor must understand before sending. */
+.donman-upgrade-fee {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  border-left: 5px solid var(--donman-upgrade-fee-border);
+  border-radius: 4px;
+  background: var(--donman-upgrade-fee);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.donman-upgrade-summary {
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  border-radius: 6px;
+  background: var(--donman-upgrade-card);
+}
+
+.donman-upgrade-summary h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.donman-upgrade-summary dl {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 12px 20px;
+  margin: 0;
+}
+
+.donman-upgrade-summary dt {
+  font-weight: 600;
+}
+
+.donman-upgrade-summary dd {
+  margin: 0;
+}
+
+.donman-upgrade-muted {
+  color: var(--donman-upgrade-muted);
+  font-size: 14px;
+}
+
+.donman-upgrade-note {
+  margin-top: 12px;
+  color: var(--donman-upgrade-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Done, already sent, or a problem with the link. */
+.donman-upgrade-panel {
+  padding: 32px;
+  border: 1px solid #e3e5e8;
+  border-top: 6px solid var(--donman-upgrade-blue);
+  border-radius: 6px;
+  background: #fff; /* Partner logos often have a white background. */
+  font-size: 17px;
+}
+
+.donman-upgrade-panel h1 {
+  margin-bottom: 16px;
+}
+
+.donman-upgrade-panel-success {
+  border-top-color: #3a9b3a;
+}
+
+.donman-upgrade-panel-warning {
+  border-top-color: var(--donman-upgrade-fee-border);
+}
+
+@media (max-width: 600px) {
+  .donman-upgrade-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .donman-upgrade-title {
+    align-self: center;
+  }
+
+  .donman-upgrade-action .donman-upgrade-button.elementor-button {
+    display: block;
+    width: 100%;
+  }
+
+  .donman-upgrade h1,
+  .donman-upgrade-panel h1 {
+    font-size: 26px;
+  }
+
+  .donman-upgrade-summary dl {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .donman-upgrade-summary dd {
+    margin-bottom: 10px;
+  }
+
+  .donman-upgrade-panel {
+    padding: 24px 20px;
+  }
+}

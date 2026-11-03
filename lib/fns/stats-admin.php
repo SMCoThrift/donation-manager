@@ -2,7 +2,8 @@
 
 namespace DonationManager\stats\admin;
 use const DonationManager\stats\PARTNERS;
-use function DonationManager\stats\{get_daily,get_monthly,get_first_month,partner_figures};
+use function DonationManager\stats\{get_daily,get_monthly,get_first_month,partner_figures,get_followup_totals,get_followup_launch_date};
+use function DonationManager\orphanfollowup\{is_enabled,get_delay_hours};
 
 /**
  * PMD stats in wp-admin: the Dashboard (our widget replaces all the others)
@@ -16,6 +17,7 @@ use function DonationManager\stats\{get_daily,get_monthly,get_first_month,partne
 const PAGE_SLUG = 'donman-stats';
 const CAPABILITY = 'activate_plugins';
 const WIDGET_ID = 'donman_stats';
+const FOLLOWUP_WIDGET_ID = 'donman_orphan_followup_stats';
 
 /**
  * Chartable series for the Stats page, keyed by the `chart` query arg.
@@ -393,8 +395,10 @@ function dashboard_setup(){
   if( isset( $wp_meta_boxes['dashboard'] ) )
     $wp_meta_boxes['dashboard'] = [];
 
-  if( current_user_can( CAPABILITY ) )
+  if( current_user_can( CAPABILITY ) ){
     wp_add_dashboard_widget( WIDGET_ID, 'PickUpMyDonation.com Stats', __NAMESPACE__ . '\\render_widget' );
+    wp_add_dashboard_widget( FOLLOWUP_WIDGET_ID, 'Orphaned Donation Stats', __NAMESPACE__ . '\\render_followup_widget' );
+  }
 }
 add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\dashboard_setup', PHP_INT_MAX );
 
@@ -447,6 +451,69 @@ function render_widget(){
   echo '</tbody></table></div>';
 
   echo '<p><a class="button" href="' . esc_url( page_url() ) . '">All stats by month and day →</a> <span class="description">Updated every 15 minutes.</span></p>';
+  echo '</div>';
+}
+
+/**
+ * Renders the Orphaned Donation Stats widget: the orphan follow-up email and
+ * the priority upgrades it leads to, for the last 30 days and since launch.
+ */
+function render_followup_widget(){
+  $today = current_time( 'Y-m-d' );
+  $launch = get_followup_launch_date();
+  $columns = [ 'Last 30 days' => get_followup_totals( date( 'Y-m-d', strtotime( $today . ' -29 days' ) ), $today ) ];
+  if( $launch )
+    $columns[ 'Since ' . date( 'M j, Y', strtotime( $launch ) ) ] = get_followup_totals( $launch, $today );
+
+  $get = function( $totals, $metric ){
+    return isset( $totals[ $metric ] )? $totals[ $metric ] : 0;
+  };
+
+  // Partners that got an upgrade in either column, by upgrade count.
+  $partners = [];
+  foreach( $columns as $totals ){
+    foreach( $totals as $metric => $value ){
+      if( preg_match( '/^upgrades_(\d+)$/', $metric, $match ) )
+        $partners[ $match[1] ] = max( isset( $partners[ $match[1] ] )? $partners[ $match[1] ] : 0, $value );
+    }
+  }
+  arsort( $partners );
+
+  $rows = [
+    [ 'Orphans who declined fee-based', 'orphan_declined' ],
+    [ 'Follow-ups sent', 'followups_sent' ],
+    [ 'Upgraded to priority', 'upgrades' ],
+  ];
+
+  echo '<div class="donman-stats">';
+  if( ! is_enabled() )
+    echo '<p><strong>The follow-up email is off.</strong> Turn it on under Donation Manager → General → Orphan Follow-up Email.</p>';
+  echo '<div class="donman-table-wrap"><table class="widefat striped donman-stats-table"><thead><tr><th></th>';
+  foreach( array_keys( $columns ) as $label )
+    echo '<th>' . esc_html( $label ) . '</th>';
+  echo '</tr></thead><tbody>';
+  foreach( $rows as list( $label, $metric ) ){
+    echo '<tr><th scope="row" class="first">' . esc_html( $label ) . '</th>';
+    foreach( $columns as $totals )
+      echo '<td>' . number_format( $get( $totals, $metric ) ) . '</td>';
+    echo '</tr>';
+  }
+  echo '<tr><th scope="row" class="first">Upgrade rate</th>';
+  foreach( $columns as $totals ){
+    $sent = $get( $totals, 'followups_sent' );
+    echo '<td>' . format_rate( $sent? 100 * $get( $totals, 'upgrades' ) / $sent : null ) . '</td>';
+  }
+  echo '</tr>';
+  foreach( array_keys( $partners ) as $org_id ){
+    echo '<tr><th scope="row" class="first">&nbsp;&nbsp;– ' . esc_html( get_the_title( $org_id ) ) . '</th>';
+    foreach( $columns as $totals )
+      echo '<td>' . number_format( $get( $totals, 'upgrades_' . $org_id ) ) . '</td>';
+    echo '</tr>';
+  }
+  echo '</tbody></table></div>';
+
+  echo '<p class="description">Orphans here are donations sent to the default transportation department whose donor declined fee-based pickup. That differs from "Orphaned donations" in the PickUpMyDonation.com Stats widget, which counts donations emailed to orphan contacts. Follow-ups go out ' . (int) get_delay_hours() . ' hours after the donation, only where the zip has a priority partner. Upgrades are counted on the day the donor confirmed; in the main stats they count as priority donations on the day they were submitted.</p>';
+  echo '<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=donation&donman_upgraded=1' ) ) . '">Upgraded donations →</a> <span class="description">Updated every 15 minutes.</span></p>';
   echo '</div>';
 }
 

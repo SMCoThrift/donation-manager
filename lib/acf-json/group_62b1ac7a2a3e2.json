@@ -99,6 +99,48 @@
             "append": ""
         },
         {
+            "key": "field_6a1f0c2e5b7d1",
+            "label": "Orphan Follow-up Email",
+            "name": "orphan_followup",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "When on, orphaned donors who declined fee-based pickup get one follow-up email offering the priority partner(s) in their zip. Nothing is sent when the zip has no priority partner.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "On",
+            "default_value": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_6a1f0c2e5b7d2",
+            "label": "Orphan Follow-up Delay",
+            "name": "orphan_followup_delay",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Hours after the donation before the follow-up email goes out.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 48,
+            "min": 1,
+            "max": "",
+            "placeholder": "",
+            "step": 1,
+            "prepend": "",
+            "append": "hours"
+        },
+        {
             "key": "field_62c432810f34a",
             "label": "Donation Button Text",
             "name": "donation_button_text",
@@ -382,5 +424,5 @@
     "acfe_form": 0,
     "acfe_meta": "",
     "acfe_note": "",
-    "modified": 1707467694
+    "modified": 1793666643
 }

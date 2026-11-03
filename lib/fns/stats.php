@@ -1,6 +1,7 @@
 <?php
 
 namespace DonationManager\stats;
+use const DonationManager\orphanfollowup\{SENT_META,UPGRADED_META,SOURCE_META};
 
 /**
  * Daily stats rollup for the wp-admin Dashboard and Donations → Stats.
@@ -44,12 +45,13 @@ function table(){
 }
 
 /**
- * Metrics written by rollup_days().
+ * Metrics written by rollup_days(), plus `upgrades_{org ID}` (see
+ * rollup_followups()).
  *
  * @return array Metric keys.
  */
 function day_metrics(){
-  $metrics = [ 'donations', 'orphaned_donations', 'orphaned_emails' ];
+  $metrics = [ 'donations', 'orphaned_donations', 'orphaned_emails', 'orphan_declined', 'followups_sent', 'upgrades' ];
   foreach( array_keys( PARTNERS ) as $partner ){
     foreach( [ 'non_priority', 'priority', 'fails', 'pending' ] as $field )
       $metrics[] = "{$partner}_{$field}";
@@ -126,11 +128,13 @@ function rollup_days( $start, $end ){
     $rows[ $row->d ]['orphaned_emails'] = $row->emails;
   }
 
+  $rows = rollup_followups( $from, $to, $rows );
+
   // Days and metrics with no rows are zeros, so clear the range first.
   $metrics = day_metrics();
   $in = implode( ',', array_fill( 0, count( $metrics ), '%s' ) );
   $wpdb->query( $wpdb->prepare(
-    'DELETE FROM ' . table() . " WHERE period = 'day' AND stat_date BETWEEN %s AND %s AND metric IN ($in)",
+    'DELETE FROM ' . table() . " WHERE period = 'day' AND stat_date BETWEEN %s AND %s AND ( metric IN ($in) OR metric LIKE 'upgrades\\_%%' )",
     array_merge( [ $start, $end ], $metrics )
   ) );
 
@@ -138,6 +142,108 @@ function rollup_days( $start, $end ){
   flush_cache();
 
   return $written;
+}
+
+/**
+ * Adds the orphan follow-up metrics for a date range to $rows.
+ *
+ * - `orphan_declined`: orphaned donations whose donor declined fee-based
+ *   pickup, by post_date. Upgraded ones count too, though they've since
+ *   moved to a partner.
+ * - `followups_sent`: follow-up emails, by the day they were sent.
+ * - `upgrades` and `upgrades_{org ID}`: priority upgrades, by the day the
+ *   donor confirmed.
+ *
+ * @param string $from First moment, Y-m-d H:i:s.
+ * @param string $to   End, Y-m-d H:i:s (exclusive).
+ * @param array  $rows [ Y-m-d => [ metric => value ] ].
+ * @return array $rows with the follow-up metrics added.
+ */
+function rollup_followups( $from, $to, $rows ){
+  global $wpdb;
+
+  $default_trans_dept = get_field( 'default_transportation_department', 'option' );
+  if( $default_trans_dept ){
+    $declined = $wpdb->get_results( $wpdb->prepare(
+      "SELECT DATE(p.post_date) AS d, COUNT(*) AS n
+      FROM {$wpdb->posts} AS p
+      LEFT JOIN {$wpdb->postmeta} AS t ON t.post_id = p.ID AND t.meta_key = 'trans_dept'
+      LEFT JOIN {$wpdb->postmeta} AS f ON f.post_id = p.ID AND f.meta_key = 'fee_based'
+      LEFT JOIN {$wpdb->postmeta} AS u ON u.post_id = p.ID AND u.meta_key = %s
+      WHERE p.post_type = 'donation' AND p.post_status = 'publish' AND p.post_date >= %s AND p.post_date < %s
+        AND ( ( t.meta_value = %s AND f.meta_value = '0' ) OR u.meta_id IS NOT NULL )
+      GROUP BY d",
+      SOURCE_META, $from, $to, $default_trans_dept->ID
+    ) );
+    foreach( $declined as $row )
+      $rows[ $row->d ]['orphan_declined'] = $row->n;
+  }
+
+  // Both timestamps are stored as Y-m-d H:i:s, so they compare as strings.
+  $sent = $wpdb->get_results( $wpdb->prepare(
+    "SELECT DATE(meta_value) AS d, COUNT(*) AS n
+    FROM {$wpdb->postmeta}
+    WHERE meta_key = %s AND meta_value >= %s AND meta_value < %s
+    GROUP BY d",
+    SENT_META, $from, $to
+  ) );
+  foreach( $sent as $row )
+    $rows[ $row->d ]['followups_sent'] = $row->n;
+
+  $upgrades = $wpdb->get_results( $wpdb->prepare(
+    "SELECT DATE(m.meta_value) AS d, o.meta_value AS org, COUNT(*) AS n
+    FROM {$wpdb->postmeta} AS m
+    LEFT JOIN {$wpdb->postmeta} AS o ON o.post_id = m.post_id AND o.meta_key = 'organization'
+    WHERE m.meta_key = %s AND m.meta_value >= %s AND m.meta_value < %s
+    GROUP BY d, org",
+    UPGRADED_META, $from, $to
+  ) );
+  foreach( $upgrades as $row ){
+    $rows[ $row->d ]['upgrades'] = ( isset( $rows[ $row->d ]['upgrades'] )? $rows[ $row->d ]['upgrades'] : 0 ) + $row->n;
+    $rows[ $row->d ][ 'upgrades_' . (int) $row->org ] = $row->n;
+  }
+
+  return $rows;
+}
+
+/**
+ * Totals of the orphan follow-up metrics for a date range.
+ *
+ * @param string $start First day, Y-m-d.
+ * @param string $end   Last day, Y-m-d (inclusive).
+ * @return array [ metric => total ], including `upgrades_{org ID}`.
+ */
+function get_followup_totals( $start, $end ){
+  global $wpdb;
+
+  $cache_key = 'followups:' . $start . ':' . $end . ':' . wp_cache_get_last_changed( CACHE_GROUP );
+  $totals = wp_cache_get( $cache_key, CACHE_GROUP );
+  if( false !== $totals )
+    return $totals;
+
+  $totals = [];
+  $results = $wpdb->get_results( $wpdb->prepare(
+    'SELECT metric, SUM(value) AS total FROM ' . table() . " WHERE period = 'day' AND stat_date BETWEEN %s AND %s
+      AND ( metric IN ('orphan_declined','followups_sent','upgrades') OR metric LIKE 'upgrades\\_%%' )
+    GROUP BY metric",
+    $start, $end
+  ) );
+  foreach( $results as $row )
+    $totals[ $row->metric ] = (int) $row->total;
+
+  wp_cache_set( $cache_key, $totals, CACHE_GROUP, DAY_IN_SECONDS );
+
+  return $totals;
+}
+
+/**
+ * The first day a follow-up email went out.
+ *
+ * @return string|null Y-m-d, or null before the first one.
+ */
+function get_followup_launch_date(){
+  global $wpdb;
+  return $wpdb->get_var( 'SELECT MIN(stat_date) FROM ' . table() . " WHERE period = 'day' AND metric = 'followups_sent'" );
 }
 
 /**
@@ -381,11 +487,26 @@ function partner_figures( $metrics, $partner ){
 }
 
 /**
- * Cron: recounts the last few days.
+ * Cron: recounts the last few days, and the older days of donations
+ * upgraded to priority in that time (their partner rows change when the
+ * partner's API post, and any retries, finish).
  */
 function refresh_recent(){
+  global $wpdb;
+
   $today = current_time( 'Y-m-d' );
-  rollup_days( date( 'Y-m-d', strtotime( $today . ' -' . ( REFRESH_DAYS - 1 ) . ' days' ) ), $today );
+  $start = date( 'Y-m-d', strtotime( $today . ' -' . ( REFRESH_DAYS - 1 ) . ' days' ) );
+  rollup_days( $start, $today );
+
+  $upgraded_days = $wpdb->get_col( $wpdb->prepare(
+    "SELECT DISTINCT DATE(p.post_date)
+    FROM {$wpdb->postmeta} AS m
+    INNER JOIN {$wpdb->posts} AS p ON p.ID = m.post_id
+    WHERE m.meta_key = %s AND m.meta_value >= %s AND p.post_date < %s",
+    UPGRADED_META, $start . ' 00:00:00', $start . ' 00:00:00'
+  ) );
+  foreach( $upgraded_days as $day )
+    rollup_days( $day, $day );
 }
 add_action( CRON_HOOK, __NAMESPACE__ . '\\refresh_recent' );
 
