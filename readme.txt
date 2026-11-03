@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.12.0
+Stable tag: 5.12.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.12.1 =
+* Dashboard: the PickUpMyDonation.com Stats widget is two-thirds wide and the Orphaned Donation Stats widget sits beside it, one-third wide (stacked below 800px). The follow-up widget's table fits the narrower column.
 
 = 5.12.0 =
 * Orphan follow-up email: 48 hours after an orphaned donation whose donor declined fee-based pickup, the donor gets one email offering the priority partner(s) in their zip. Zips without a priority partner get nothing. Turn it on, and set the delay, under Donation Manager → General (off by default).
