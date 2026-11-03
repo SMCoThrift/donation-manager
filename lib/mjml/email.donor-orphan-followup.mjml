@@ -1,0 +1,50 @@
+<mj-body background-color="#eeebeb">
+    <mj-section padding-bottom="0">
+        <mj-column width="600px">
+            <mj-divider border-width="8px" border-color="#0082C8" padding="0"></mj-divider>
+            <mj-image src="https://www.pickupmydonation.com/app/plugins/donation-manager/lib/images/email-header.png" padding="0"></mj-image>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding="20px 0 0 0">
+        <mj-column>
+            <mj-text font-size="15px" line-height="24px">Hi {{first_name}},</mj-text>
+            <mj-text font-size="15px" line-height="24px">{{when}} you asked us to find a free pickup for your donation:</mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding="0 45px">
+        <mj-column background-color="#e6e7e9">
+            <mj-text font-size="15px" line-height="24px"><strong>{{items}}</strong> in {{zip}}</mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding="0">
+        <mj-column>
+            <mj-text font-size="15px" line-height="24px">Free pickup services are often fully booked, and we know waiting with no reply is frustrating. If you haven't heard from anyone yet, {{#if single_partner}}our priority pickup partner in your area can help.{{else}}our priority pickup partners in your area can help.{{/if}}</mj-text>
+            <mj-text font-size="15px" line-height="24px">{{#if single_partner}}<strong>{{partner_name}}</strong> is a fee-based service that usually responds quickly and takes almost anything, including items charities can't accept.{{else}}These partners are fee-based services that usually respond quickly and take almost anything, including items charities can't accept.{{/if}} If you choose this option, we'll send them the details you already gave us, so you don't need to fill out the form again. They'll contact you to confirm pricing and a pickup time.</mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-raw>{{#each partners}}</mj-raw>
+    <mj-section background-color="#ffffff" padding="0">
+        <mj-column>
+            <mj-button href="{{url}}" background-color="#0082C8" color="#ffffff" font-size="16px" font-weight="600" border-radius="4px" inner-padding="14px 24px" padding="8px 25px">Send my donation to {{name}}</mj-button>
+        </mj-column>
+    </mj-section>
+    <mj-raw>{{/each}}</mj-raw>
+    <mj-section background-color="#ffffff" padding="10px 0 20px 0">
+        <mj-column>
+            <mj-text font-size="15px" line-height="24px">If a free pickup service has already contacted you, you don't need to do anything.</mj-text>
+            <mj-text font-size="15px" line-height="24px">Thank you for donating,<br>The PickUpMyDonation.com team</mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#363636">
+        <mj-column>
+            <mj-social font-size="15px" icon-size="20px" mode="horizontal" padding="10px 25px">
+                <mj-social-element src="{{facebook_icon}}" href="https://www.facebook.com/PickUpMyDonation" background-color="transparent" title="Follow us on Facebook"></mj-social-element>
+                <mj-social-element src="{{x_icon}}" href="https://x.com/pickupdonations" background-color="transparent" title="Follow us on X/Twitter"></mj-social-element>
+                <mj-social-element src="{{instagram_icon}}" href="https://www.instagram.com/pickupmydonation/" background-color="transparent" title="Follow us on Instagram"></mj-social-element>
+            </mj-social>
+            <mj-text color="#ffffff" align="center">
+                    &copy; 2012 &ndash; {{year}} PickUpMyDonation.com. All rights reserved.
+            </mj-text>
+        </mj-column>
+    </mj-section>
+</mj-body>
