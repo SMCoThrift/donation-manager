@@ -22,7 +22,6 @@ use function DonationManager\emails\{send_email};
  * the normal way: no second donation is created.
  */
 
-const CRON_HOOK = 'donman_orphan_followup';
 const CACHE_GROUP = 'donman_orphan_followup';
 const UPGRADE_PAGE = 'priority-upgrade';
 
@@ -248,7 +247,8 @@ function html_content_type(){
 }
 
 /**
- * Cron: emails the donations that are due a follow-up.
+ * Emails the donations that are due a follow-up. Run every 15 minutes by
+ * `wp dm orphan-followup` from the site user's crontab.
  *
  * A donation without a priority partner or donor email is marked skipped,
  * so it doesn't hold up the batch. A failed send is retried next run.
@@ -272,17 +272,6 @@ function sweep(){
 
   return $results;
 }
-add_action( CRON_HOOK, __NAMESPACE__ . '\\sweep' );
-
-/**
- * Schedules the sweep if it isn't already. Uses the 15-minute interval
- * from lib/fns/stats.php.
- */
-function schedule_sweep(){
-  if( ! wp_next_scheduled( CRON_HOOK ) )
-    wp_schedule_event( time(), 'donman_15_minutes', CRON_HOOK );
-}
-add_action( 'init', __NAMESPACE__ . '\\schedule_sweep' );
 
 /**
  * Moves a donation to a priority partner and sends it to them.

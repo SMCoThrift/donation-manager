@@ -11,7 +11,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     /**
      * Sends the follow-ups that are due now, or shows who would get one.
      *
-     * Without options, runs the same sweep as the 15-minute cron (one batch).
+     * Without options, emails one batch of the donations that are due, and
+     * prints a one-line summary. The site user's crontab runs this every 15
+     * minutes. While the follow-up is off, it only logs that.
      *
      * ## OPTIONS
      *
@@ -85,12 +87,23 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         return;
       }
 
-      if ( ! is_enabled() )
-        WP_CLI::error( 'The follow-up is off. Turn it on under Donation Manager → General.' );
+      // One line per run, for the crontab's log.
+      $stamp = current_time( 'Y-m-d H:i:s' );
+      if ( ! is_enabled() ) {
+        WP_CLI::line( "{$stamp} Off (Donation Manager → General → Orphan Follow-up Email). Nothing sent." );
+        return;
+      }
       $results = sweep();
-      foreach ( $results as $id => $result )
-        WP_CLI::line( "#{$id}: {$result}" );
-      WP_CLI::success( count( array_keys( $results, 'sent' ) ) . ' sent, ' . ( count( $results ) - count( array_keys( $results, 'sent' ) ) ) . ' not.' );
+      $counts = array_count_values( $results );
+      $failed = array_keys( $results, 'mail-failed' );
+      WP_CLI::line( sprintf( '%s Sent %d, no partner %d, no email %d, failed %d%s.',
+        $stamp,
+        isset( $counts['sent'] ) ? $counts['sent'] : 0,
+        isset( $counts['no-partner'] ) ? $counts['no-partner'] : 0,
+        isset( $counts['no-email'] ) ? $counts['no-email'] : 0,
+        count( $failed ),
+        $failed ? ' (#' . implode( ', #', $failed ) . ', retried next run)' : ''
+      ) );
     }
   }
 
