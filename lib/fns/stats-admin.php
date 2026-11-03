@@ -397,7 +397,7 @@ function dashboard_setup(){
 
   if( current_user_can( CAPABILITY ) ){
     wp_add_dashboard_widget( WIDGET_ID, 'PickUpMyDonation.com Stats', __NAMESPACE__ . '\\render_widget' );
-    wp_add_dashboard_widget( FOLLOWUP_WIDGET_ID, 'Orphaned Donation Stats', __NAMESPACE__ . '\\render_followup_widget' );
+    wp_add_dashboard_widget( FOLLOWUP_WIDGET_ID, 'Orphaned Donation Stats', __NAMESPACE__ . '\\render_followup_widget', null, null, 'side' );
   }
 }
 add_action( 'wp_dashboard_setup', __NAMESPACE__ . '\\dashboard_setup', PHP_INT_MAX );
@@ -463,7 +463,7 @@ function render_followup_widget(){
   $launch = get_followup_launch_date();
   $columns = [ 'Last 30 days' => get_followup_totals( date( 'Y-m-d', strtotime( $today . ' -29 days' ) ), $today ) ];
   if( $launch )
-    $columns[ 'Since ' . date( 'M j, Y', strtotime( $launch ) ) ] = get_followup_totals( $launch, $today );
+    $columns[ 'Since ' . date( 'M j', strtotime( $launch ) ) ] = get_followup_totals( $launch, $today );
 
   $get = function( $totals, $metric ){
     return isset( $totals[ $metric ] )? $totals[ $metric ] : 0;
@@ -488,7 +488,7 @@ function render_followup_widget(){
   echo '<div class="donman-stats">';
   if( ! is_enabled() )
     echo '<p><strong>The follow-up email is off.</strong> Turn it on under Donation Manager → General → Orphan Follow-up Email.</p>';
-  echo '<div class="donman-table-wrap"><table class="widefat striped donman-stats-table"><thead><tr><th></th>';
+  echo '<div class="donman-table-wrap"><table class="widefat striped donman-stats-table donman-followup-table"><thead><tr><th></th>';
   foreach( array_keys( $columns ) as $label )
     echo '<th>' . esc_html( $label ) . '</th>';
   echo '</tr></thead><tbody>';
@@ -512,7 +512,7 @@ function render_followup_widget(){
   }
   echo '</tbody></table></div>';
 
-  echo '<p class="description">Orphans here are donations sent to the default transportation department whose donor declined fee-based pickup. That differs from "Orphaned donations" in the PickUpMyDonation.com Stats widget, which counts donations emailed to orphan contacts. Follow-ups go out ' . (int) get_delay_hours() . ' hours after the donation, only where the zip has a priority partner. Upgrades are counted on the day the donor confirmed; in the main stats they count as priority donations on the day they were submitted.</p>';
+  echo '<p class="description">Orphans here went to the default transportation department after the donor declined fee-based pickup, so this differs from "Orphaned donations" in the main widget. Follow-ups go out ' . (int) get_delay_hours() . ' hours after the donation, only where the zip has a priority partner. Upgrades also count as priority donations in the main stats.</p>';
   echo '<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=donation&donman_upgraded=1' ) ) . '">Upgraded donations →</a> <span class="description">Updated every 15 minutes.</span></p>';
   echo '</div>';
 }
@@ -525,8 +525,9 @@ function admin_css(){
   if( ! $screen || ! in_array( $screen->id, [ 'dashboard', 'donation_page_' . PAGE_SLUG ] ) )
     return;
   echo '<style>
-  #dashboard-widgets #postbox-container-1{width:100%;}
-  #dashboard-widgets #postbox-container-2,#dashboard-widgets #postbox-container-3,#dashboard-widgets #postbox-container-4{display:none;}
+  #wpbody-content #dashboard-widgets #postbox-container-1,#wpbody-content #dashboard-widgets #postbox-container-2{width:100%;}
+  @media (min-width:800px){#wpbody-content #dashboard-widgets #postbox-container-1{width:66.666%;}#wpbody-content #dashboard-widgets #postbox-container-2{width:33.333%;}}
+  #dashboard-widgets #postbox-container-3,#dashboard-widgets #postbox-container-4{display:none;}
   .donman-stats{--donman-bar:#2271b1;--donman-bar-hover:#135e96;--donman-priority:#008a20;--donman-priority-hover:#005c12;--donman-priority-tint:#edfaef;--donman-grid:#e0e0e0;--donman-ink-muted:#646970;}
   .donman-stats h3{margin:1.2em 0 .5em;font-size:14px;font-weight:600;}
   .donman-stats h3:first-child{margin-top:.4em;}
@@ -555,6 +556,7 @@ function admin_css(){
   .donman-chart .axis{fill:var(--donman-ink-muted);font-size:11px;}
   .donman-picker{margin:.6em 0;}
   .donman-table-wrap{overflow-x:auto;}
+  .donman-followup-table th.first{white-space:normal;}
   .donman-stats-table{width:auto;min-width:100%;}
   .donman-stats-table th,.donman-stats-table td{text-align:right;white-space:nowrap;padding:6px 10px;}
   .donman-stats-table .first{text-align:left;}
