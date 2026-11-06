@@ -5,9 +5,11 @@ use function DonationManager\globals\{add_html,get_html};
 use function DonationManager\donations\{get_donation_receipt};
 use function DonationManager\utilities\{get_alert};
 use function DonationManager\realtors\{get_realtor_ads};
+use function DonationManager\analytics\{get_conversion_script};
 
 /**
- * GA4 conversion tracking — fires exactly once per completed donation.
+ * GA4 conversion tracking — fires exactly once per completed donation. The
+ * events themselves are built in analytics.php.
  *
  * Tied to $_SESSION['donor']['ID'], which save_donation() sets only when a new
  * donation record is created (see 06.a/06.b validate-pickup-*.php). The
@@ -27,8 +29,7 @@ if ( ! empty( $_SESSION['donor']['ID'] ) && empty( $_SESSION['donor']['_ga_event
   if ( PHP_SESSION_ACTIVE !== session_status() && ! headers_sent() ) {
     session_start();
   }
-  $donation_id = (int) $_SESSION['donor']['ID'];
-  add_html( '<script>gtag("event", "donation_completed", {"transaction_id": "' . esc_js( $donation_id ) . '"});</script>' );
+  add_html( get_conversion_script( $_SESSION['donor'] ) );
   $_SESSION['donor']['_ga_event_sent'] = true;
   session_write_close();
 }

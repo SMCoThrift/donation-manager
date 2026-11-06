@@ -6,7 +6,8 @@ use function DonationManager\templates\{render_template,get_template_part};
 use function DonationManager\transdepts\{get_trans_dept_contact};
 use function DonationManager\apiqueue\{queue_api_post};
 use function DonationManager\orphanedproviders\{get_orphaned_provider_contact,get_orphaned_donation_contacts};
-use function DonationManager\organizations\{is_orphaned_donation,get_organizations};
+use function DonationManager\organizations\{is_orphaned_donation,get_organizations,is_priority};
+use function DonationManager\analytics\{record_priority_partner,delivery};
 use function DonationManager\donations\{get_donation_routing_method,add_orphaned_donation,get_donation_receipt,get_click_to_claim_link};
 
 /**
@@ -245,6 +246,8 @@ function send_email( $type = '' ){
           // Donation Routing Method
           if( ! $orphaned_donation ){
             $donor['routing_method'] = get_donation_routing_method( $donor['org_id'] );
+            if( isset( $donor['ID'] ) && is_priority( $donor['org_id'] ) )
+              record_priority_partner( $donor['ID'], $donor['org_id'], delivery( $donor['routing_method'] ), 'direct' );
             if( 'email' != $donor['routing_method'] ){
               queue_api_post( $donor );
               uber_log('🔔 `trans_dept_notification` donor routing_method = ' . $donor['routing_method'] );
@@ -284,6 +287,8 @@ function send_email( $type = '' ){
                   $donor['routing_method'] = $org['routing_method'];
                   queue_api_post( $donor );
                   $donor['routing_method'] = 'email';
+                  if( isset( $donor['ID'] ) && $org['priority_pickup'] )
+                    record_priority_partner( $donor['ID'], $org['id'], 'api', 'orphan_fee_based' );
                 }
 
                 /**
@@ -294,6 +299,8 @@ function send_email( $type = '' ){
                   foreach( $org['trans_dept_emails'] as $priority_email ){
                     $priority_recipients[] = $priority_email;
                   }
+                  if( isset( $donor['ID'] ) )
+                    record_priority_partner( $donor['ID'], $org['id'], delivery( $org['routing_method'] ), 'orphan_fee_based' );
                 }
               } // foreach
             } // if ( $fee_based )
