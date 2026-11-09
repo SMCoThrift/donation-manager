@@ -4,13 +4,19 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.12.2
+Stable tag: 5.13.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.13.0 =
+* GA4: a new `priority_partner_donation` event fires on the thank-you page when a donation was sent to a priority partner (the donor picked one, or an orphaned donor accepted fee-based pickup and the zip's priority partners got it by API or email). It carries `partner`, `route` (`direct` or `orphan_fee_based`) and `delivery` (`api` or `email`), for a Google Ads conversion action.
+* GA4: `donation_completed` has a new `donation_type` parameter: `priority`, `nonprofit` or `orphan`.
+* Each donation sent to a priority partner records the partner in `_priority_partner` post meta, so GA4's count can be checked against ours. Orphan follow-up upgrades are recorded as `followup_upgrade` but fire no GA4 event.
+* `is_priority()` no longer fails for an organization with no pickup settings.
 
 = 5.12.2 =
 * Dashboard: the two stats widgets always sit in their columns (stats left, Orphaned Donation Stats right), even for users who saved a different widget order before. Dragging and the move arrows are turned off.

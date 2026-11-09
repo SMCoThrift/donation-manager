@@ -559,7 +559,7 @@ function is_orphaned_donation( $donor_trans_dept_id = 0 ){
 function is_priority( $org_id ){
   $priority_pickup = false;
   $pickup_settings = get_field( 'pickup_settings', $org_id );
-  if( array_key_exists( 'priority_pickup', $pickup_settings ) )
+  if( is_array( $pickup_settings ) && array_key_exists( 'priority_pickup', $pickup_settings ) )
     $priority_pickup = $pickup_settings['priority_pickup'];
   return $priority_pickup;
 }
