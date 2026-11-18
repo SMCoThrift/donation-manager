@@ -5,13 +5,17 @@
 **Requires at least:** 6.5.0 \
 **Tested up to:** 6.8.3 \
 **Requires PHP:** 8.1 \
-**Stable tag:** 5.13.1 \
+**Stable tag:** 5.13.2 \
 **License:** GPLv2 or later \
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 ## Changelog
+
+### 5.13.2
+
+* Security: the College Hunks router no longer writes its whole API request, bearer token included, through `uber_log()`, which printed it in any WP-CLI run that posted to College Hunks.
 
 ### 5.13.1
 
