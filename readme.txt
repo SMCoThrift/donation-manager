@@ -4,13 +4,16 @@ Tags: donations, CPT
 Requires at least: 6.5.0
 Tested up to: 6.8.3
 Requires PHP: 8.1
-Stable tag: 5.13.0
+Stable tag: 5.13.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 A complete donation intake system for WordPress.
 
 == Changelog ==
+
+= 5.13.1 =
+* Fix: partner API posts (1-800-GOT-JUNK, College Hunks) queued while the every-minute cron run was in progress were lost. That run saved back the copy of the `cron` option it read at boot, wiping events added since. About 7% of 1-800-GOT-JUNK posts were never sent from 2026-10-15 to 2026-11-18. WP-CLI and WP-Cron now always read `cron` from the database, and web requests do once they change a cron event.
 
 = 5.13.0 =
 * GA4: a new `priority_partner_donation` event fires on the thank-you page when a donation was sent to a priority partner (the donor picked one, or an orphaned donor accepted fee-based pickup and the zip's priority partners got it by API or email). It carries `partner`, `route` (`direct` or `orphan_fee_based`) and `delivery` (`api` or `email`), for a Google Ads conversion action.
