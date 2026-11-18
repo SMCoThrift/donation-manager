@@ -110,7 +110,6 @@ class CHHJDonationRouter extends DonationRouter{
           'timeout' => 20,
         ];
         $this->save_api_post( $donation['ID'], $new_args );
-        uber_log( '👉 $new_args = ' . print_r( $new_args, true ) );
         if ( defined( 'CHHJ_API_EP' ) && defined( 'CHHJ_API_TOKEN' ) && 
           0 < strlen( CHHJ_API_EP ) && 0 < strlen( CHHJ_API_TOKEN ) ) {
           $response = wp_remote_post( CHHJ_API_EP, $new_args );
